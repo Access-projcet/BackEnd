@@ -15,12 +15,12 @@ import javax.mail.MessagingException;
 @RequiredArgsConstructor
 public class EmailController {
 
-//    private final EmailService emailService;
-//
-//    @PostMapping("/email/{email_addr}")
-//    public ResponseEntity<GlobalResponseDto> sendEmailPath(@PathVariable String email_addr,
-//                                                           @RequestBody EmailRequestDto emailRequestDto) throws MessagingException {
-//        emailService.sendEmail(email_addr, emailRequestDto);
-//        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.EMAIL_CHECK));
-//    }
+    private final EmailService emailService;
+
+    @PostMapping("/email/{email_addr}")
+    public ResponseEntity<GlobalResponseDto> sendEmailPath(@PathVariable String email_addr,
+                                                           @RequestBody EmailRequestDto emailRequestDto) throws MessagingException {
+        emailService.sendEmail(email_addr, emailRequestDto);
+        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.EMAIL_CHECK));
+    }
 }

@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CompanyRepository extends JpaRepository<Company, Long> {
+
     Optional<Company> findByCompanyName(String companyName);
-
     List<Company> findAllByOrderByCreatedAtDesc();
-
-    Company findByBusinessCode(String companyToken);
+    Company findByCompanyToken(String companyToken);
+    Optional<Company> findByCompanyTokenAndCompanyName(String companyToken, String companyName);
 }

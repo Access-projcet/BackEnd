@@ -34,6 +34,8 @@ public class Company extends TimeStamped {
     @Column
     private String companyAddress;
 
+    @Column(unique = true)
+    private String companyToken;
     @Column(precision = 10, scale = 7)
     private BigDecimal x;
 
@@ -52,6 +54,18 @@ public class Company extends TimeStamped {
                 .build();
     }
 
+    public static Company of(CompanyRequestDto companyRequestDto, String companyToken) {
+        return Company.builder()
+                .businessNum(companyRequestDto.getBusinessNum())
+                .businessCode(companyRequestDto.getBusinessCode())
+                .companyName(companyRequestDto.getCompanyName())
+                .companyAddress(companyRequestDto.getCompanyAddress())
+                .companyPhoneNum(companyRequestDto.getCompanyPhoneNum())
+                .x(BigDecimal.valueOf(companyRequestDto.getX()))
+                .y(BigDecimal.valueOf(companyRequestDto.getY()))
+                .companyToken(companyToken)
+                .build();
+    }
     public void update(CompanyRequestDto companyRequestDto) {
         this.businessNum = companyRequestDto.getBusinessNum();
         this.businessCode = companyRequestDto.getBusinessCode();

@@ -68,6 +68,7 @@ public class WebSecurityConfig {
                 .antMatchers("/signup/**").permitAll()
                 .antMatchers("/login/**").permitAll()
                 .antMatchers(HttpMethod.POST,"/company").permitAll()
+                .antMatchers(HttpMethod.POST,"/email/*").permitAll()
                 .anyRequest().authenticated()
                 .and().exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                 .and().addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
