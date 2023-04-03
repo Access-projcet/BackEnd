@@ -8,45 +8,45 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
-@Builder
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class VisitForm extends TimeStamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)           // 방문할 회사
+    @Column(nullable = false)           // Visit Company
     private String location;
 
-    @Column(nullable = false)           // 방문할 회사의 자세한 공간
+    @Column(nullable = false)           // Visit Company Space
     private String place;
 
-    @Column(nullable = false)           // 찾아갈 사람
+    @Column(nullable = false)           // Target
     private String target;
 
-    @Column(nullable = false)           // 목적
+    @Column(nullable = false)           // Purpose
     private String purpose;
 
-    @Column(nullable = false)           // 방문 날짜
+    @Column(nullable = false)           // Visit startDate
     private String startDate;
 
-    @Column(nullable = false)           // 방문 시간
+    @Column(nullable = false)           // Visit StartTime
     private String startTime;
 
-    @Column(nullable = false)           // 퇴실 날짜
+    @Column(nullable = false)           // Visit EndDate
     private String endDate;
 
-    @Column(nullable = false)           // 퇴실 시간
+    @Column(nullable = false)           // Visit EndTime
     private String endTime;
 
-    @Column(nullable = false)           // 승인 여부 -> 이게 대기/삭제/승인
+    @Column(nullable = false)           // Approval Status
     private String status;
 
     @ManyToOne
-    @JoinColumn(name = "GUEST_ID")
+    @JoinColumn(name = "GUEST_ID")      // Visitor
     private Guest guest;
 
 

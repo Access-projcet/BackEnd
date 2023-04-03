@@ -4,6 +4,7 @@ import lombok.Getter;
 
 @Getter
 public class VisitFormSearchRequestDto {
+
     private String guestName;
     private String location;
     private String target;

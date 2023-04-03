@@ -26,11 +26,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class GuestService {
 
-    private final RefreshTokenRepository refreshTokenRepository;
-    private final GuestRepository guestRepository;
-    private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
-
+    private final PasswordEncoder passwordEncoder;
+    private final GuestRepository guestRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     // Guest 회원가입
     @Transactional
@@ -49,7 +48,7 @@ public class GuestService {
         UserRoleEnum role = UserRoleEnum.GUEST;
 
         // Save Entity
-        guestRepository.save(Guest.of(signupRequestDto,password, role));
+        guestRepository.save(Guest.of(signupRequestDto, password, role));
 
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.SIGN_UP_SUCCESS));
     }
@@ -83,6 +82,4 @@ public class GuestService {
 
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.LOG_IN_SUCCESS, LoginResponseDto.of(guest)));
     }
-
-
 }

@@ -28,12 +28,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AdminService {
 
-    private static final String COMPANY_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC"; // 나중에 발급해야 하므로 이를 발급하는 코드도 필요함.
-    private final RefreshTokenRepository refreshTokenRepository;
-    private final CompanyRepository companyRepository;
-    private final AdminRepository adminRepository;
-    private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final PasswordEncoder passwordEncoder;
+    private final AdminRepository adminRepository;
+    private final CompanyRepository companyRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     // 1. Admin SignUp
 // 1. Admin SignUp

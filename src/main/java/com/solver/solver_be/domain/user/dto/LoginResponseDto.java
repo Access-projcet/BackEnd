@@ -30,5 +30,4 @@ public class LoginResponseDto {
                 .phoneNum(guest.getPhoneNum())
                 .build();
     }
-
 }

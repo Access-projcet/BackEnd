@@ -25,6 +25,7 @@ public class VisitFormResponseDto {
     private String visitor;
     private String phoneNum;
     private String status;
+
     public static VisitFormResponseDto of(VisitForm visitForm){
         return VisitFormResponseDto.builder()
                 .id(visitForm.getId())
@@ -41,6 +42,7 @@ public class VisitFormResponseDto {
                 .status(visitForm.getStatus())
                 .build();
     }
+
     public static VisitFormResponseDto of(VisitForm visitForm, Guest guest){
         return VisitFormResponseDto.builder()
                 .id(visitForm.getId())
@@ -57,5 +59,4 @@ public class VisitFormResponseDto {
                 .status(visitForm.getStatus())
                 .build();
     }
-
 }

@@ -7,9 +7,7 @@ import com.solver.solver_be.global.response.GlobalResponseDto;
 import com.solver.solver_be.global.security.webSecurity.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -20,30 +18,34 @@ public class VisitFormController {
 
     private final VisitFormService visitorService;
 
+    // 1. Create VisitForm
     @PostMapping("/visit")
-    public ResponseEntity<GlobalResponseDto> createVisitForm(@Valid @RequestBody VisitFormRequestDto visitorRequestDto,
+    public ResponseEntity<GlobalResponseDto> createVisitForm(@Valid @RequestBody VisitFormRequestDto visitFormRequestDto,
                                                              @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return visitorService.createVisitForm(visitorRequestDto, userDetails.getGuest());
+        return visitorService.createVisitForm(visitFormRequestDto, userDetails.getGuest());
     }
 
+    // 2-1. Get VisitForm ( Guest )
     @GetMapping("/visit/guest")
     public ResponseEntity<GlobalResponseDto> getGuestVisitForm(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return visitorService.getGuestVisitForm(userDetails.getGuest());
+        return visitorService.getGuestVisitForms(userDetails.getGuest());
     }
 
-
+    // 2-2 Get VisitForm ( Admin )
     @GetMapping("/visit/admin")
     public ResponseEntity<GlobalResponseDto> getAdminVisitForm(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return visitorService.getAdminVisitForm(userDetails.getAdmin());
+        return visitorService.getAdminVisitForms(userDetails.getAdmin());
     }
 
+    // 3-1. Update VisitForm ( Guest )
     @PutMapping("/visit/guest/{id}")
     public ResponseEntity<GlobalResponseDto> updateGuestVisitForm(@PathVariable Long id,
-                                                                  @RequestBody VisitFormRequestDto visitorRequestDto,
+                                                                  @RequestBody VisitFormRequestDto visitFormRequestDto,
                                                                   @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return visitorService.updateGuestVisitForm(id, visitorRequestDto, userDetails.getGuest());
+        return visitorService.updateGuestVisitForm(id, visitFormRequestDto, userDetails.getGuest());
     }
 
+    // 3-2. Update VisitForm ( Admin )
     @PutMapping("/visit/admin/{id}")
     public ResponseEntity<GlobalResponseDto> updateAdminVisitForm(@PathVariable Long id,
                                                                   @RequestBody VisitFormRequestDto visitFormRequestDto,
@@ -51,21 +53,23 @@ public class VisitFormController {
         return visitorService.updateAdminVisitForm(id, visitFormRequestDto, userDetails.getAdmin());
     }
 
+    // 4. Delete VisitForm
     @DeleteMapping("/visit/{id}")
     public ResponseEntity<GlobalResponseDto> deleteVisitForm(@PathVariable Long id,
                                                              @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return visitorService.deleteVisitForm(id, userDetails.getGuest());
     }
 
+    // 5. Get Access Status List
     @GetMapping("/visit/access-status")
     public ResponseEntity<GlobalResponseDto> getAccessStatus(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return visitorService.getAccessStatus(userDetails.getAdmin());
     }
 
+    // 6. Search VisitForms
     @GetMapping("/visit-forms/search")
     public ResponseEntity<GlobalResponseDto> searchVisitForms(@RequestBody VisitFormSearchRequestDto visitFormSearchRequestDto,
                                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return visitorService.searchVisitForms(visitFormSearchRequestDto,userDetails.getAdmin());
     }
-
 }
