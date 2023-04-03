@@ -1,8 +1,8 @@
-package com.solver.solver_be.domain.AccessRecord.service;
+package com.solver.solver_be.domain.accessRecord.service;
 
-import com.solver.solver_be.domain.AccessRecord.dto.AccessRecordRequestDto;
-import com.solver.solver_be.domain.AccessRecord.entity.AccessRecord;
-import com.solver.solver_be.domain.AccessRecord.repository.AccessRecordRepository;
+import com.solver.solver_be.domain.accessRecord.dto.AccessRecordRequestDto;
+import com.solver.solver_be.domain.accessRecord.entity.AccessRecord;
+import com.solver.solver_be.domain.accessRecord.repository.AccessRecordRepository;
 import com.solver.solver_be.domain.user.entity.Guest;
 import com.solver.solver_be.domain.visitform.entity.VisitForm;
 import com.solver.solver_be.domain.visitform.repository.VisitFormRepository;
@@ -19,27 +19,27 @@ import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 public class AccessService extends TimeStamped {
+
     private final AccessRecordRepository accessRepository;
     private final VisitFormRepository visitFormRepository;
 
-    // 출입 기록 생성
+    // 1. Create a Record of Access
     @Transactional
     public ResponseEntity<GlobalResponseDto> AccessIn(Guest guest, AccessRecordRequestDto accessRecordRequestDto) {
         VisitForm visitForm = visitFormRepository.findByGuestIdAndStartDateAndLocation(guest.getId(), accessRecordRequestDto.getStartDate(), accessRecordRequestDto.getLocation());
-        LocalDateTime inTime = LocalDateTime.now(); // 현재 시간을 출입 시간으로 설정
-        accessRepository.save(AccessRecord.of(inTime,null,guest,visitForm)); // 출입 기록 저장
+        LocalDateTime inTime = LocalDateTime.now();
+        accessRepository.save(AccessRecord.of(inTime, null, guest, visitForm));
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.ACCESS_IN_SUCCESS));
     }
 
-
-    // 출입 기록 업데이트
+    // 2. Update a Record of Access
     @Transactional
     public ResponseEntity<GlobalResponseDto> AccessOut(Guest guest) {
-        LocalDateTime outTime = LocalDateTime.now(); // 현재 시간을 나가는 시간으로 설정
+        LocalDateTime outTime = LocalDateTime.now();
         AccessRecord accessRecord = accessRepository.findLatestAccessRecordByGuest(guest)
-                .orElseThrow(() -> new IllegalArgumentException("해당 손님의 출입 기록이 없습니다.")); // 가장 최근의 출입 기록을 찾음
-        accessRecord.setOutTime(outTime); // 출입 기록에 나가는 시간 업데이트
-        accessRepository.save(accessRecord); // 출입 기록 저장
+                .orElseThrow(() -> new IllegalArgumentException("해당 손님의 출입 기록이 없습니다."));
+        accessRecord.setOutTime(outTime);
+        accessRepository.save(accessRecord);
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.ACCESS_OUT_SUCCESS));
     }
 }

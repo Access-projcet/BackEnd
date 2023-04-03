@@ -28,22 +28,21 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
     private static final String BASE62 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     private static final int ID_LENGTH = 16;
+
+    // 1. Register Company
     @Transactional
     public ResponseEntity<GlobalResponseDto> createCompany(CompanyRequestDto companyRequestDto) {
 
-        // 원래 등록된 회사 였는지.
         if (companyRepository.findByCompanyName(companyRequestDto.getCompanyName()).isPresent()) {
             throw new UserException(ResponseCode.COMPANY_ALREADY_EXIST);
         }
-        String companyToken = createCompanyToken(companyRequestDto);
 
-        Company company = companyRepository.saveAndFlush(Company.of(companyRequestDto, companyToken));
+        Company company = companyRepository.saveAndFlush(Company.of(companyRequestDto));
 
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.COMPANY_REGISTER_SUCCESS, CompanyResponseDto.of(company)));
     }
 
-
-    // 2. 회사 목록 가져오기
+    // 2. Get List Company
     @Transactional(readOnly = true)
     public ResponseEntity<GlobalResponseDto> getCompanies(Guest guest) {
 

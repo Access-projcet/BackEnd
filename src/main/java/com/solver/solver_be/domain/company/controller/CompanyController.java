@@ -11,14 +11,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-
 public class CompanyController {
 
     private final CompanyService companyService;
 
     @PostMapping("/company")
-    public ResponseEntity<GlobalResponseDto> createCompany(@RequestBody CompanyRequestDto companyRequestDto
-    ) {
+    public ResponseEntity<GlobalResponseDto> createCompany(@RequestBody CompanyRequestDto companyRequestDto) {
         return companyService.createCompany(companyRequestDto);
     }
 
@@ -37,5 +35,4 @@ public class CompanyController {
     public ResponseEntity<GlobalResponseDto> deleteCompany(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return companyService.deleteCompany(id, userDetails.getAdmin());
     }
-
 }

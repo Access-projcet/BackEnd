@@ -11,8 +11,8 @@ import java.math.BigDecimal;
 @Entity
 @Getter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Company extends TimeStamped {
 
     @Id
@@ -29,7 +29,7 @@ public class Company extends TimeStamped {
     private String companyName;
 
     @Column
-    private String companyPhoneNum;
+    private String companyCallNum;
 
     @Column
     private String companyAddress;
@@ -48,7 +48,7 @@ public class Company extends TimeStamped {
                 .businessCode(companyRequestDto.getBusinessCode())
                 .companyName(companyRequestDto.getCompanyName())
                 .companyAddress(companyRequestDto.getCompanyAddress())
-                .companyPhoneNum(companyRequestDto.getCompanyPhoneNum())
+                .companyCallNum(companyRequestDto.getCompanyCallNum())
                 .x(BigDecimal.valueOf(companyRequestDto.getX()))
                 .y(BigDecimal.valueOf(companyRequestDto.getY()))
                 .build();
@@ -60,7 +60,7 @@ public class Company extends TimeStamped {
                 .businessCode(companyRequestDto.getBusinessCode())
                 .companyName(companyRequestDto.getCompanyName())
                 .companyAddress(companyRequestDto.getCompanyAddress())
-                .companyPhoneNum(companyRequestDto.getCompanyPhoneNum())
+                .companyCallNum(companyRequestDto.getCompanyCallNum())
                 .x(BigDecimal.valueOf(companyRequestDto.getX()))
                 .y(BigDecimal.valueOf(companyRequestDto.getY()))
                 .companyToken(companyToken)
@@ -71,7 +71,7 @@ public class Company extends TimeStamped {
         this.businessCode = companyRequestDto.getBusinessCode();
         this.companyName = companyRequestDto.getCompanyName();
         this.companyAddress = companyRequestDto.getCompanyAddress();
-        this.companyPhoneNum = companyRequestDto.getCompanyPhoneNum();
+        this.companyCallNum = companyRequestDto.getCompanyCallNum();
         this.x = BigDecimal.valueOf(companyRequestDto.getX());
         this.y = BigDecimal.valueOf(companyRequestDto.getY());
     }

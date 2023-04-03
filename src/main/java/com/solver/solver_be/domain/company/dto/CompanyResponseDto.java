@@ -21,7 +21,7 @@ public class CompanyResponseDto {
 
     private String companyName;
 
-    private String companyPhoneNum;
+    private String companyCallNum;
 
     private String companyAddress;
 
@@ -36,10 +36,9 @@ public class CompanyResponseDto {
                 .businessCode(company.getBusinessCode())
                 .companyName(company.getCompanyName())
                 .companyAddress(company.getCompanyAddress())
-                .companyPhoneNum(company.getCompanyPhoneNum())
+                .companyCallNum(company.getCompanyCallNum())
                 .x(company.getX().doubleValue())
                 .y(company.getY().doubleValue())
                 .build();
     }
-
 }

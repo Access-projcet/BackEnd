@@ -1,7 +1,7 @@
-package com.solver.solver_be.domain.AccessRecord.controller;
+package com.solver.solver_be.domain.accessRecord.controller;
 
-import com.solver.solver_be.domain.AccessRecord.dto.AccessRecordRequestDto;
-import com.solver.solver_be.domain.AccessRecord.service.AccessService;
+import com.solver.solver_be.domain.accessRecord.dto.AccessRecordRequestDto;
+import com.solver.solver_be.domain.accessRecord.service.AccessService;
 import com.solver.solver_be.global.response.GlobalResponseDto;
 import com.solver.solver_be.global.security.webSecurity.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;

@@ -13,7 +13,7 @@ public class CompanyRequestDto {
 
     private String companyName;
 
-    private String companyPhoneNum;
+    private String companyCallNum;
 
     private String companyAddress;
 
