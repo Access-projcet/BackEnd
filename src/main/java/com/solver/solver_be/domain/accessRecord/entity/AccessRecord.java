@@ -1,4 +1,4 @@
-package com.solver.solver_be.domain.AccessRecord.entity;
+package com.solver.solver_be.domain.accessRecord.entity;
 
 import com.solver.solver_be.domain.user.entity.Guest;
 import com.solver.solver_be.domain.visitform.entity.VisitForm;
@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class AccessRecord {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -40,6 +41,4 @@ public class AccessRecord {
                 .visitForm(visitForm)
                 .build();
     }
-
-
 }
