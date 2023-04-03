@@ -7,7 +7,7 @@ public class VisitFormSearchRequestDto {
 
     private String guestName;
     private String location;
-    private String target;
+    private String adminName;
     private String startDate;
     private String endDate;
     private String purpose;

@@ -5,6 +5,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.solver.solver_be.domain.visitform.entity.VisitForm;
 
 import javax.persistence.EntityManager;
+import java.time.LocalDate;
 import java.util.List;
 
 import static com.solver.solver_be.domain.visitform.entity.QVisitForm.visitForm;
@@ -18,8 +19,8 @@ public class VisitFormRepositoryCustomImpl implements CustomVisitFormRepository{
     }
 
     @Override
-    public List<VisitForm> findByGuestNameOrLocationOrTargetOrStartDateOrEndDateOrPurposeAndStatus(
-            String guestName, String location, String target, String startDate, String endDate, String purpose, String status) {
+    public List<VisitForm> findByGuestNameOrLocationOrAdminNameOrStartDateOrEndDateOrPurposeAndStatus(
+            String guestName, String location, String adminName, String startDate, String endDate, String purpose, String status) {
         BooleanBuilder builder = new BooleanBuilder();
 
         if (guestName != null) {
@@ -28,14 +29,14 @@ public class VisitFormRepositoryCustomImpl implements CustomVisitFormRepository{
         if (location != null) {
             builder.or(visitForm.location.eq(location));
         }
-        if (target != null) {
-            builder.or(visitForm.target.eq(target));
+        if (adminName != null) {
+            builder.or(visitForm.admin.name.eq(adminName));
         }
         if (startDate != null) {
-            builder.or(visitForm.startDate.eq(startDate));
+            builder.or(visitForm.startDate.eq(LocalDate.parse(startDate)));
         }
         if (endDate != null) {
-            builder.or(visitForm.endDate.eq(endDate));
+            builder.or(visitForm.endDate.eq(LocalDate.parse(endDate)));
         }
         if (purpose != null) {
             builder.or(visitForm.purpose.eq(purpose));
@@ -49,7 +50,7 @@ public class VisitFormRepositoryCustomImpl implements CustomVisitFormRepository{
                 .orderBy(
                         visitForm.guest.name.asc(),
                         visitForm.location.asc(),
-                        visitForm.target.asc(),
+                        visitForm.admin.name.asc(),
                         visitForm.startDate.asc(),
                         visitForm.endDate.asc(),
                         visitForm.purpose.asc(),

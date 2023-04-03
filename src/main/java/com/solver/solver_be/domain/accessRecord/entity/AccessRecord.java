@@ -1,5 +1,7 @@
 package com.solver.solver_be.domain.accessRecord.entity;
 
+import com.solver.solver_be.domain.access.entity.Access;
+import com.solver.solver_be.domain.user.entity.Admin;
 import com.solver.solver_be.domain.user.entity.Guest;
 import com.solver.solver_be.domain.visitform.entity.VisitForm;
 import lombok.*;
@@ -11,8 +13,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AccessRecord {
 
     @Id
@@ -26,19 +28,14 @@ public class AccessRecord {
     private LocalDateTime outTime;
 
     @ManyToOne
-    @JoinColumn(name = "GUEST_ID", nullable = false)
-    private Guest guest;
+    @JoinColumn(name = "ACCESS_ID", nullable = false)
+    private Access access;
 
-    @ManyToOne
-    @JoinColumn(name = "VISITFORM_ID", nullable = false)
-    private VisitForm visitForm;
-
-    public static AccessRecord of(LocalDateTime inTime, LocalDateTime outTime, Guest guest, VisitForm visitForm) {
+    public static AccessRecord of(LocalDateTime inTime, LocalDateTime outTime, Access access) {
         return AccessRecord.builder()
                 .inTime(inTime)
                 .outTime(outTime)
-                .guest(guest)
-                .visitForm(visitForm)
+                .access(access)
                 .build();
     }
 }

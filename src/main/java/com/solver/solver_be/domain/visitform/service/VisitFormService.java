@@ -3,7 +3,6 @@ package com.solver.solver_be.domain.visitform.service;
 import com.solver.solver_be.domain.user.entity.Admin;
 import com.solver.solver_be.domain.user.entity.Guest;
 import com.solver.solver_be.domain.user.repository.AdminRepository;
-import com.solver.solver_be.domain.visitform.dto.AccessStatusResponseDto;
 import com.solver.solver_be.domain.visitform.dto.VisitFormRequestDto;
 import com.solver.solver_be.domain.visitform.dto.VisitFormResponseDto;
 import com.solver.solver_be.domain.visitform.dto.VisitFormSearchRequestDto;
@@ -32,13 +31,12 @@ public class VisitFormService {
     @Transactional
     public ResponseEntity<GlobalResponseDto> createVisitForm(VisitFormRequestDto visitFormRequestDto, Guest guest) {
 
-        // Person in charge exists
-        Optional<Admin> target = adminRepository.findByName(visitFormRequestDto.getTarget());
-        if (target.isEmpty()) {
+        Optional<Admin> admin = adminRepository.findByName(visitFormRequestDto.getTarget());
+        if (admin.isEmpty()) {
             throw new VisitFormException(ResponseCode.ADMIN_NOT_FOUND);
         }
 
-        VisitForm visitForm = visitFormRepository.saveAndFlush(VisitForm.of(visitFormRequestDto, guest));
+        VisitForm visitForm = visitFormRepository.saveAndFlush(VisitForm.of(visitFormRequestDto, guest, admin.get()));
 
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.VISITFORM_WRITE_SUCCESS, VisitFormResponseDto.of(visitForm, guest)));
     }
@@ -61,7 +59,7 @@ public class VisitFormService {
     @Transactional(readOnly = true)
     public ResponseEntity<GlobalResponseDto> getAdminVisitForms(Admin admin) {
 
-        List<VisitForm> visitFormUserList = visitFormRepository.findByTarget(admin.getName());
+        List<VisitForm> visitFormUserList = visitFormRepository.findByAdminId(admin.getId());
 
         List<VisitFormResponseDto> visitFormResponseDtoList = new ArrayList<>();
         for (VisitForm visitForm : visitFormUserList) {
@@ -84,6 +82,7 @@ public class VisitFormService {
         visitForm.update(visitFormRequestDto);
 
         VisitFormResponseDto visitFormResponseDto = VisitFormResponseDto.of(visitForm, guest);
+
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.VISITFORM_UPDATE_SUCCESS, visitFormResponseDto));
     }
 
@@ -91,9 +90,9 @@ public class VisitFormService {
     @Transactional
     public ResponseEntity<GlobalResponseDto> updateAdminVisitForm(Long id, VisitFormRequestDto visitFormRequestDto, Admin admin){
 
-        VisitForm visitForm = visitFormRepository.findByIdAndTarget(id, admin.getName());
+        VisitForm visitForm = visitFormRepository.findByIdAndAdminId(id, admin.getId());
 
-        if(!visitForm.getTarget().equals(admin.getName())){
+        if(!visitForm.getAdmin().equals(admin)){
             throw new VisitFormException(ResponseCode.VISITFORM_UPDATE_FAILED);
         }
 
@@ -117,47 +116,14 @@ public class VisitFormService {
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.VISITFORM_DELETE_SUCCESS));
     }
 
-    // 5. Get Access Status List
-    @Transactional
-    public ResponseEntity<GlobalResponseDto> getAccessStatus(Admin admin) {
-
-        List<VisitForm> visitFormList = visitFormRepository.findByTarget(admin.getName());
-        Map<String, List<VisitForm>> visitFormMap = new HashMap<>();
-
-        // Cleanup by Date VisitForm List.
-        for (VisitForm visitForm : visitFormList) {
-            String date = visitForm.getStartDate();
-            List<VisitForm> visitFormByDate = visitFormMap.getOrDefault(date, new ArrayList<>());
-            visitFormByDate.add(visitForm);
-            visitFormMap.put(date, visitFormByDate);
-        }
-
-        // Check visit reservation history by date And AccessStatusResponseDto Creating an Object.
-        List<AccessStatusResponseDto> accessStatusResponseDtoList = new ArrayList<>();
-        for (String date : visitFormMap.keySet()) {
-            List<VisitForm> visitFormByDate = visitFormMap.get(date);
-
-            int applyCount = visitFormByDate.size();
-            int approveCount = 0;
-            for (VisitForm visitForm : visitFormByDate) {
-                if ("3".equals(visitForm.getStatus())) {
-                    approveCount += 1;
-                }
-            }
-            AccessStatusResponseDto accessStatusResponseDto = AccessStatusResponseDto.of(date, (long) applyCount, (long) approveCount, (long) (applyCount + approveCount));
-            accessStatusResponseDtoList.add(accessStatusResponseDto);
-        }
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.ACCESS_STATUS_SUCCESS, accessStatusResponseDtoList));
-    }
-
-    // 6. Search VisitForms
+    // 5. Search VisitForms
     @Transactional
     public ResponseEntity<GlobalResponseDto> searchVisitForms(VisitFormSearchRequestDto requestDto, Admin admin) {
 
-        List<VisitForm> visitFormList = visitFormRepository.findByGuestNameOrLocationOrTargetOrStartDateOrEndDateOrPurposeAndStatus(
+        List<VisitForm> visitFormList = visitFormRepository.findByGuestNameOrLocationOrAdminNameOrStartDateOrEndDateOrPurposeAndStatus(
                 requestDto.getGuestName(),
                 requestDto.getLocation(),
-                requestDto.getTarget(),
+                requestDto.getAdminName(),
                 requestDto.getStartDate(),
                 requestDto.getEndDate(),
                 requestDto.getPurpose(),
@@ -166,7 +132,6 @@ public class VisitFormService {
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.VISITFORM_SEARCH_SUCCESS, visitFormList));
     }
 
-    // ======================================= METHOD ======================================== //
 
     // Get User's VisitForm List
     private VisitForm getVisitFormById(Long id) {

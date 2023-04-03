@@ -60,13 +60,7 @@ public class VisitFormController {
         return visitorService.deleteVisitForm(id, userDetails.getGuest());
     }
 
-    // 5. Get Access Status List
-    @GetMapping("/visit/access-status")
-    public ResponseEntity<GlobalResponseDto> getAccessStatus(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return visitorService.getAccessStatus(userDetails.getAdmin());
-    }
-
-    // 6. Search VisitForms
+    // 5. Search VisitForms
     @GetMapping("/visit-forms/search")
     public ResponseEntity<GlobalResponseDto> searchVisitForms(@RequestBody VisitFormSearchRequestDto visitFormSearchRequestDto,
                                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {

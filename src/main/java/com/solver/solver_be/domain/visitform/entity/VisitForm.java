@@ -1,11 +1,14 @@
 package com.solver.solver_be.domain.visitform.entity;
 
+import com.solver.solver_be.domain.user.entity.Admin;
 import com.solver.solver_be.domain.user.entity.Guest;
 import com.solver.solver_be.domain.visitform.dto.VisitFormRequestDto;
 import com.solver.solver_be.global.util.TimeStamped;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -24,23 +27,20 @@ public class VisitForm extends TimeStamped {
     @Column(nullable = false)           // Visit Company Space
     private String place;
 
-    @Column(nullable = false)           // Target
-    private String target;
-
     @Column(nullable = false)           // Purpose
     private String purpose;
 
     @Column(nullable = false)           // Visit startDate
-    private String startDate;
+    private LocalDate startDate;
 
     @Column(nullable = false)           // Visit StartTime
-    private String startTime;
+    private LocalDateTime startTime;
 
     @Column(nullable = false)           // Visit EndDate
-    private String endDate;
+    private LocalDate endDate;
 
     @Column(nullable = false)           // Visit EndTime
-    private String endTime;
+    private LocalDateTime endTime;
 
     @Column(nullable = false)           // Approval Status
     private String status;
@@ -49,34 +49,36 @@ public class VisitForm extends TimeStamped {
     @JoinColumn(name = "GUEST_ID")      // Visitor
     private Guest guest;
 
+    @ManyToOne
+    @JoinColumn(name = "ADMIN_ID")      // Admin
+    private Admin admin;
 
-    public static VisitForm of(VisitFormRequestDto visitorRequestDto, Guest guest) {
+    public static VisitForm of(VisitFormRequestDto visitorRequestDto, Guest guest, Admin admin) {
         return VisitForm.builder()
                 .location(visitorRequestDto.getLocation())
-                .target(visitorRequestDto.getTarget())
                 .place(visitorRequestDto.getPlace())
                 .purpose(visitorRequestDto.getPurpose())
-                .startDate(visitorRequestDto.getStartDate())
-                .endDate(visitorRequestDto.getEndDate())
-                .startTime(visitorRequestDto.getStartTime())
-                .endTime(visitorRequestDto.getEndTime())
+                .startDate(LocalDate.parse(visitorRequestDto.getStartDate()))
+                .endDate(LocalDate.parse(visitorRequestDto.getEndDate()))
+                .startTime(LocalDateTime.parse(visitorRequestDto.getStartTime()))
+                .endTime(LocalDateTime.parse(visitorRequestDto.getEndTime()))
                 .status(visitorRequestDto.getStatus())
                 .guest(guest)
+                .admin(admin)
                 .build();
     }
 
     public void update(VisitFormRequestDto visitorRequestDto) {
         this.location = visitorRequestDto.getLocation();
-        this.target = visitorRequestDto.getTarget();
         this.place = visitorRequestDto.getPlace();
         this.purpose = visitorRequestDto.getPurpose();
-        this.startDate = visitorRequestDto.getStartDate();
-        this.endDate = visitorRequestDto.getEndDate();
-        this.startTime = visitorRequestDto.getStartTime();
-        this.endTime = visitorRequestDto.getEndTime();
+        this.startDate = LocalDate.parse(visitorRequestDto.getStartDate());
+        this.endDate = LocalDate.parse(visitorRequestDto.getEndDate());
+        this.startTime = LocalDateTime.parse(visitorRequestDto.getStartTime());
+        this.endTime = LocalDateTime.parse(visitorRequestDto.getEndTime());
     }
 
-    public void updateStatus(VisitFormRequestDto visitFormRequestDto){
+    public void updateStatus(VisitFormRequestDto visitFormRequestDto) {
         this.status = visitFormRequestDto.getStatus();
     }
 }

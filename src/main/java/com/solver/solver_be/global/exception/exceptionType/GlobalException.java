@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class GlobalException extends RuntimeException {
-    private ResponseCode statusCode;
 
+    private ResponseCode statusCode;
     public GlobalException(ResponseCode statusCode) {
         this.statusCode = statusCode;
     }

@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface CustomVisitFormRepository {
 
-    List<VisitForm> findByGuestNameOrLocationOrTargetOrStartDateOrEndDateOrPurposeAndStatus(String guestName, String location, String target, String startDate, String endDate, String purpose, String status);
+    List<VisitForm> findByGuestNameOrLocationOrAdminNameOrStartDateOrEndDateOrPurposeAndStatus(String guestName, String location, String adminName, String startDate, String endDate, String purpose, String status);
 }

@@ -36,8 +36,9 @@ public class CompanyService {
         if (companyRepository.findByCompanyName(companyRequestDto.getCompanyName()).isPresent()) {
             throw new UserException(ResponseCode.COMPANY_ALREADY_EXIST);
         }
+        String companyToken = createCompanyToken(companyRequestDto);
 
-        Company company = companyRepository.saveAndFlush(Company.of(companyRequestDto));
+        Company company = companyRepository.saveAndFlush(Company.of(companyRequestDto, companyToken));
 
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.COMPANY_REGISTER_SUCCESS, CompanyResponseDto.of(company)));
     }
