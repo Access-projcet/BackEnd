@@ -16,5 +16,5 @@ public interface VisitFormRepository extends JpaRepository<VisitForm, Long>, Cus
 
     VisitForm findByIdAndTarget(Long id, String target);
 
-    Optional<VisitForm> findAllByStartDateAndLocation(String startDate, String location);
+    Optional<VisitForm> findAllByStartTimeAndEndTimeAndLocation(String startTime, String EndTime, String location);
 }

@@ -20,119 +20,111 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
-@Service
 @Slf4j
+@Service
 @RequiredArgsConstructor
 public class VisitFormService {
 
-    private final VisitFormRepository visitFormRepository;
     private final AdminRepository adminRepository;
+    private final VisitFormRepository visitFormRepository;
 
-    // 1. 방문신청서 작성
+    // 1. Create VisitForm
     @Transactional
     public ResponseEntity<GlobalResponseDto> createVisitForm(VisitFormRequestDto visitFormRequestDto, Guest guest) {
 
-        // 담당자가 존재를 하는지.
+        // Person in charge exists
         Optional<Admin> target = adminRepository.findByName(visitFormRequestDto.getTarget());
         if (target.isEmpty()) {
             throw new VisitFormException(ResponseCode.ADMIN_NOT_FOUND);
         }
 
-        // 같은 날에 작성을 한게 있는지.
-        Optional<VisitForm> foundStartDate = visitFormRepository.findAllByStartDateAndLocation(visitFormRequestDto.getStartDate(), visitFormRequestDto.getLocation());
-        if (foundStartDate.isPresent()) {
-            throw new VisitFormException(ResponseCode.VISITOR_EXIST);
-        }
-
         VisitForm visitForm = visitFormRepository.saveAndFlush(VisitForm.of(visitFormRequestDto, guest));
 
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.VISITOR_WIRTE_SUCCESS, VisitFormResponseDto.of(visitForm, guest)));
+        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.VISITFORM_WRITE_SUCCESS, VisitFormResponseDto.of(visitForm, guest)));
     }
 
-    // 2. 방문신청서 가져오기
+    // 2-1. Get VisitForm List ( Guest )
     @Transactional(readOnly = true)
-    public ResponseEntity<GlobalResponseDto> getGuestVisitForm(Guest guest) {
+    public ResponseEntity<GlobalResponseDto> getGuestVisitForms(Guest guest) {
 
-        List<VisitForm> visiFormUserList = visitFormRepository.findByGuestId(guest.getId());
+        List<VisitForm> visitFormUserList = visitFormRepository.findByGuestId(guest.getId());
 
-        List<VisitFormResponseDto> visitFromResponseDtoList = new ArrayList<>();
-        for (VisitForm visitorForm : visiFormUserList) {
-            visitFromResponseDtoList.add(VisitFormResponseDto.of(visitorForm));
+        List<VisitFormResponseDto> visitFormResponseDtoList = new ArrayList<>();
+        for (VisitForm visitForm : visitFormUserList) {
+            visitFormResponseDtoList.add(VisitFormResponseDto.of(visitForm));
         }
 
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.VISITOR_GET_SUCCESS, visitFromResponseDtoList));
+        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.VISITFORM_GET_SUCCESS, visitFormResponseDtoList));
     }
 
+    // 2-2 Get VisitForm List ( Admin )
     @Transactional(readOnly = true)
-    public ResponseEntity<GlobalResponseDto> getAdminVisitForm(Admin admin) {
+    public ResponseEntity<GlobalResponseDto> getAdminVisitForms(Admin admin) {
 
         List<VisitForm> visitFormUserList = visitFormRepository.findByTarget(admin.getName());
 
-//        if (visitFormUserList.isEmpty()) {
-//            throw new VisitFormException(ResponseCode.VISITOR_NOT_FOUND);
-//        }
-
-        List<VisitFormResponseDto> visitFormResponseDtos = new ArrayList<>();
-        for (VisitForm visitorForm : visitFormUserList) {
-            visitFormResponseDtos.add(VisitFormResponseDto.of(visitorForm));
+        List<VisitFormResponseDto> visitFormResponseDtoList = new ArrayList<>();
+        for (VisitForm visitForm : visitFormUserList) {
+            visitFormResponseDtoList.add(VisitFormResponseDto.of(visitForm));
         }
 
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.VISITOR_GET_SUCCESS, visitFormResponseDtos));
+        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.VISITFORM_GET_SUCCESS, visitFormResponseDtoList));
     }
 
-    // 3. 방문신청서 수정 ( Guest )
+    // 3-1. Update VisitForm ( Guest )
     @Transactional
     public ResponseEntity<GlobalResponseDto> updateGuestVisitForm(Long id, VisitFormRequestDto visitFormRequestDto, Guest guest) {
 
-        VisitForm visitorForm = getVisitFormById(id);
+        VisitForm visitForm = getVisitFormById(id);
 
-        if (!visitorForm.getGuest().equals(guest)) {
-            throw new VisitFormException(ResponseCode.VISITOR_UPDATE_FAILED);
+        if (!visitForm.getGuest().equals(guest)) {
+            throw new VisitFormException(ResponseCode.VISITFORM_UPDATE_FAILED);
         }
 
-        visitorForm.update(visitFormRequestDto);
+        visitForm.update(visitFormRequestDto);
 
-        VisitFormResponseDto visitFormResponseDto = VisitFormResponseDto.of(visitorForm, guest);
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.VISITOR_UPDATE_SUCCESS, visitFormResponseDto));
+        VisitFormResponseDto visitFormResponseDto = VisitFormResponseDto.of(visitForm, guest);
+        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.VISITFORM_UPDATE_SUCCESS, visitFormResponseDto));
     }
 
-    // 4. 방문신청서 수정 ( Admin )
+    // 3-2. Update VisitForm ( Admin )
     @Transactional
     public ResponseEntity<GlobalResponseDto> updateAdminVisitForm(Long id, VisitFormRequestDto visitFormRequestDto, Admin admin){
 
         VisitForm visitForm = visitFormRepository.findByIdAndTarget(id, admin.getName());
 
         if(!visitForm.getTarget().equals(admin.getName())){
-            throw new VisitFormException(ResponseCode.VISITOR_UPDATE_FAILED);
+            throw new VisitFormException(ResponseCode.VISITFORM_UPDATE_FAILED);
         }
 
         visitForm.updateStatus(visitFormRequestDto);
 
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.VISITOR_STATUS_UPDATE_SUCCESS));
+        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.VISITFORM_STATUS_UPDATE_SUCCESS));
     }
 
-    // 5. 방문신청서 삭제
+    // 4. Delete VisitForm
     @Transactional
     public ResponseEntity<GlobalResponseDto> deleteVisitForm(Long id, Guest guest) {
 
         VisitForm visitForm = getVisitFormById(id);
 
         if (!visitForm.getGuest().equals(guest)) {
-            throw new VisitFormException(ResponseCode.VISITOR_UPDATE_FAILED);
+            throw new VisitFormException(ResponseCode.VISITFORM_UPDATE_FAILED);
         }
 
         visitFormRepository.deleteById(id);
 
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.VISITOR_DELETE_SUCCESS));
+        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.VISITFORM_DELETE_SUCCESS));
     }
 
+    // 5. Get Access Status List
     @Transactional
     public ResponseEntity<GlobalResponseDto> getAccessStatus(Admin admin) {
 
         List<VisitForm> visitFormList = visitFormRepository.findByTarget(admin.getName());
         Map<String, List<VisitForm>> visitFormMap = new HashMap<>();
 
-        // VisitForm 리스트를 날짜별 정리.
+        // Cleanup by Date VisitForm List.
         for (VisitForm visitForm : visitFormList) {
             String date = visitForm.getStartDate();
             List<VisitForm> visitFormByDate = visitFormMap.getOrDefault(date, new ArrayList<>());
@@ -140,7 +132,7 @@ public class VisitFormService {
             visitFormMap.put(date, visitFormByDate);
         }
 
-        // 날짜별로 방문 예약 내역을 체크하여 AccessStatusResponseDto 객체를 생성.
+        // Check visit reservation history by date And AccessStatusResponseDto Creating an Object.
         List<AccessStatusResponseDto> accessStatusResponseDtoList = new ArrayList<>();
         for (String date : visitFormMap.keySet()) {
             List<VisitForm> visitFormByDate = visitFormMap.get(date);
@@ -158,8 +150,10 @@ public class VisitFormService {
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.ACCESS_STATUS_SUCCESS, accessStatusResponseDtoList));
     }
 
+    // 6. Search VisitForms
     @Transactional
     public ResponseEntity<GlobalResponseDto> searchVisitForms(VisitFormSearchRequestDto requestDto, Admin admin) {
+
         List<VisitForm> visitFormList = visitFormRepository.findByGuestNameOrLocationOrTargetOrStartDateOrEndDateOrPurposeAndStatus(
                 requestDto.getGuestName(),
                 requestDto.getLocation(),
@@ -171,16 +165,12 @@ public class VisitFormService {
         );
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.VISITFORM_SEARCH_SUCCESS, visitFormList));
     }
-    @Transactional(readOnly = true)
-    public String getTest(Admin admin){
-        return "Test Confirm";
-    }
-
 
     // ======================================= METHOD ======================================== //
 
+    // Get User's VisitForm List
     private VisitForm getVisitFormById(Long id) {
-        return visitFormRepository.findById(id).orElseThrow(() -> new VisitFormException(ResponseCode.VISITOR_NOT_FOUND));
+        return visitFormRepository.findById(id).orElseThrow(() -> new VisitFormException(ResponseCode.VISITFORM_NOT_FOUND));
     }
 
 //    @Scheduled(fixedDelay = 1000)

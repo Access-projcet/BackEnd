@@ -45,5 +45,4 @@ public class UserController {
     public ResponseEntity<GlobalResponseDto> loginGuest(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
         return guestService.login(loginRequestDto, response);
     }
-
 }

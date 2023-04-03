@@ -23,6 +23,5 @@ public class AccessStatusResponseDto {
                 .date(date)
                 .sumNumber(sumNumber)
                 .build();
-
     }
 }

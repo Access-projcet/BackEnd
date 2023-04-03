@@ -10,5 +10,4 @@ public interface AdminRepository extends JpaRepository<Admin, Long> {
 
     Optional<Admin> findByUserId(String userId);
     Optional<Admin> findByName(String username);
-
 }

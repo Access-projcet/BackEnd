@@ -8,6 +8,4 @@ import java.util.Optional;
 public interface GuestRepository extends JpaRepository<Guest, Long> {
 
     Optional<Guest> findByUserId(String userId);
-    Optional<Guest> findByName(String username);
-
 }

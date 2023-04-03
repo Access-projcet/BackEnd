@@ -10,6 +10,7 @@ import java.util.List;
 import static com.solver.solver_be.domain.visitform.entity.QVisitForm.visitForm;
 
 public class VisitFormRepositoryCustomImpl implements CustomVisitFormRepository{
+
     private final JPAQueryFactory queryFactory;
 
     public VisitFormRepositoryCustomImpl(EntityManager em) {
@@ -56,5 +57,4 @@ public class VisitFormRepositoryCustomImpl implements CustomVisitFormRepository{
                 )
                 .fetch();
     }
-
 }

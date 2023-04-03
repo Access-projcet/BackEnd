@@ -13,12 +13,12 @@ public enum ResponseCode {
     SIGN_UP_SUCCESS(200, "회원 가입이 완료되었습니다."),
     LOG_IN_SUCCESS(200, "로그인이 완료되었습니다."),
 
-    // Visitor 관련
-    VISITOR_WIRTE_SUCCESS(200, "방문 문서 작성 성공"),
-    VISITOR_GET_SUCCESS(200, "방문 신청 내용 조회 성공"),
-    VISITOR_UPDATE_SUCCESS(200, "방문 기록 수정 성공" ),
-    VISITOR_DELETE_SUCCESS(200,"방문 기록 삭제 성공" ),
-    VISITOR_STATUS_UPDATE_SUCCESS(200, "방문자 상태 변경 성공"),
+    // VisitForm 관련
+    VISITFORM_WRITE_SUCCESS(200, "방문 문서 작성 성공"),
+    VISITFORM_GET_SUCCESS(200, "방문 신청 내용 조회 성공"),
+    VISITFORM_UPDATE_SUCCESS(200, "방문 기록 수정 성공" ),
+    VISITFORM_DELETE_SUCCESS(200,"방문 기록 삭제 성공" ),
+    VISITFORM_STATUS_UPDATE_SUCCESS(200, "방문자 상태 변경 성공"),
     VISITFORM_SEARCH_SUCCESS(200, "정렬 완료." ),
 
     // Token 관련
@@ -33,6 +33,7 @@ public enum ResponseCode {
     ACCESS_OUT_SUCCESS(200, "안녕히 가십시오" ),
     ACCESS_STATUS_SUCCESS(200, "출입관리 목록 불러오기 완료."),
 
+    // EMAIL 관련
     EMAIL_CHECK(200, "이메일 전송 완료."),
 
     /*============================ FAIL ================================*/
@@ -51,9 +52,9 @@ public enum ResponseCode {
     INVALID_COMPANY_TOKEN(400, "유효하지 않은 회사 코드입니다." ),
 
     // Visitor 관련
-    VISITOR_NOT_FOUND(400,"방문 신청 기록이 없습니다." ),
-    VISITOR_UPDATE_FAILED(400,"본인은 방문 기록이 아닙니다." ),
-    VISITOR_EXIST(400, "동일한 날짜에 방문 기록이 있습니다." ),
+    VISITFORM_NOT_FOUND(400,"방문 신청 기록이 없습니다." ),
+    VISITFORM_UPDATE_FAILED(400,"본인은 방문 기록이 아닙니다." ),
+    VISITFORM_EXIST(400, "동일한 시간에 방문 기록이 있습니다." ),
     ADMIN_NOT_FOUND(400, "담당자가 없습니다."  ),
 
    // Company 관련
