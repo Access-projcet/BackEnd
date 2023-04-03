@@ -33,6 +33,8 @@ public enum ResponseCode {
     ACCESS_OUT_SUCCESS(200, "안녕히 가십시오" ),
     ACCESS_STATUS_SUCCESS(200, "출입관리 목록 불러오기 완료."),
 
+    EMAIL_CHECK(200, "이메일 전송 완료."),
+
     /*============================ FAIL ================================*/
     //Global
     NOT_VALID_REQUEST(400, "유효하지 않은 요청입니다."),
