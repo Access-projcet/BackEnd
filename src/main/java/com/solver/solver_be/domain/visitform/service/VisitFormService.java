@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Slf4j
@@ -34,6 +35,16 @@ public class VisitFormService {
         Optional<Admin> admin = adminRepository.findByName(visitFormRequestDto.getTarget());
         if (admin.isEmpty()) {
             throw new VisitFormException(ResponseCode.ADMIN_NOT_FOUND);
+        }
+
+        // 중복 방지
+        Optional<VisitForm> found = visitFormRepository.findByAdminIdAndStartTimeLessThanEqualAndEndTimeGreaterThanEqual(
+                admin.get().getId(),
+                LocalDateTime.parse(visitFormRequestDto.getEndTime()),
+                LocalDateTime.parse(visitFormRequestDto.getStartTime())
+        );
+        if (found.isPresent()) {
+            throw new VisitFormException(ResponseCode.VISITFORM_EXIST);
         }
 
         VisitForm visitForm = visitFormRepository.saveAndFlush(VisitForm.of(visitFormRequestDto, guest, admin.get()));
