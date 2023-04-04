@@ -27,7 +27,7 @@ public class VisitFormRequestDto {
     private String startDate;
 
     @NotBlank(message = "방문 시간을 등록 해주세요.")
-    @Pattern(regexp = "^(0[0-9]|1[0-9]|2[0-3]):(0[1-9]|[0-5][0-9])$", message = "방문 시간 입력은 hh:mm 형식 입니다.")
+    @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}$", message = "방문 시간 입력은 yyyy-MM-dd'T'HH:mm:ss 형식 입니다.")
     private String startTime;
 
     @NotBlank(message = "종료 날짜를 등록 해주세요.")
@@ -35,7 +35,7 @@ public class VisitFormRequestDto {
     private String endDate;
 
     @NotBlank(message = "종료 시간을 등록 해주세요.")
-    @Pattern(regexp = "^(0[0-9]|1[0-9]|2[0-3]):(0[1-9]|[0-5][0-9])$", message = "종료 시간 입력은 hh:mm 형식 입니다.")
+    @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}$", message = "종료 시간 입력은 yyyy-MM-dd'T'HH:mm:ss 형식 입니다.")
     private String endTime;
 
     @NotBlank
