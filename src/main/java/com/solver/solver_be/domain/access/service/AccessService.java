@@ -11,6 +11,7 @@ import com.solver.solver_be.domain.user.repository.GuestRepository;
 import com.solver.solver_be.domain.visitform.entity.VisitForm;
 import com.solver.solver_be.domain.visitform.repository.VisitFormRepository;
 import com.solver.solver_be.global.exception.exceptionType.UserException;
+import com.solver.solver_be.global.exception.exceptionType.VisitFormException;
 import com.solver.solver_be.global.response.GlobalResponseDto;
 import com.solver.solver_be.global.response.ResponseCode;
 import lombok.RequiredArgsConstructor;
@@ -18,12 +19,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -38,8 +37,9 @@ public class AccessService {
     @Transactional
     public ResponseEntity<GlobalResponseDto> accessIn(Long guestId, Admin admin) {
 
-        LocalDate now = LocalDate.now();
         LocalDateTime nowTime = LocalDateTime.now();
+        LocalDateTime startTimeBeforeOneHour = nowTime.minusHours(1);
+        LocalDateTime startTimeAfterOneHour = nowTime.plusHours(1);
 
         Guest guest = guestRepository.findById(guestId).orElseThrow(
                 () -> new UserException(ResponseCode.USER_NOT_FOUND)
@@ -47,7 +47,20 @@ public class AccessService {
 
         // 1. 게스트 아이디를 통해서 이 친구가 visitForm 데이터에서 이미 신청했던 친구라는 것을 판단.
         // 이는 로비용 어드민 아이디를 하나 만들어서, 그 친구에 대한 데이터를 전달하는 식으로?
-        VisitForm visitForm = visitFormRepository.findByGuestAndStartDateAndAdmin(guest, now, admin); // 예외처리 추가해야함.
+        List<VisitForm> visitForms = visitFormRepository.findByGuestAndStartTimeBetweenAndAdmin(guest, startTimeBeforeOneHour, startTimeAfterOneHour, admin);
+        if (visitForms == null) {
+            throw new VisitFormException(ResponseCode.VISITFORM_NOT_FOUND);
+        }
+
+        // 중복된 VisitForm이 있을 경우, 현재 시간과 가장 가까운 StartTime을 가진 VisitForm을 선택합니다.
+        VisitForm visitForm;
+        if (visitForms.size() > 1) {
+            visitForm = visitForms.stream()
+                    .min(Comparator.comparingLong(f -> Math.abs(Duration.between(f.getStartTime(), nowTime).toMillis())))
+                    .orElseThrow(() -> new VisitFormException(ResponseCode.VISITFORM_NOT_FOUND));
+        } else {
+            visitForm = visitForms.get(0);
+        }
 
         // 2  신청했고, 이게 승인이 되었다는 것이 판단이 되면 그 visitForm 에서 있었던 데이터들을 가져옴.
         Access access = accessRepository.save(Access.of(guest, admin, visitForm));
