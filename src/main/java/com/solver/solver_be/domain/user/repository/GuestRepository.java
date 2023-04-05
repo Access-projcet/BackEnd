@@ -10,4 +10,6 @@ public interface GuestRepository extends JpaRepository<Guest, Long> {
     Optional<Guest> findByUserId(String userId);
     Guest findGuestByNameAndPhoneNum(String userName, String userPhone);
     Guest findGuestByNameAndPhoneNumAndUserId(String userName, String userPhone, String userId);
+
+    Optional<Guest> findByName(String name);
 }

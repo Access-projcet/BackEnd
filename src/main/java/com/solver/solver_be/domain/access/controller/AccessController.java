@@ -1,5 +1,6 @@
 package com.solver.solver_be.domain.access.controller;
 
+import com.solver.solver_be.domain.access.dto.AccessRequestDto;
 import com.solver.solver_be.domain.access.service.AccessService;
 import com.solver.solver_be.global.response.GlobalResponseDto;
 import com.solver.solver_be.global.security.webSecurity.UserDetailsImpl;
@@ -14,16 +15,16 @@ public class AccessController {
 
     private final AccessService accessService;
 
-    @PostMapping("/access-in/{guestId}")
+    @PostMapping("/access-in")
     public ResponseEntity<GlobalResponseDto> accessIn(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                      @PathVariable Long guestId) {
-        return accessService.accessIn(guestId, userDetails.getAdmin());
+                                                      @RequestBody AccessRequestDto accessInRequestDto) {
+        return accessService.accessIn(accessInRequestDto, userDetails.getAdmin());
     }
 
-    @PutMapping("/access-out/{guestId}")
+    @PutMapping("/access-out")
     public ResponseEntity<GlobalResponseDto> accessOut(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                       @PathVariable Long guestId) {
-        return accessService.accessOut(guestId, userDetails.getAdmin());
+                                                       @RequestBody AccessRequestDto accessInRequestDto) {
+        return accessService.accessOut(accessInRequestDto, userDetails.getAdmin());
     }
 
     @GetMapping("/access-status")

@@ -1,5 +1,6 @@
 package com.solver.solver_be.domain.access.service;
 
+import com.solver.solver_be.domain.access.dto.AccessRequestDto;
 import com.solver.solver_be.domain.access.entity.Access;
 import com.solver.solver_be.domain.access.repository.AccessRepository;
 import com.solver.solver_be.domain.accessRecord.entity.AccessRecord;
@@ -35,13 +36,13 @@ public class AccessService {
 
     // 1. Access In
     @Transactional
-    public ResponseEntity<GlobalResponseDto> accessIn(Long guestId, Admin admin) {
+    public ResponseEntity<GlobalResponseDto> accessIn(AccessRequestDto accessInRequestDto, Admin admin) {
 
         LocalDateTime nowTime = LocalDateTime.now();
         LocalDateTime startTimeBeforeOneHour = nowTime.minusHours(1);
         LocalDateTime startTimeAfterOneHour = nowTime.plusHours(1);
 
-        Guest guest = guestRepository.findById(guestId).orElseThrow(
+        Guest guest = guestRepository.findByName(accessInRequestDto.getName()).orElseThrow(
                 () -> new UserException(ResponseCode.USER_NOT_FOUND)
         );
 
@@ -73,12 +74,12 @@ public class AccessService {
 
     // 2. Access Out
     @Transactional
-    public ResponseEntity<GlobalResponseDto> accessOut(Long guestId, Admin admin) {
+    public ResponseEntity<GlobalResponseDto> accessOut(AccessRequestDto accessRequestDto, Admin admin) {
 
         LocalDateTime outTime = LocalDateTime.now();
 
         // 1. 출입을 했는지를 판별
-        Access access = accessRepository.findByGuestId(guestId).orElseThrow(
+        Access access = accessRepository.findByGuestName(accessRequestDto.getName()).orElseThrow(
                 () -> new UserException(ResponseCode.USER_NOT_FOUND)
         );
 
