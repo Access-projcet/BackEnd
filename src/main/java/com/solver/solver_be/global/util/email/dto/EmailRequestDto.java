@@ -1,4 +1,4 @@
-package com.solver.solver_be.global.util.email;
+package com.solver.solver_be.global.util.email.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

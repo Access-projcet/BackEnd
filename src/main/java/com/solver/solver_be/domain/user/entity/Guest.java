@@ -41,4 +41,8 @@ public class Guest {
                 .role(role)
                 .build();
     }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }
