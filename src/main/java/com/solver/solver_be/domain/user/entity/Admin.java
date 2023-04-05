@@ -2,7 +2,6 @@ package com.solver.solver_be.domain.user.entity;
 
 import com.solver.solver_be.domain.company.entity.Company;
 import com.solver.solver_be.domain.user.dto.AdminSignupRequestDto;
-import com.solver.solver_be.domain.user.dto.GuestSignupRequestDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -47,6 +46,10 @@ public class Admin {
                 .role(role)
                 .company(company)
                 .build();
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
 

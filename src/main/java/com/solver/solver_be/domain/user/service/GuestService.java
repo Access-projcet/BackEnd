@@ -31,7 +31,7 @@ public class GuestService {
     private final GuestRepository guestRepository;
     private final RefreshTokenRepository refreshTokenRepository;
 
-    // Guest 회원가입
+    // 1. Guest SignUp
     @Transactional
     public ResponseEntity<GlobalResponseDto> signupGuest(GuestSignupRequestDto signupRequestDto) {
 
@@ -53,6 +53,7 @@ public class GuestService {
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.SIGN_UP_SUCCESS));
     }
 
+    // 2. Guest Login
     @Transactional
     public ResponseEntity<GlobalResponseDto> login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
 
