@@ -35,7 +35,6 @@ public class AdminService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     // 1. Admin SignUp
-// 1. Admin SignUp
     @Transactional
     public ResponseEntity<GlobalResponseDto> signupBusiness(AdminSignupRequestDto signupRequestDto) {
 

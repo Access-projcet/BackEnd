@@ -2,7 +2,6 @@ package com.solver.solver_be.global.security.webSecurity;
 
 import com.solver.solver_be.global.security.jwt.JwtAuthFilter;
 import com.solver.solver_be.global.security.jwt.JwtUtil;
-import com.solver.solver_be.global.security.refreshtoken.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -68,9 +67,11 @@ public class WebSecurityConfig {
                 .antMatchers("/signup/**").permitAll()
                 .antMatchers("/login/**").permitAll()
                 .antMatchers(HttpMethod.POST,"/company").permitAll()
-                .antMatchers(HttpMethod.POST,"/email/*").permitAll()
+                .antMatchers(HttpMethod.POST,"/email/**").permitAll()
                 .antMatchers(HttpMethod.POST,"/send").permitAll()
                 .antMatchers(HttpMethod.POST,"/sms/send").permitAll()
+                .antMatchers("/guest/**").permitAll()
+                .antMatchers("/admin/**").permitAll()
                 .antMatchers(HttpMethod.GET,"/excel/access").permitAll()
                 .anyRequest().authenticated()
                 .and().exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())
