@@ -36,6 +36,8 @@ public enum ResponseCode {
     // EMAIL 관련
     EMAIL_CHECK(200, "이메일 전송 완료."),
 
+    EXCEL_DOWNLOAD_SUCCESS(200, "엑셀 다운로드 완료" ),
+
     /*============================ FAIL ================================*/
     //Global
     NOT_VALID_REQUEST(400, "유효하지 않은 요청입니다."),
