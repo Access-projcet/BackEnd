@@ -3,6 +3,7 @@ package com.solver.solver_be.domain.visitform.repository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.solver.solver_be.domain.visitform.entity.VisitForm;
+import org.springframework.data.domain.Sort;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
@@ -10,7 +11,7 @@ import java.util.List;
 
 import static com.solver.solver_be.domain.visitform.entity.QVisitForm.visitForm;
 
-public class VisitFormRepositoryCustomImpl implements CustomVisitFormRepository{
+public class VisitFormRepositoryCustomImpl implements CustomVisitFormRepository {
 
     private final JPAQueryFactory queryFactory;
 
@@ -18,9 +19,10 @@ public class VisitFormRepositoryCustomImpl implements CustomVisitFormRepository{
         this.queryFactory = new JPAQueryFactory(em);
     }
 
+    // 1. 검색기능
     @Override
-    public List<VisitForm> findByGuestNameOrLocationOrAdminNameOrStartDateOrEndDateOrPurposeAndStatus(
-            String guestName, String location, String adminName, String startDate, String endDate, String purpose, String status) {
+    public List<VisitForm> findByGuestNameOrLocationOrAdminNameOrStartDateOrEndDateOrPurposeAndStatus(String guestName, String location, String adminName, String startDate, String endDate, String purpose, String status) {
+
         BooleanBuilder builder = new BooleanBuilder();
 
         if (guestName != null) {
