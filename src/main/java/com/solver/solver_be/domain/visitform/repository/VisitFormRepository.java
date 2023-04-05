@@ -27,4 +27,18 @@ public interface VisitFormRepository extends JpaRepository<VisitForm, Long>, Cus
     List<VisitForm> findByGuestAndStartTimeBetween(Guest guest, LocalDateTime startTimeBeforeOneHour, LocalDateTime startTimeAfterOneHour);
 
     List<VisitForm> findByGuestAndAdmin(Guest guest, Admin admin);
+
+    List<VisitForm> findAllByOrderByGuestNameDesc();
+
+    List<VisitForm> findAllByOrderByLocationAsc();
+
+    List<VisitForm> findAllByOrderByAdminNameAsc();
+
+    List<VisitForm> findAllByOrderByStartDateDesc();
+
+    List<VisitForm> findAllByOrderByEndDateAsc();
+
+    List<VisitForm> findAllByOrderByPurposeAsc();
+
+    List<VisitForm> findAllByOrderByStatusDesc();
 }

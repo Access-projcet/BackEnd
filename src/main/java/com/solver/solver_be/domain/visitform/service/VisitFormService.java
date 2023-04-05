@@ -143,6 +143,36 @@ public class VisitFormService {
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.VISITFORM_SEARCH_SUCCESS, visitFormList));
     }
 
+    // 6. Sort VisitForms
+    @Transactional
+    public ResponseEntity<GlobalResponseDto> sortVisitForms(Admin admin, String orderBy){
+        List<VisitForm> visitFormList;
+        switch (orderBy) {
+            case "guestName":
+                visitFormList = visitFormRepository.findAllByOrderByGuestNameDesc();
+                break;
+            case "location":
+                visitFormList = visitFormRepository.findAllByOrderByLocationAsc();
+                break;
+            case "target":
+                visitFormList = visitFormRepository.findAllByOrderByAdminNameAsc();
+                break;
+            case "startDate":
+                visitFormList = visitFormRepository.findAllByOrderByStartDateDesc();
+                break;
+            case "endDate":
+                visitFormList = visitFormRepository.findAllByOrderByEndDateAsc();
+                break;
+            case "purpose":
+                visitFormList = visitFormRepository.findAllByOrderByPurposeAsc();
+                break;
+            default:
+                visitFormList = visitFormRepository.findAllByOrderByStatusDesc();
+        }
+
+        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.VISITFORM_SEARCH_SUCCESS, visitFormList));
+    }
+
 
     // Get User's VisitForm List
     private VisitForm getVisitFormById(Long id) {
