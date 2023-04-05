@@ -1,12 +1,9 @@
 package com.solver.solver_be.domain.qrCode.entity;
 
-import com.solver.solver_be.domain.access.entity.Access;
-import com.solver.solver_be.domain.accessRecord.entity.AccessRecord;
 import com.solver.solver_be.domain.user.entity.Guest;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
