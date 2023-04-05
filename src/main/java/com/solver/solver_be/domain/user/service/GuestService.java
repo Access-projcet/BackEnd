@@ -13,6 +13,7 @@ import com.solver.solver_be.global.security.jwt.JwtUtil;
 import com.solver.solver_be.global.security.refreshtoken.RefreshToken;
 import com.solver.solver_be.global.security.refreshtoken.RefreshTokenRepository;
 import com.solver.solver_be.global.security.refreshtoken.TokenDto;
+import com.solver.solver_be.global.util.sse.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,6 +31,7 @@ public class GuestService {
     private final PasswordEncoder passwordEncoder;
     private final GuestRepository guestRepository;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final NotificationService notificationService;
 
     // 1. Guest SignUp
     @Transactional
@@ -81,6 +83,7 @@ public class GuestService {
         }
         jwtUtil.setHeader(response, tokenDto);
 
+        notificationService.send(guest, "새로운 로그인 요청이 들어왔습니다.");
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.LOG_IN_SUCCESS, LoginResponseDto.of(guest)));
     }
 }
