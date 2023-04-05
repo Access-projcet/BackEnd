@@ -41,4 +41,6 @@ public interface VisitFormRepository extends JpaRepository<VisitForm, Long>, Cus
     List<VisitForm> findAllByOrderByPurposeAsc();
 
     List<VisitForm> findAllByOrderByStatusDesc();
+
+    List<VisitForm> findAllByAdmin(Admin admin);
 }

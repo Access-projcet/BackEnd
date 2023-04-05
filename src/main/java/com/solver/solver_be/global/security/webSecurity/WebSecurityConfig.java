@@ -72,6 +72,7 @@ public class WebSecurityConfig {
                 .antMatchers(HttpMethod.POST,"/sms/send").permitAll()
                 .antMatchers("/guest/**").permitAll()
                 .antMatchers("/admin/**").permitAll()
+                .antMatchers(HttpMethod.GET,"/excel/access").permitAll()
                 .anyRequest().authenticated()
                 .and().exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                 .and().addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);

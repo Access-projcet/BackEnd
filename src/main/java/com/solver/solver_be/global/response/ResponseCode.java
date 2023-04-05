@@ -38,6 +38,8 @@ public enum ResponseCode {
     // Email Success
     EMAIL_CHECK(200, "이메일 전송 완료."),
 
+    EXCEL_DOWNLOAD_SUCCESS(200, "엑셀 다운로드 완료" ),
+
     /*============================ FAIL ================================*/
 
     //Global Fail

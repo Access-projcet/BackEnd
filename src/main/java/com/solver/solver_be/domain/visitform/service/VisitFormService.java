@@ -99,11 +99,11 @@ public class VisitFormService {
 
     // 3-2. Update VisitForm ( Admin )
     @Transactional
-    public ResponseEntity<GlobalResponseDto> updateAdminVisitForm(Long id, VisitFormRequestDto visitFormRequestDto, Admin admin){
+    public ResponseEntity<GlobalResponseDto> updateAdminVisitForm(Long id, VisitFormRequestDto visitFormRequestDto, Admin admin) {
 
         VisitForm visitForm = visitFormRepository.findByIdAndAdminId(id, admin.getId());
 
-        if(!visitForm.getAdmin().equals(admin)){
+        if (!visitForm.getAdmin().equals(admin)) {
             throw new VisitFormException(ResponseCode.VISITFORM_UPDATE_FAILED);
         }
 
@@ -146,6 +146,7 @@ public class VisitFormService {
     // 6. Sort VisitForms
     @Transactional
     public ResponseEntity<GlobalResponseDto> sortVisitForms(Admin admin, String orderBy){
+
         List<VisitForm> visitFormList;
         switch (orderBy) {
             case "guestName":
@@ -169,7 +170,6 @@ public class VisitFormService {
             default:
                 visitFormList = visitFormRepository.findAllByOrderByStatusDesc();
         }
-
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.VISITFORM_SEARCH_SUCCESS, visitFormList));
     }
 

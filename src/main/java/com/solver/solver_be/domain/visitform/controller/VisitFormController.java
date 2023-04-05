@@ -63,8 +63,8 @@ public class VisitFormController {
     // 5. Search VisitForms
     @GetMapping("/visit-forms/search")
     public ResponseEntity<GlobalResponseDto> searchVisitForms(@RequestBody VisitFormSearchRequestDto visitFormSearchRequestDto,
-                                                        @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return visitorService.searchVisitForms(visitFormSearchRequestDto,userDetails.getAdmin());
+                                                              @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return visitorService.searchVisitForms(visitFormSearchRequestDto, userDetails.getAdmin());
     }
 
     @GetMapping("/visit-forms/sort")
