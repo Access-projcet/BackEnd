@@ -8,4 +8,5 @@ import lombok.NoArgsConstructor;
 public class EmailRequestDto {
 
     private String companyName;
+    private String email;
 }

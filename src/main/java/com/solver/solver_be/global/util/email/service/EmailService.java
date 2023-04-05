@@ -28,7 +28,7 @@ public class EmailService {
     private String configEmail;
 
     // 1. Company Token Mail Form
-    private MimeMessage createEmailForm(String email, EmailRequestDto emailRequestDto) throws MessagingException {
+    private MimeMessage createEmailForm(EmailRequestDto emailRequestDto) throws MessagingException {
 
         Optional<Company> foundCompany = companyRepository.findByCompanyName(emailRequestDto.getCompanyName());
         // Company Existence
@@ -37,54 +37,54 @@ public class EmailService {
         }
 
         MimeMessage message = mailSender.createMimeMessage();
-        message.addRecipients(MimeMessage.RecipientType.TO, email);
+        message.addRecipients(MimeMessage.RecipientType.TO, emailRequestDto.getEmail());
         message.setSubject("메세지가 도착 했습니다.");
         message.setFrom(configEmail);
         message.setText("회사 토큰 : " + foundCompany.get().getCompanyToken(), "utf-8", "html");
 
-        redisUtil.setDataExpire(email, "회사 토큰 : " + foundCompany.get().getCompanyToken(), 60 * 30L);
+        redisUtil.setDataExpire(emailRequestDto.getEmail(), "회사 토큰 : " + foundCompany.get().getCompanyToken(), 60 * 30L);
 
         return message;
     }
 
     // 2. Send corporate token mail
-    public void sendEmail(String toEmail, EmailRequestDto emailRequestDto) throws MessagingException {
+    public void sendEmail(EmailRequestDto emailRequestDto) throws MessagingException {
 
         // Clear existing data
-        if (redisUtil.existData(toEmail)) {
-            redisUtil.deleteData(toEmail);
+        if (redisUtil.existData(emailRequestDto.getEmail())) {
+            redisUtil.deleteData(emailRequestDto.getEmail());
         }
 
-        MimeMessage emailForm = createEmailForm(toEmail, emailRequestDto);
+        MimeMessage emailForm = createEmailForm(emailRequestDto);
 
         mailSender.send(emailForm);
     }
 
     // 3. Create Authentication Code Mail Form
-    private MimeMessage createAuthCode(String email) throws MessagingException {
+    private MimeMessage createAuthCode(EmailRequestDto emailRequestDto) throws MessagingException {
 
         String authCode = createdCode();
 
         MimeMessage message = mailSender.createMimeMessage();
-        message.addRecipients(MimeMessage.RecipientType.TO, email);
+        message.addRecipients(MimeMessage.RecipientType.TO, emailRequestDto.getEmail());
         message.setSubject("안녕하세요 인증번호입니다.");
         message.setFrom(configEmail);
-        message.setText(authCode, "utf-8", "html");
+        message.setText("인증 코드: " + authCode, "utf-8", "html");
 
-        redisUtil.setDataExpire(email, authCode, 60 * 30L);
+        redisUtil.setDataExpire(emailRequestDto.getEmail(), authCode, 60 * 30L);
 
         return message;
     }
 
     // 4. Sending authentication code mail to email
-    public void sendAuthCode(String toEmail) throws MessagingException {
+    public void sendAuthCode(EmailRequestDto emailRequestDto) throws MessagingException {
 
         // Clear existing data
-        if (redisUtil.existData(toEmail)) {
-            redisUtil.deleteData(toEmail);
+        if (redisUtil.existData(emailRequestDto.getEmail())) {
+            redisUtil.deleteData(emailRequestDto.getEmail());
         }
 
-        MimeMessage emailForm = createAuthCode(toEmail);
+        MimeMessage emailForm = createAuthCode(emailRequestDto);
 
         mailSender.send(emailForm);
     }
@@ -103,7 +103,7 @@ public class EmailService {
     public void sendUserSearchEmail(String toEmail, String userId) throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
         message.addRecipients(MimeMessage.RecipientType.TO, toEmail);
-        message.setSubject("찾으셨던 아이디 입니다.");
+        message.setSubject("아이디 찾기 성공");
         message.setFrom(configEmail);
         message.setText("아이디: " + userId, "utf-8", "html");
 
