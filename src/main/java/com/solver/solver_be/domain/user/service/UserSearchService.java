@@ -12,6 +12,7 @@ import com.solver.solver_be.global.util.email.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.MessagingException;
 
@@ -24,6 +25,7 @@ public class UserSearchService {
     private final EmailService emailService;
 
     // 1. Found Guest userId
+    @Transactional
     public ResponseEntity<GlobalResponseDto> findGuestSearchId(UserSearchRequestDto userSearchRequestDto) throws MessagingException {
 
         // Find your ID by name and phone number
@@ -43,6 +45,7 @@ public class UserSearchService {
     }
 
     // 2. Found Admin userId
+    @Transactional
     public ResponseEntity<GlobalResponseDto> findAdminSearchId(UserSearchRequestDto userSearchRequestDto) throws MessagingException {
 
         // Find your ID by name and phone number

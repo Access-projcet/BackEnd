@@ -3,12 +3,15 @@ package com.solver.solver_be.domain.user.controller;
 import com.solver.solver_be.domain.user.dto.AdminSignupRequestDto;
 import com.solver.solver_be.domain.user.dto.GuestSignupRequestDto;
 import com.solver.solver_be.domain.user.dto.LoginRequestDto;
+import com.solver.solver_be.domain.user.dto.PasswordChangeRequestDto;
 import com.solver.solver_be.domain.user.service.AdminService;
 import com.solver.solver_be.domain.user.service.GuestService;
 import com.solver.solver_be.global.response.GlobalResponseDto;
+import com.solver.solver_be.global.security.webSecurity.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -34,15 +37,29 @@ public class UserController {
         return adminService.login(loginRequestDto, response);
     }
 
-    // 3. Guest Signup
+    // 4. Admin change password
+    @PutMapping("/change/password/business")
+    public ResponseEntity<GlobalResponseDto> changeBusiness(@Valid @RequestBody PasswordChangeRequestDto passwordChangeRequestDto,
+                                                            @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return adminService.changePassword(passwordChangeRequestDto, userDetails.getAdmin());
+    }
+
+    // 5. Guest Signup
     @PostMapping("/signup/guest")
     public ResponseEntity<GlobalResponseDto> signupGuest(@Valid @RequestBody GuestSignupRequestDto signupRequestDto) {
         return guestService.signupGuest(signupRequestDto);
     }
 
-    // 4. Guest Login
+    // 6. Guest Login
     @PostMapping("/login/guest")
     public ResponseEntity<GlobalResponseDto> loginGuest(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
         return guestService.login(loginRequestDto, response);
+    }
+
+    // 7. Guest change password
+    @PutMapping("/change/password/guest")
+    public ResponseEntity<GlobalResponseDto> changeGuest(@Valid @RequestBody PasswordChangeRequestDto passwordChangeRequestDto,
+                                                            @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return guestService.changePassword(passwordChangeRequestDto, userDetails.getGuest());
     }
 }

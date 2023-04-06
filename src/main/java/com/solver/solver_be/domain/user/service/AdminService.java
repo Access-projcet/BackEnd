@@ -5,6 +5,7 @@ import com.solver.solver_be.domain.company.repository.CompanyRepository;
 import com.solver.solver_be.domain.user.dto.AdminSignupRequestDto;
 import com.solver.solver_be.domain.user.dto.LoginRequestDto;
 import com.solver.solver_be.domain.user.dto.LoginResponseDto;
+import com.solver.solver_be.domain.user.dto.PasswordChangeRequestDto;
 import com.solver.solver_be.domain.user.entity.Admin;
 import com.solver.solver_be.domain.user.entity.UserRoleEnum;
 import com.solver.solver_be.domain.user.repository.AdminRepository;
@@ -91,5 +92,30 @@ public class AdminService {
         jwtUtil.setHeader(response, tokenDto);
 
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.LOG_IN_SUCCESS, LoginResponseDto.of(admin)));
+    }
+
+    // 3. Admin change password
+    @Transactional
+    public ResponseEntity<GlobalResponseDto> changePassword(PasswordChangeRequestDto passwordChangeRequestDto, Admin admin) {
+
+        // User Existed Check
+        Optional<Admin> adminFound = adminRepository.findByUserId(admin.getUserId());
+        if (adminFound.isEmpty()) {
+            throw new UserException(ResponseCode.USER_ACCOUNT_NOT_EXIST);
+        }
+
+        // Current Password Check
+        if (!passwordEncoder.matches(passwordChangeRequestDto.getPassword(), adminFound.get().getPassword())) {
+            throw new UserException(ResponseCode.PASSWORD_MISMATCH);
+        }
+
+        // New Password Set
+        String newPasswordEncoded = passwordEncoder.encode(passwordChangeRequestDto.getNewPassword());
+
+        // Password Update
+        admin.setPassword(newPasswordEncoded);
+        adminRepository.save(admin);
+
+        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.PASSWORD_RESET_SUCCESS));
     }
 }

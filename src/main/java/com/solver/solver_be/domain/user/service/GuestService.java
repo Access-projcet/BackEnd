@@ -3,6 +3,7 @@ package com.solver.solver_be.domain.user.service;
 import com.solver.solver_be.domain.user.dto.GuestSignupRequestDto;
 import com.solver.solver_be.domain.user.dto.LoginRequestDto;
 import com.solver.solver_be.domain.user.dto.LoginResponseDto;
+import com.solver.solver_be.domain.user.dto.PasswordChangeRequestDto;
 import com.solver.solver_be.domain.user.entity.Guest;
 import com.solver.solver_be.domain.user.entity.UserRoleEnum;
 import com.solver.solver_be.domain.user.repository.GuestRepository;
@@ -84,5 +85,30 @@ public class GuestService {
         jwtUtil.setHeader(response, tokenDto);
 
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.LOG_IN_SUCCESS, LoginResponseDto.of(guest)));
+    }
+
+    // 3. Guest change password
+    @Transactional
+    public ResponseEntity<GlobalResponseDto> changePassword(PasswordChangeRequestDto passwordChangeRequestDto, Guest guest) {
+
+        // User Existed Check
+        Optional<Guest> guestFound = guestRepository.findByUserId(guest.getUserId());
+        if (guestFound.isEmpty()) {
+            throw new UserException(ResponseCode.USER_ACCOUNT_NOT_EXIST);
+        }
+
+        // Current Password Check
+        if (!passwordEncoder.matches(passwordChangeRequestDto.getPassword(), guestFound.get().getPassword())) {
+            throw new UserException(ResponseCode.PASSWORD_MISMATCH);
+        }
+
+        // New Password Set
+        String newPasswordEncoded = passwordEncoder.encode(passwordChangeRequestDto.getNewPassword());
+
+        // Password Update
+        guest.setPassword(newPasswordEncoded);
+        guestRepository.save(guest);
+
+        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.PASSWORD_RESET_SUCCESS));
     }
 }
