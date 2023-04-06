@@ -36,6 +36,7 @@ public class Company extends TimeStamped {
 
     @Column(unique = true)
     private String companyToken;
+
     @Column(precision = 10, scale = 7)
     private BigDecimal x;
 
@@ -66,6 +67,7 @@ public class Company extends TimeStamped {
                 .companyToken(companyToken)
                 .build();
     }
+
     public void update(CompanyRequestDto companyRequestDto) {
         this.businessNum = companyRequestDto.getBusinessNum();
         this.businessCode = companyRequestDto.getBusinessCode();
