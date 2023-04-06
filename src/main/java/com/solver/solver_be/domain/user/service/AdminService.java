@@ -2,10 +2,7 @@ package com.solver.solver_be.domain.user.service;
 
 import com.solver.solver_be.domain.company.entity.Company;
 import com.solver.solver_be.domain.company.repository.CompanyRepository;
-import com.solver.solver_be.domain.user.dto.AdminSignupRequestDto;
-import com.solver.solver_be.domain.user.dto.LoginRequestDto;
-import com.solver.solver_be.domain.user.dto.LoginResponseDto;
-import com.solver.solver_be.domain.user.dto.PasswordChangeRequestDto;
+import com.solver.solver_be.domain.user.dto.*;
 import com.solver.solver_be.domain.user.entity.Admin;
 import com.solver.solver_be.domain.user.entity.UserRoleEnum;
 import com.solver.solver_be.domain.user.repository.AdminRepository;
@@ -16,20 +13,24 @@ import com.solver.solver_be.global.security.jwt.JwtUtil;
 import com.solver.solver_be.global.security.refreshtoken.RefreshToken;
 import com.solver.solver_be.global.security.refreshtoken.RefreshTokenRepository;
 import com.solver.solver_be.global.security.refreshtoken.TokenDto;
+import com.solver.solver_be.global.util.email.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
 public class AdminService {
 
     private final JwtUtil jwtUtil;
+    private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
     private final AdminRepository adminRepository;
     private final CompanyRepository companyRepository;
@@ -117,5 +118,67 @@ public class AdminService {
         adminRepository.save(admin);
 
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.PASSWORD_RESET_SUCCESS));
+    }
+
+    // 4. Found Admin userId
+    @Transactional
+    public ResponseEntity<GlobalResponseDto> findAdminSearchId(UserSearchRequestDto userSearchRequestDto) throws MessagingException {
+
+        // Find your ID by name and phone number
+        Admin admin = adminRepository.findAdminByNameAndPhoneNum(userSearchRequestDto.getName(), userSearchRequestDto.getPhoneNum());
+        if (admin == null) {
+            throw new UserException(ResponseCode.USER_NOT_FOUND);
+        }
+
+        // Send ID After Email Authentication
+        if (emailService.verifyEmailCode(userSearchRequestDto.getEmail(), userSearchRequestDto.getCode())) {
+            emailService.sendUserSearchEmail(userSearchRequestDto.getEmail(), admin.getUserId());
+        }else {
+            throw new UserException(ResponseCode.AUTH_FAILED);
+        }
+
+        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.FIND_USER_ID));
+    }
+
+    // 5. Reset Admin Password
+    @Transactional
+    public ResponseEntity<GlobalResponseDto> resetAdminPassword(PasswordResetRequestDto passwordResetRequestDto) throws MessagingException {
+
+        Admin admin = adminRepository.findAdminByNameAndPhoneNumAndUserId(passwordResetRequestDto.getName(), passwordResetRequestDto.getPhoneNum(), passwordResetRequestDto.getUserId());
+
+        if (admin == null) {
+            throw new UserException(ResponseCode.USER_NOT_FOUND);
+        }
+
+        // Send a new password after email authentication
+        if (emailService.verifyEmailCode(passwordResetRequestDto.getEmail(), passwordResetRequestDto.getCode())) {
+
+            // Provisional Password Issue
+            String newPassword = generateRandomPassword();
+
+            // Replace existing password
+            admin.setPassword(passwordEncoder.encode(newPassword));
+            adminRepository.save(admin);
+
+            emailService.sendPasswordResetEmail(passwordResetRequestDto.getEmail(), newPassword);
+        }else {
+            throw new UserException(ResponseCode.AUTH_FAILED);
+        }
+
+        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.PASSWORD_RESET_SUCCESS));
+    }
+
+    // Method : Generating a temporary password
+    private String generateRandomPassword() {
+        int leftLimit = 48; // number '0'
+        int rightLimit = 122; // alphabet 'z'
+        int targetStringLength = 10;
+        Random random = new Random();
+
+        return random.ints(leftLimit, rightLimit + 1)
+                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+                .limit(targetStringLength)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
     }
 }
