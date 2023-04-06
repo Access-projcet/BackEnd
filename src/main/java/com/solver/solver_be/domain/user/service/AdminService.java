@@ -4,8 +4,11 @@ import com.solver.solver_be.domain.company.entity.Company;
 import com.solver.solver_be.domain.company.repository.CompanyRepository;
 import com.solver.solver_be.domain.user.dto.*;
 import com.solver.solver_be.domain.user.entity.Admin;
+import com.solver.solver_be.domain.user.entity.Guest;
+import com.solver.solver_be.domain.user.entity.QGuest;
 import com.solver.solver_be.domain.user.entity.UserRoleEnum;
 import com.solver.solver_be.domain.user.repository.AdminRepository;
+import com.solver.solver_be.domain.user.repository.GuestRepository;
 import com.solver.solver_be.global.exception.exceptionType.UserException;
 import com.solver.solver_be.global.response.GlobalResponseDto;
 import com.solver.solver_be.global.response.ResponseCode;
@@ -33,6 +36,7 @@ public class AdminService {
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
     private final AdminRepository adminRepository;
+    private final GuestRepository guestRepository;
     private final CompanyRepository companyRepository;
     private final RefreshTokenRepository refreshTokenRepository;
 
@@ -44,8 +48,9 @@ public class AdminService {
         String password = passwordEncoder.encode(signupRequestDto.getPassword());
 
         // Duplicated User Check
-        Optional<Admin> found = adminRepository.findByUserId(signupRequestDto.getUserId());
-        if (found.isPresent()) {
+        Optional<Admin> foundAdmin = adminRepository.findByUserId(signupRequestDto.getUserId());
+        Optional<Guest> foundGuest = guestRepository.findByUserId(signupRequestDto.getUserId());
+        if (foundAdmin.isPresent() || foundGuest.isPresent()) {
             throw new UserException(ResponseCode.USER_ID_EXIST);
         }
 
