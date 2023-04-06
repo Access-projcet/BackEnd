@@ -1,8 +1,10 @@
 package com.solver.solver_be.domain.user.service;
 
 import com.solver.solver_be.domain.user.dto.*;
+import com.solver.solver_be.domain.user.entity.Admin;
 import com.solver.solver_be.domain.user.entity.Guest;
 import com.solver.solver_be.domain.user.entity.UserRoleEnum;
+import com.solver.solver_be.domain.user.repository.AdminRepository;
 import com.solver.solver_be.domain.user.repository.GuestRepository;
 import com.solver.solver_be.global.exception.exceptionType.UserException;
 import com.solver.solver_be.global.response.GlobalResponseDto;
@@ -31,6 +33,7 @@ public class GuestService {
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
     private final GuestRepository guestRepository;
+    private final AdminRepository adminRepository;
     private final RefreshTokenRepository refreshTokenRepository;
 
     // 1. Guest SignUp
@@ -41,8 +44,9 @@ public class GuestService {
         String password = passwordEncoder.encode(signupRequestDto.getPassword());
 
         // Duplicated User Check
-        Optional<Guest> found = guestRepository.findByUserId(signupRequestDto.getUserId());
-        if (found.isPresent()) {
+        Optional<Admin> foundAdmin = adminRepository.findByUserId(signupRequestDto.getUserId());
+        Optional<Guest> foundGuest = guestRepository.findByUserId(signupRequestDto.getUserId());
+        if (foundAdmin.isPresent() || foundGuest.isPresent()) {
             throw new UserException(ResponseCode.USER_ID_EXIST);
         }
 
