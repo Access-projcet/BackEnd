@@ -18,7 +18,7 @@ public class VisitFormRepositoryCustomImpl implements CustomVisitFormRepository 
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    // 1. 검색기능
+    // 1. Search VisitForm By Keyword
     @Override
     public List<VisitForm> findByGuestNameOrLocationOrAdminNameOrStartDateOrEndDateOrPurposeAndStatus(String guestName, String location, String adminName, String startDate, String endDate, String purpose, String status) {
 

@@ -33,12 +33,15 @@ public class CompanyService {
     @Transactional
     public ResponseEntity<GlobalResponseDto> registerCompany(CompanyRequestDto companyRequestDto) {
 
+        // Company Duplicate Validation
         if (companyRepository.findByCompanyName(companyRequestDto.getCompanyName()).isPresent()) {
             throw new UserException(ResponseCode.COMPANY_ALREADY_EXIST);
         }
 
-        String companyToken = createCompanyToken(companyRequestDto);
+        // Create Company Token
+        String companyToken = createCompanyToken();
 
+        // CompanyRepo Save
         Company company = companyRepository.saveAndFlush(Company.of(companyRequestDto, companyToken));
 
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.COMPANY_REGISTER_SUCCESS, CompanyResponseDto.of(company)));
@@ -48,12 +51,15 @@ public class CompanyService {
     @Transactional(readOnly = true)
     public ResponseEntity<GlobalResponseDto> getCompanies(Guest guest) {
 
+        // Get CompanyList
         List<Company> companyList = companyRepository.findAllByOrderByCreatedAtDesc();
 
+        // CompanyList Validation
         if (companyList.isEmpty()) {
             throw new CompanyException(ResponseCode.COMPANY_NOT_FOUND);
         }
 
+        // Create CompanyResponseDtoList
         List<CompanyResponseDto> companyResponseDtoList = new ArrayList<>();
         for (Company company : companyList) {
             companyResponseDtoList.add(CompanyResponseDto.of(company));
@@ -66,15 +72,20 @@ public class CompanyService {
     @Transactional
     public ResponseEntity<GlobalResponseDto> updateCompany(Long id, CompanyRequestDto companyRequestDto, Admin admin) {
 
+        // Get Company By id
         Optional<Company> company = companyRepository.findById(id);
 
+        // Company Validation
         if (company.isEmpty()) {
             throw new CompanyException(ResponseCode.COMPANY_NOT_FOUND);
         }
 
+        // CompanyRepo Update
         company.get().update(companyRequestDto);
 
+        // Create Company ResponseDto
         CompanyResponseDto companyResponseDto = CompanyResponseDto.of(company.get());
+
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.COMPANY_UPDATE_SUCCESS, companyResponseDto));
     }
 
@@ -82,19 +93,22 @@ public class CompanyService {
     @Transactional
     public ResponseEntity<GlobalResponseDto> deleteCompany(Long id, Admin admin) {
 
+        // Get Company By id
         Optional<Company> company = companyRepository.findById(id);
 
+        // Company Validation
         if (company.isEmpty()) {
             throw new CompanyException(ResponseCode.COMPANY_NOT_FOUND);
         }
 
+        // CompanyRepo Delete
         companyRepository.deleteById(id);
 
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.COMPANY_DELETE_SUCCESS));
     }
 
     // Method : Create Company Token
-    public String createCompanyToken(CompanyRequestDto companyRequestDto) {
+    public String createCompanyToken() {
 
         SecureRandom random = new SecureRandom();
         byte[] bytes = new byte[ID_LENGTH];
