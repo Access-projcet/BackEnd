@@ -5,6 +5,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
@@ -15,18 +17,25 @@ public class Notification {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "notification_id")
     private Long id;
 
-    @Column(nullable = false)
-    private String contents;
+    @Embedded
+    private NotificationContent content;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "GUEST_ID")
     private Guest guest;
 
     @Builder
-    public Notification(Guest guest, String contents){
+    public Notification(Guest guest, String content){
         this.guest = guest;
-        this.contents = contents;
+        this.content = new NotificationContent(content);
     }
+
+    public String getContent() {
+        return content.getContent();
+    }
+
 }

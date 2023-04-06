@@ -1,6 +1,7 @@
 package com.solver.solver_be.global.util.sse.dto;
 
 import com.solver.solver_be.global.util.sse.entity.Notification;
+import com.solver.solver_be.global.util.sse.entity.NotificationContent;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,10 +15,10 @@ public class NotificationResponseDto {
 
     private Long id;
 
-    private String contents;
+    private String content;
 
     public static NotificationResponseDto from(Notification notification) {
-        return new NotificationResponseDto(notification.getId(), notification.getContents());
+        return new NotificationResponseDto(notification.getId(), notification.getContent());
     }
 }
 
