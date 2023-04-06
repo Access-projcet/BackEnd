@@ -41,7 +41,7 @@ public class GlobalExceptionHandler {
                 .body(GlobalResponseDto.of(responseCode));
     }
 
-    // VisitFormException
+    // AccessRecordException
     @ExceptionHandler(AccessRecordException.class)
     public ResponseEntity<GlobalResponseDto> handleAccessRecordException(AccessRecordException e) {
         ResponseCode responseCode = e.getStatusCode();
@@ -50,6 +50,14 @@ public class GlobalExceptionHandler {
                 .body(GlobalResponseDto.of(responseCode));
     }
 
+    // AccessException
+    @ExceptionHandler(AccessException.class)
+    public ResponseEntity<GlobalResponseDto> handleAccessException(AccessException e) {
+        ResponseCode responseCode = e.getStatusCode();
+        log.error(responseCode.getMessage());
+        return ResponseEntity.badRequest()
+                .body(GlobalResponseDto.of(responseCode));
+    }
 
     // GlobalException Handler
     @ExceptionHandler(GlobalException.class)

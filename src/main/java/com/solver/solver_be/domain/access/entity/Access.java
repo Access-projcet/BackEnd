@@ -19,6 +19,9 @@ public class Access {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column
+    private Boolean status;
+
     @ManyToOne
     @JoinColumn(name = "GUEST_ID", nullable = false)
     private Guest guest;
@@ -31,11 +34,12 @@ public class Access {
     @JoinColumn(name = "VISIT_FORM", nullable = false)
     private VisitForm visitForm;
 
-    public static Access of(Guest guest, Admin admin, VisitForm visitForm) {
+    public static Access of(Guest guest, Admin admin, VisitForm visitForm, Boolean status) {
         return Access.builder()
                 .guest(guest)
                 .admin(admin)
                 .visitForm(visitForm)
+                .status(status)
                 .build();
     }
 }
