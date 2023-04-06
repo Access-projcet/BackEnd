@@ -83,7 +83,6 @@ public class GuestService {
         }
         jwtUtil.setHeader(response, tokenDto);
 
-        notificationService.send(guest, "새로운 로그인 요청이 들어왔습니다.");
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.LOG_IN_SUCCESS, LoginResponseDto.of(guest)));
     }
 }

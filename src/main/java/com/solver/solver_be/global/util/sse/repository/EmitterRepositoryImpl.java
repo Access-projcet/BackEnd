@@ -28,16 +28,16 @@ public class EmitterRepositoryImpl implements EmitterRepository{
     }
 
     @Override
-    public Map<String, SseEmitter> findAllEmitterStartWithByGuestId(String memberId) {
+    public Map<String, SseEmitter> findAllEmitterStartWithByGuestId(String userId) {
         return emitters.entrySet().stream()
-                .filter(entry -> entry.getKey().startsWith(memberId))
+                .filter(entry -> entry.getKey().startsWith(String.valueOf(userId)))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     @Override
-    public Map<String, Object> findAllEventCacheStartWithByGuestId(String memberId) {
+    public Map<String, Object> findAllEventCacheStartWithByGuestId(String userId) {
         return eventCache.entrySet().stream()
-                .filter(entry -> entry.getKey().startsWith(memberId))
+                .filter(entry -> entry.getKey().startsWith(String.valueOf(userId)))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
@@ -47,10 +47,10 @@ public class EmitterRepositoryImpl implements EmitterRepository{
     }
 
     @Override
-    public void deleteAllEmitterStartWithMemberId(String memberId) {
+    public void deleteAllEmitterStartWithMemberId(String userId) {
         emitters.forEach(
                 (key, emitter) ->{
-                    if (key.startsWith(memberId)) {
+                    if (key.startsWith(userId)) {
                         emitters.remove(key);
                     }
                 }
@@ -58,10 +58,10 @@ public class EmitterRepositoryImpl implements EmitterRepository{
     }
 
     @Override
-    public void deleteAllEventCacheStartWithMemberId(String memberId) {
+    public void deleteAllEventCacheStartWithMemberId(String userId) {
         eventCache.forEach(
                 (key, emitter) -> {
-                    if (key.startsWith(memberId)) {
+                    if (key.startsWith(userId)) {
                         eventCache.remove(key);
                     }
                 }

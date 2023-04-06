@@ -11,6 +11,8 @@ import com.solver.solver_be.domain.visitform.repository.VisitFormRepository;
 import com.solver.solver_be.global.exception.exceptionType.VisitFormException;
 import com.solver.solver_be.global.response.GlobalResponseDto;
 import com.solver.solver_be.global.response.ResponseCode;
+import com.solver.solver_be.global.util.sse.repository.NotificationRepository;
+import com.solver.solver_be.global.util.sse.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +29,7 @@ public class VisitFormService {
 
     private final AdminRepository adminRepository;
     private final VisitFormRepository visitFormRepository;
+    private final NotificationService notificationService;
 
     // 1. Create VisitForm
     @Transactional
@@ -48,7 +51,9 @@ public class VisitFormService {
         }
 
         VisitForm visitForm = visitFormRepository.saveAndFlush(VisitForm.of(visitFormRequestDto, guest, admin.get()));
-
+        log.info("createVisitForm : " + guest.getUserId());
+        notificationService.send(guest, "새로운 로그인 요청이 들어왔습니다.");
+        log.info("notificationService.send 통과");
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.VISITFORM_WRITE_SUCCESS, VisitFormResponseDto.of(visitForm, guest)));
     }
 
@@ -62,7 +67,7 @@ public class VisitFormService {
         for (VisitForm visitForm : visitFormUserList) {
             visitFormResponseDtoList.add(VisitFormResponseDto.of(visitForm));
         }
-
+        notificationService.send(guest, "새로운 로그인 요청이 들어왔습니다.");
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.VISITFORM_GET_SUCCESS, visitFormResponseDtoList));
     }
 
