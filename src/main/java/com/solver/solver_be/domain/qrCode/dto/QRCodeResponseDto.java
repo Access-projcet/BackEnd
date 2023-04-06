@@ -15,8 +15,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class QRCodeResponseDto {
 
-    private String name;
-    private String phoneNum;
+    private String name;            // Guest 이름
+    private String phoneNum;        // Guest 휴대폰 번호
 
     public static QRCodeResponseDto of(QRCode qrCode) {
         return QRCodeResponseDto.builder()

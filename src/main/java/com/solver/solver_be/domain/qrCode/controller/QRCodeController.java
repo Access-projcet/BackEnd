@@ -15,9 +15,9 @@ public class QRCodeController {
 
     private final QRCodeService qrCodeService;
 
+    // 1. Get Info for QRCode Create
     @GetMapping("/qrCode")
     public ResponseEntity<GlobalResponseDto> createQRCode(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return qrCodeService.createQRCode(userDetails.getGuest());
     }
-
 }

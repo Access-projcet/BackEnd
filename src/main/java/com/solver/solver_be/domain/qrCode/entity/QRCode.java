@@ -16,7 +16,7 @@ public class QRCode {
     private Long id;
 
     @Column
-    private Boolean isIssued;
+    private Boolean isIssued;           // QRCode 발급 이력
 
     @ManyToOne
     @JoinColumn(name = "GUEST_ID", nullable = false)

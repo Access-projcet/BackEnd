@@ -15,19 +15,19 @@ public class CompanyResponseDto {
 
     private Long id;
 
-    private String businessNum;
+    private String businessNum;         // 사업자 번호
 
-    private String businessCode;
+    private String businessCode;        // 회사 인증 Token
 
-    private String companyName;
+    private String companyName;         // 회사 이름
 
-    private String companyCallNum;
+    private String companyCallNum;      // 회사 전화 번호
 
-    private String companyAddress;
+    private String companyAddress;      // 회사 주소
 
-    private Double x;
+    private Double x;                   // 회사 위도
 
-    private Double y;
+    private Double y;                   // 회사 경도
 
     public static CompanyResponseDto of(Company company) {
         return CompanyResponseDto.builder()

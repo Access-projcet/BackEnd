@@ -39,10 +39,10 @@ public class AdminService {
     @Transactional
     public ResponseEntity<GlobalResponseDto> signupBusiness(AdminSignupRequestDto signupRequestDto) {
 
-        // Password Encode
+        // 1) Password Encode
         String password = passwordEncoder.encode(signupRequestDto.getPassword());
 
-        // Duplicated User Check
+        // 2) Duplicated User Check
         Optional<Admin> found = adminRepository.findByUserId(signupRequestDto.getUserId());
         if (found.isPresent()) {
             throw new UserException(ResponseCode.USER_ID_EXIST);
@@ -50,14 +50,14 @@ public class AdminService {
 
         Optional<Company> foundCompany = companyRepository.findByCompanyTokenAndCompanyName(signupRequestDto.getCompanyToken(), signupRequestDto.getCompanyName());
 
-        // CompanyToken Check
+        // 3) CompanyToken Check
         if (!foundCompany.isPresent()) {
             throw new UserException(ResponseCode.INVALID_COMPANY_TOKEN);
         }
         Company company = companyRepository.findByCompanyToken(signupRequestDto.getCompanyToken());
         UserRoleEnum role = UserRoleEnum.ADMIN;
 
-        // Save Admin Entity
+        // 4) Save Admin Entity
         adminRepository.save(Admin.of(signupRequestDto, password, role, company));
 
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.SIGN_UP_SUCCESS));
@@ -67,21 +67,21 @@ public class AdminService {
     @Transactional
     public ResponseEntity<GlobalResponseDto> login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
 
-        // User Existed Check
+        // 1) User Existed Check
         if (adminRepository.findByUserId(loginRequestDto.getUserId()).isEmpty()) {
             throw new UserException(ResponseCode.USER_ACCOUNT_NOT_EXIST);
         }
 
-        // Password Decode Check
+        // 2) Password Decode Check
         Admin admin = adminRepository.findByUserId(loginRequestDto.getUserId()).get();
         if (!passwordEncoder.matches(loginRequestDto.getPassword(), admin.getPassword())) {
             throw new UserException(ResponseCode.PASSWORD_MISMATCH);
         }
 
-        // Granting AccessToken
+        // 3) Granting AccessToken
         TokenDto tokenDto = jwtUtil.createAllToken(loginRequestDto.getUserId());
 
-        // Granting RefreshToken
+        // 4) Granting RefreshToken
         Optional<RefreshToken> refreshToken = refreshTokenRepository.findAllByUserEmail(loginRequestDto.getUserId());
         if (refreshToken.isPresent()) {
             refreshTokenRepository.save(refreshToken.get().updateToken(tokenDto.getRefreshToken()));
@@ -98,21 +98,21 @@ public class AdminService {
     @Transactional
     public ResponseEntity<GlobalResponseDto> changePassword(PasswordChangeRequestDto passwordChangeRequestDto, Admin admin) {
 
-        // User Existed Check
+        // 1) User Existed Check
         Optional<Admin> adminFound = adminRepository.findByUserId(admin.getUserId());
         if (adminFound.isEmpty()) {
             throw new UserException(ResponseCode.USER_ACCOUNT_NOT_EXIST);
         }
 
-        // Current Password Check
+        // 2) Current Password Check
         if (!passwordEncoder.matches(passwordChangeRequestDto.getPassword(), adminFound.get().getPassword())) {
             throw new UserException(ResponseCode.PASSWORD_MISMATCH);
         }
 
-        // New Password Set
+        // 3) New Password Set
         String newPasswordEncoded = passwordEncoder.encode(passwordChangeRequestDto.getNewPassword());
 
-        // Password Update
+        // 4) Password Update
         admin.setPassword(newPasswordEncoded);
         adminRepository.save(admin);
 

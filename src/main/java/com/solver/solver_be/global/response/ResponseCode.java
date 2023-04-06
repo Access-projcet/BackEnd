@@ -65,7 +65,8 @@ public enum ResponseCode {
 
    // Company Fail
     COMPANY_ALREADY_EXIST(400, "등록된 회사가 이미 존재합니다."),
-    COMPANY_NOT_FOUND(400, "회사를 찾을 수 없습니다.");
+    COMPANY_NOT_FOUND(400, "회사를 찾을 수 없습니다."),
+    ACCESS_RECORD_NOT_FOUND(400, "출입기록을 찾을 수 없습니다." );
 
     private final int statusCode;
     private final String message;
