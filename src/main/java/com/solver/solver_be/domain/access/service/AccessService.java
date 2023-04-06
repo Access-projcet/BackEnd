@@ -11,6 +11,7 @@ import com.solver.solver_be.domain.access.dto.AccessStatusResponseDto;
 import com.solver.solver_be.domain.user.repository.GuestRepository;
 import com.solver.solver_be.domain.visitform.entity.VisitForm;
 import com.solver.solver_be.domain.visitform.repository.VisitFormRepository;
+import com.solver.solver_be.global.exception.exceptionType.AccessException;
 import com.solver.solver_be.global.exception.exceptionType.AccessRecordException;
 import com.solver.solver_be.global.exception.exceptionType.UserException;
 import com.solver.solver_be.global.exception.exceptionType.VisitFormException;
@@ -39,23 +40,23 @@ public class AccessService {
     @Transactional
     public ResponseEntity<GlobalResponseDto> accessIn(AccessRequestDto accessInRequestDto, Admin admin) {
 
-        // 0. DateTime Init
+        // DateTime Init
         LocalDateTime nowTime = LocalDateTime.now();
         LocalDateTime startTimeBeforeOneHour = nowTime.minusHours(1);
         LocalDateTime startTimeAfterOneHour = nowTime.plusHours(1);
 
-        // 1. Guest check
+        // Guest check
         Guest guest = guestRepository.findByName(accessInRequestDto.getName()).orElseThrow(
                 () -> new UserException(ResponseCode.USER_NOT_FOUND)
         );
 
-        // 2. Get VisitFormList By Info
+        // Get VisitFormList By Info
         List<VisitForm> visitForms = visitFormRepository.findByGuestAndStartTimeBetweenAndAdminCompany(guest, startTimeBeforeOneHour, startTimeAfterOneHour, admin.getCompany());
         if (visitForms == null) {
             throw new VisitFormException(ResponseCode.VISITFORM_NOT_FOUND);
         }
 
-        // 3. Get VisitForm by Time
+        // Get VisitForm by Time
         VisitForm visitForm = null;
         if (visitForms.size() > 1) {
             long minDuration = Long.MAX_VALUE;
@@ -75,10 +76,16 @@ public class AccessService {
             throw new VisitFormException(ResponseCode.VISITFORM_NOT_FOUND);
         }
 
-        // 4. Save AccessRepo
-        Access access = accessRepository.save(Access.of(guest, visitForm.getAdmin(), visitForm));
+        // Already CheckIn Check
+        Optional <Access> accessCheck = accessRepository.findByVisitFormId(visitForm.getId());
+        if(accessCheck.isPresent() && accessCheck.get().getStatus()){
+            throw new AccessException(ResponseCode.ACCESS_IN_ALREADY_DONE);
+        }
 
-        // 5. Save AccessRecordRepo
+        // Save AccessRepo
+        Access access = accessRepository.save(Access.of(guest, visitForm.getAdmin(), visitForm,true));
+
+        // Save AccessRecordRepo
         accessRecordRepository.save(AccessRecord.of(nowTime, null, access));
 
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.ACCESS_IN_SUCCESS));
@@ -88,22 +95,31 @@ public class AccessService {
     @Transactional
     public ResponseEntity<GlobalResponseDto> accessOut(AccessRequestDto accessRequestDto, Admin admin) {
 
-        // 0. DateTime Init
+        // DateTime Init
         LocalDateTime outTime = LocalDateTime.now();
 
-        // 1. Access Check
-        Access access = accessRepository.findByGuestName(accessRequestDto.getName()).orElseThrow(
+        // Access Check
+        Access access = accessRepository.findLatestByGuestName(accessRequestDto.getName()).orElseThrow(
                 () -> new UserException(ResponseCode.USER_NOT_FOUND)
         );
 
-        // 2. AccessRecord Check (Latest)
+        // Already Checkout Check
+        if(!access.getStatus()){
+            throw new AccessException(ResponseCode.ACCESS_OUT_ALREADY_DONE);
+        }
+
+        // AccessRecord Check (Latest)
         AccessRecord accessRecord = accessRecordRepository.findLatestAccessRecordByAccess(access).orElseThrow(
                 () -> new AccessRecordException(ResponseCode.ACCESS_RECORD_NOT_FOUND)
         );
 
-        // 3. Set AccessRecord Out and Save Repo
+        // Set AccessRecord Out and Save Repo
         accessRecord.setOutTime(outTime);
         accessRecordRepository.save(accessRecord);
+
+        // Set Access Status false
+        access.setStatus(false);
+        accessRepository.save(access);
 
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.ACCESS_OUT_SUCCESS));
     }
@@ -112,11 +128,11 @@ public class AccessService {
     @Transactional
     public ResponseEntity<GlobalResponseDto> getAccessStatus(Admin admin) {
 
-        // 1. Get visitFormList By AdminId
+        // Get visitFormList By AdminId
         List<VisitForm> visitFormList = visitFormRepository.findByAdminId(admin.getId());
         Map<LocalDate, List<VisitForm>> visitFormMap = new HashMap<>();
 
-        // 2. VisitFormList to VisitFormMap By startDate
+        // VisitFormList to VisitFormMap By startDate
         for (VisitForm visitForm : visitFormList) {
             LocalDate date = visitForm.getStartDate();
             List<VisitForm> visitFormByDate = visitFormMap.getOrDefault(date, new ArrayList<>());
@@ -124,7 +140,7 @@ public class AccessService {
             visitFormMap.put(date, visitFormByDate);
         }
 
-        // 3. Make AccessStatusResponseDtoList
+        // Make AccessStatusResponseDtoList
         List<AccessStatusResponseDto> accessStatusResponseDtoList = new ArrayList<>();
         for (LocalDate date : visitFormMap.keySet()) {
             List<VisitForm> visitFormByDate = visitFormMap.get(date);
