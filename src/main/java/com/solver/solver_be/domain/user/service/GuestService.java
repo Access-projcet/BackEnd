@@ -1,9 +1,6 @@
 package com.solver.solver_be.domain.user.service;
 
-import com.solver.solver_be.domain.user.dto.GuestSignupRequestDto;
-import com.solver.solver_be.domain.user.dto.LoginRequestDto;
-import com.solver.solver_be.domain.user.dto.LoginResponseDto;
-import com.solver.solver_be.domain.user.dto.PasswordChangeRequestDto;
+import com.solver.solver_be.domain.user.dto.*;
 import com.solver.solver_be.domain.user.entity.Guest;
 import com.solver.solver_be.domain.user.entity.UserRoleEnum;
 import com.solver.solver_be.domain.user.repository.GuestRepository;
@@ -14,25 +11,27 @@ import com.solver.solver_be.global.security.jwt.JwtUtil;
 import com.solver.solver_be.global.security.refreshtoken.RefreshToken;
 import com.solver.solver_be.global.security.refreshtoken.RefreshTokenRepository;
 import com.solver.solver_be.global.security.refreshtoken.TokenDto;
-import com.solver.solver_be.global.util.sse.service.NotificationService;
+import com.solver.solver_be.global.util.email.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
 public class GuestService {
 
     private final JwtUtil jwtUtil;
+    private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
     private final GuestRepository guestRepository;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final NotificationService notificationService;
 
     // 1. Guest SignUp
     @Transactional
@@ -110,5 +109,67 @@ public class GuestService {
         guestRepository.save(guest);
 
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.PASSWORD_RESET_SUCCESS));
+    }
+
+    // 4. Found Guest userId
+    @Transactional
+    public ResponseEntity<GlobalResponseDto> findGuestSearchId(UserSearchRequestDto userSearchRequestDto) throws MessagingException {
+
+        // Find your ID by name and phone number
+        Guest guest = guestRepository.findGuestByNameAndPhoneNum(userSearchRequestDto.getName(), userSearchRequestDto.getPhoneNum());
+        if (guest == null) {
+            throw new UserException(ResponseCode.USER_NOT_FOUND);
+        }
+
+        // Send ID After Email Authentication
+        if (emailService.verifyEmailCode(userSearchRequestDto.getEmail(), userSearchRequestDto.getCode())) {
+            emailService.sendUserSearchEmail(userSearchRequestDto.getEmail(), guest.getUserId());
+        }else {
+            throw new UserException(ResponseCode.AUTH_FAILED);
+        }
+
+        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.FIND_USER_ID));
+    }
+
+    // 5. Reset Guest Password
+    @Transactional
+    public ResponseEntity<GlobalResponseDto> resetGuestPassword(PasswordResetRequestDto passwordResetRequestDto) throws MessagingException {
+
+        Guest guest = guestRepository.findGuestByNameAndPhoneNumAndUserId(passwordResetRequestDto.getName(), passwordResetRequestDto.getPhoneNum(), passwordResetRequestDto.getUserId());
+
+        if (guest == null) {
+            throw new UserException(ResponseCode.USER_NOT_FOUND);
+        }
+
+        // Send a new password after email authentication
+        if (emailService.verifyEmailCode(passwordResetRequestDto.getEmail(), passwordResetRequestDto.getCode())) {
+
+            // Provisional Password Issue
+            String newPassword = generateRandomPassword();
+
+            // Replace existing password
+            guest.setPassword(passwordEncoder.encode(newPassword));
+            guestRepository.save(guest);
+
+            emailService.sendPasswordResetEmail(passwordResetRequestDto.getEmail(), newPassword);
+        }else {
+            throw new UserException(ResponseCode.AUTH_FAILED);
+        }
+
+        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.PASSWORD_RESET_SUCCESS));
+    }
+
+    // Method : Generating a temporary password
+    private String generateRandomPassword() {
+        int leftLimit = 48; // number '0'
+        int rightLimit = 122; // alphabet 'z'
+        int targetStringLength = 10;
+        Random random = new Random();
+
+        return random.ints(leftLimit, rightLimit + 1)
+                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+                .limit(targetStringLength)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
     }
 }
