@@ -7,5 +7,4 @@ public class AccessRequestDto {
 
     private String name;
     private String phoneNum;
-
 }

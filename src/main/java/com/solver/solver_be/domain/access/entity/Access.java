@@ -14,6 +14,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Access {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

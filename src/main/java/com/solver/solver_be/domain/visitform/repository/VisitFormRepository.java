@@ -1,5 +1,6 @@
 package com.solver.solver_be.domain.visitform.repository;
 
+import com.solver.solver_be.domain.company.entity.Company;
 import com.solver.solver_be.domain.user.entity.Admin;
 import com.solver.solver_be.domain.user.entity.Guest;
 import com.solver.solver_be.domain.visitform.entity.VisitForm;
@@ -43,4 +44,6 @@ public interface VisitFormRepository extends JpaRepository<VisitForm, Long>, Cus
     List<VisitForm> findAllByOrderByStatusDesc();
 
     List<VisitForm> findAllByAdmin(Admin admin);
+
+    List<VisitForm> findByGuestAndStartTimeBetweenAndAdminCompany(Guest guest, LocalDateTime startTimeBeforeOneHour, LocalDateTime startTimeAfterOneHour, Company company);
 }
