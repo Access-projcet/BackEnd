@@ -21,36 +21,36 @@ public class VisitForm extends TimeStamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)           // Visit Company
+    @Column(nullable = false)           // 방문 회사
     private String location;
 
-    @Column(nullable = false)           // Visit Company Space
+    @Column(nullable = false)           // 세부 방문 장소
     private String place;
 
-    @Column(nullable = false)           // Purpose
+    @Column(nullable = false)           // 방문 목적
     private String purpose;
 
-    @Column(nullable = false)           // Visit startDate
+    @Column(nullable = false)           // 방문 시작 날짜
     private LocalDate startDate;
 
-    @Column(nullable = false)           // Visit StartTime
+    @Column(nullable = false)           // 방문 시작 시간
     private LocalDateTime startTime;
 
-    @Column(nullable = false)           // Visit EndDate
+    @Column(nullable = false)           // 방문 종료 날짜
     private LocalDate endDate;
 
-    @Column(nullable = false)           // Visit EndTime
+    @Column(nullable = false)           // 방문 종료 시간
     private LocalDateTime endTime;
 
-    @Column(nullable = false)           // Approval Status
+    @Column(nullable = false)           // 허가 여부
     private String status;
 
     @ManyToOne
-    @JoinColumn(name = "GUEST_ID")      // Visitor
+    @JoinColumn(name = "GUEST_ID")      // 방문객 (Guest)
     private Guest guest;
 
     @ManyToOne
-    @JoinColumn(name = "ADMIN_ID")      // Admin
+    @JoinColumn(name = "ADMIN_ID")      // 찾아갈 분 (Admin)
     private Admin admin;
 
     public static VisitForm of(VisitFormRequestDto visitorRequestDto, Guest guest, Admin admin) {

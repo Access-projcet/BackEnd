@@ -7,5 +7,7 @@ import java.util.Optional;
 
 public interface AccessRepository extends JpaRepository<Access, Long> {
 
-    Optional<Access> findByGuestName(String name);
+    Optional<Access> findLatestByGuestName(String name);
+
+    Optional<Access> findByVisitFormId(Long id);
 }
