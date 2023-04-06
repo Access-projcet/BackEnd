@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.MessagingException;
 import java.util.Random;
@@ -27,13 +28,17 @@ public class PasswordResetService {
     private final EmailService emailService;
 
     // 1. Reset Guest Password
+    @Transactional
     public ResponseEntity<GlobalResponseDto> resetGuestPassword(PasswordResetRequestDto passwordResetRequestDto) throws MessagingException {
 
         Guest guest = guestRepository.findGuestByNameAndPhoneNumAndUserId(passwordResetRequestDto.getName(), passwordResetRequestDto.getPhoneNum(), passwordResetRequestDto.getUserId());
 
         if (guest == null) {
             throw new UserException(ResponseCode.USER_NOT_FOUND);
-        } else {
+        }
+
+        // Send a new password after email authentication
+        if (emailService.verifyEmailCode(passwordResetRequestDto.getEmail(), passwordResetRequestDto.getCode())) {
 
             // Provisional Password Issue
             String newPassword = generateRandomPassword();
@@ -42,25 +47,26 @@ public class PasswordResetService {
             guest.setPassword(passwordEncoder.encode(newPassword));
             guestRepository.save(guest);
 
-            // Send a new password after email authentication
-            if (emailService.verifyEmailCode(passwordResetRequestDto.getEmail(), passwordResetRequestDto.getCode())) {
-                emailService.sendPasswordResetEmail(passwordResetRequestDto.getEmail(), newPassword);
-            }else {
-                throw new UserException(ResponseCode.AUTH_FAILED);
-            }
-
-            return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.PASSWORD_RESET_SUCCESS));
+            emailService.sendPasswordResetEmail(passwordResetRequestDto.getEmail(), newPassword);
+        }else {
+            throw new UserException(ResponseCode.AUTH_FAILED);
         }
+
+        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.PASSWORD_RESET_SUCCESS));
     }
 
     // 2. Reset Admin Password
+    @Transactional
     public ResponseEntity<GlobalResponseDto> resetAdminPassword(PasswordResetRequestDto passwordResetRequestDto) throws MessagingException {
 
         Admin admin = adminRepository.findAdminByNameAndPhoneNumAndUserId(passwordResetRequestDto.getName(), passwordResetRequestDto.getPhoneNum(), passwordResetRequestDto.getUserId());
 
         if (admin == null) {
             throw new UserException(ResponseCode.USER_NOT_FOUND);
-        } else {
+        }
+
+        // Send a new password after email authentication
+        if (emailService.verifyEmailCode(passwordResetRequestDto.getEmail(), passwordResetRequestDto.getCode())) {
 
             // Provisional Password Issue
             String newPassword = generateRandomPassword();
@@ -69,15 +75,12 @@ public class PasswordResetService {
             admin.setPassword(passwordEncoder.encode(newPassword));
             adminRepository.save(admin);
 
-            // Send a new password after email authentication
-            if (emailService.verifyEmailCode(passwordResetRequestDto.getEmail(), passwordResetRequestDto.getCode())) {
             emailService.sendPasswordResetEmail(passwordResetRequestDto.getEmail(), newPassword);
-            }else {
+        }else {
             throw new UserException(ResponseCode.AUTH_FAILED);
-            }
-
-            return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.PASSWORD_RESET_SUCCESS));
         }
+
+        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.PASSWORD_RESET_SUCCESS));
     }
 
     // Generating a temporary password
