@@ -19,7 +19,10 @@ public class QRCodeService {
 
     // 1. Get Info for QRCode Create
     public ResponseEntity<GlobalResponseDto> createQRCode(Guest guest) {
+
+        // QRCodeRepo save
         QRCode qrCode = qrCodeRepository.save(QRCode.of(true,guest));
+
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.ACCESS_IN_SUCCESS, QRCodeResponseDto.of(qrCode)));
     }
 }
