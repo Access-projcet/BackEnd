@@ -18,6 +18,6 @@ public class NotificationController {
     @GetMapping(value = "/subscribe/", produces = "text/event-stream")
     public SseEmitter subscribe(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                 @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId) {
-        return notificationService.subscribe(userDetails.getGuest(), lastEventId);
+        return notificationService.subscribe(userDetails.getAdmin(), lastEventId);
     }
 }
