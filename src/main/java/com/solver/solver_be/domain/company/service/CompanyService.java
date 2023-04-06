@@ -29,13 +29,14 @@ public class CompanyService {
     private static final String BASE62 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     private static final int ID_LENGTH = 16;
 
-    // 1. Register Company
+    // 1. Create Company
     @Transactional
-    public ResponseEntity<GlobalResponseDto> createCompany(CompanyRequestDto companyRequestDto) {
+    public ResponseEntity<GlobalResponseDto> registerCompany(CompanyRequestDto companyRequestDto) {
 
         if (companyRepository.findByCompanyName(companyRequestDto.getCompanyName()).isPresent()) {
             throw new UserException(ResponseCode.COMPANY_ALREADY_EXIST);
         }
+
         String companyToken = createCompanyToken(companyRequestDto);
 
         Company company = companyRepository.saveAndFlush(Company.of(companyRequestDto, companyToken));
@@ -43,7 +44,7 @@ public class CompanyService {
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.COMPANY_REGISTER_SUCCESS, CompanyResponseDto.of(company)));
     }
 
-    // 2. Get List Company
+    // 2. Get Company List
     @Transactional(readOnly = true)
     public ResponseEntity<GlobalResponseDto> getCompanies(Guest guest) {
 
@@ -54,20 +55,20 @@ public class CompanyService {
         }
 
         List<CompanyResponseDto> companyResponseDtoList = new ArrayList<>();
-        for (Company company : companyList){
+        for (Company company : companyList) {
             companyResponseDtoList.add(CompanyResponseDto.of(company));
         }
 
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.COMPANY_GET_SUCCESS, companyResponseDtoList));
     }
 
-    // 3. 회사 내용 수정하기
+    // 3. Update Company Info
     @Transactional
-    public ResponseEntity<GlobalResponseDto> updateCompany(Long id, CompanyRequestDto companyRequestDto, Admin admin){
+    public ResponseEntity<GlobalResponseDto> updateCompany(Long id, CompanyRequestDto companyRequestDto, Admin admin) {
 
         Optional<Company> company = companyRepository.findById(id);
 
-        if(company.isEmpty()){
+        if (company.isEmpty()) {
             throw new CompanyException(ResponseCode.COMPANY_NOT_FOUND);
         }
 
@@ -77,13 +78,13 @@ public class CompanyService {
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.COMPANY_UPDATE_SUCCESS, companyResponseDto));
     }
 
-    // 4. 회사 정보 삭제하기
+    // 4. Delete Company Info
     @Transactional
-    public ResponseEntity<GlobalResponseDto> deleteCompany(Long id, Admin admin){
+    public ResponseEntity<GlobalResponseDto> deleteCompany(Long id, Admin admin) {
 
         Optional<Company> company = companyRepository.findById(id);
 
-        if(company.isEmpty()){
+        if (company.isEmpty()) {
             throw new CompanyException(ResponseCode.COMPANY_NOT_FOUND);
         }
 
@@ -92,7 +93,9 @@ public class CompanyService {
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.COMPANY_DELETE_SUCCESS));
     }
 
+    // Method : Create Company Token
     public String createCompanyToken(CompanyRequestDto companyRequestDto) {
+
         SecureRandom random = new SecureRandom();
         byte[] bytes = new byte[ID_LENGTH];
         random.nextBytes(bytes);

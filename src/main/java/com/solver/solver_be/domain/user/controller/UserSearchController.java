@@ -18,7 +18,6 @@ import javax.mail.MessagingException;
 public class UserSearchController {
 
     private final UserSearchService searchService;
-
     private final PasswordResetService passwordResetService;
 
     // 1. Found Guest userId

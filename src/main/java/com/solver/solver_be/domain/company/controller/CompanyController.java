@@ -15,24 +15,30 @@ public class CompanyController {
 
     private final CompanyService companyService;
 
+    // 1. Register Company
     @PostMapping("/company")
-    public ResponseEntity<GlobalResponseDto> createCompany(@RequestBody CompanyRequestDto companyRequestDto) {
-        return companyService.createCompany(companyRequestDto);
+    public ResponseEntity<GlobalResponseDto> registerCompany(@RequestBody CompanyRequestDto companyRequestDto) {
+        return companyService.registerCompany(companyRequestDto);
     }
 
+    // 2. Get CompanyList
     @GetMapping("/company")
     public ResponseEntity<GlobalResponseDto> getCompanies(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return companyService.getCompanies(userDetails.getGuest());
     }
 
+    // 3. Update Company
     @PutMapping("/company/{id}")
-    public ResponseEntity<GlobalResponseDto> updateCompany(@PathVariable Long id, @RequestBody CompanyRequestDto companyRequestDto,
+    public ResponseEntity<GlobalResponseDto> updateCompany(@PathVariable Long id,
+                                                           @RequestBody CompanyRequestDto companyRequestDto,
                                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return companyService.updateCompany(id, companyRequestDto, userDetails.getAdmin());
     }
 
+    // 4. Delete Company
     @DeleteMapping("/company/{id}")
-    public ResponseEntity<GlobalResponseDto> deleteCompany(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<GlobalResponseDto> deleteCompany(@PathVariable Long id,
+                                                           @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return companyService.deleteCompany(id, userDetails.getAdmin());
     }
 }

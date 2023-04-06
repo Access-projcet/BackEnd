@@ -15,18 +15,21 @@ public class AccessController {
 
     private final AccessService accessService;
 
+    // 1. Access In
     @PostMapping("/access-in")
     public ResponseEntity<GlobalResponseDto> accessIn(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                       @RequestBody AccessRequestDto accessInRequestDto) {
         return accessService.accessIn(accessInRequestDto, userDetails.getAdmin());
     }
 
+    // 2. Access Out
     @PutMapping("/access-out")
     public ResponseEntity<GlobalResponseDto> accessOut(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                        @RequestBody AccessRequestDto accessInRequestDto) {
         return accessService.accessOut(accessInRequestDto, userDetails.getAdmin());
     }
 
+    // 3. Access Status
     @GetMapping("/access-status")
     public ResponseEntity<GlobalResponseDto> getAccessStatus(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return accessService.getAccessStatus(userDetails.getAdmin());

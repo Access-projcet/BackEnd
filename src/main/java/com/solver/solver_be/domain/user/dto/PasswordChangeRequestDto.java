@@ -9,7 +9,6 @@ import javax.validation.constraints.Pattern;
 @Getter
 @NoArgsConstructor
 public class PasswordChangeRequestDto {
-
     private String password;
 
     @NotBlank(message = "비밀번호는 필수입니다.")

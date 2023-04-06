@@ -17,6 +17,7 @@ public class QRCodeService {
 
     private final QRCodeRepository qrCodeRepository;
 
+    // 1. Get Info for QRCode Create
     public ResponseEntity<GlobalResponseDto> createQRCode(Guest guest) {
         QRCode qrCode = qrCodeRepository.save(QRCode.of(true,guest));
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.ACCESS_IN_SUCCESS, QRCodeResponseDto.of(qrCode)));
