@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class VisitFormStatusResponseDto {
 
-    private String status;
+    private String status;          // 현재 상태
 
     public static VisitFormStatusResponseDto of (VisitForm visitForm){
         return VisitFormStatusResponseDto.builder()

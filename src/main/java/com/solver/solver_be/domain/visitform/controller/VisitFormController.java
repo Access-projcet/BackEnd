@@ -67,6 +67,7 @@ public class VisitFormController {
         return visitorService.searchVisitForms(visitFormSearchRequestDto, userDetails.getAdmin());
     }
 
+    // 6. Sort VisitForms
     @GetMapping("/visit-forms/sort")
     public ResponseEntity<GlobalResponseDto> getLocation(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                          @RequestParam(required = false, value = "orderby") String orderby) {

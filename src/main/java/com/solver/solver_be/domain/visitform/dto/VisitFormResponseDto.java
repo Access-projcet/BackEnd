@@ -18,17 +18,17 @@ public class VisitFormResponseDto {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     private Long id;
-    private String location;
-    private String place;
-    private String target;
-    private String purpose;
-    private String startDate;
-    private String startTime;
-    private String endDate;
-    private String endTime;
-    private String visitor;
-    private String phoneNum;
-    private String status;
+    private String location;                // 방문장소
+    private String place;                   // 세부 방문위치
+    private String target;                  // 방문할 분 (Admin)
+    private String purpose;                 // 방문 목적
+    private String startDate;               // 방문 시작 날짜
+    private String startTime;               // 방문 시작 시간
+    private String endDate;                 // 방문 종료 날짜
+    private String endTime;                 // 방문 종료 시간
+    private String visitor;                 // 방문자 (Guest)
+    private String phoneNum;                // 방문자 휴대폰 번호
+    private String status;                  // 방문자 상태
 
     public static VisitFormResponseDto of(VisitForm visitForm) {
 
