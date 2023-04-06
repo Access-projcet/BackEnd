@@ -3,13 +3,12 @@ package com.solver.solver_be.domain.visitform.repository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.solver.solver_be.domain.visitform.entity.VisitForm;
-import org.springframework.data.domain.Sort;
-
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.List;
 
 import static com.solver.solver_be.domain.visitform.entity.QVisitForm.visitForm;
+
 
 public class VisitFormRepositoryCustomImpl implements CustomVisitFormRepository {
 
