@@ -4,7 +4,6 @@ import lombok.Getter;
 
 @Getter
 public class AccessRequestDto {
-
-    private String name;
-    private String phoneNum;
+    private String name;            // Guest 이름
+    private String phoneNum;        // Guest 휴대폰 번호
 }
