@@ -13,7 +13,9 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Optional;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -25,24 +27,25 @@ public class NotificationService {
     private final EmitterRepository emitterRepository;
     private final NotificationRepository notificationRepository;
 
-    // SSE 연결 대상자 설정
+    // Set up an SSE connection
     public SseEmitter subscribe(Admin admin, String lastEventId) {
-        // 1
+
         String emitterId = admin.getId() + "_" + System.currentTimeMillis();
 
-        // 2
         SseEmitter emitter = emitterRepository.save(emitterId, new SseEmitter(DEFAULT_TIMEOUT));
 
         emitter.onCompletion(() -> emitterRepository.deleteById(emitterId));
         emitter.onTimeout(() -> emitterRepository.deleteById(emitterId));
 
-        // 3
         String eventId = makeTimeIncludeUd(admin.getId());
 
-        // 503 에러를 방지하기 위한 더미 이벤트 전송
+        // Set up for Heartbeat
+        ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
+
+        // Sending a dummy Event to prevent 503 error
         sendNotification(emitter, eventId, emitterId,"EventStream Created. [userId=" + admin.getId() + "]");
 
-        // 클라이언트가 미수신한 Event 목록이 존재할 경우 전송하여 Event 유실을 예방
+        // Prevent lost events by sending a list of unreceived events, if one exists
         if (!lastEventId.isEmpty()) {
             Map<String, Object> events = emitterRepository.findAllEventCacheStartWithByAdminId(admin.getId());
             events.entrySet().stream()
@@ -50,10 +53,24 @@ public class NotificationService {
                     .forEach(entry -> sendNotification(emitter, entry.getKey(), emitterId, entry.getValue()));
         }
 
+        // Creating a task that periodically sends an empty event
+        Runnable heartbeatTask = () -> {
+            try {
+                String heartbeatMessage = "event: heartbeat\ndata: \n\n";
+                emitter.send(heartbeatMessage);
+            } catch (IOException e) {
+                emitter.complete();
+                scheduledExecutorService.shutdown();
+            }
+        };
+
+        // Sending heartbeat periodically
+        scheduledExecutorService.scheduleAtFixedRate(heartbeatTask, 0, 44, TimeUnit.SECONDS);
+
         return emitter;
     }
 
-    // 알림 보내는 기능
+    // Sending Alarm to Specified Admin with Message
     @Async
     public void send(Admin admin, String content) {
 
@@ -79,7 +96,7 @@ public class NotificationService {
                 .build();
     }
 
-    // 데이터 전송
+    // Sending Data
     private void sendNotification(SseEmitter emitter, String eventId, String emitterId, Object data) {
         try {
             emitter.send(SseEmitter.event()
@@ -91,7 +108,7 @@ public class NotificationService {
         }
     }
 
-    // emitterId 고유값만드는 메서드
+    // Making an Identity emitterId
     private String makeTimeIncludeUd(Long id) {
         return id + "_" + System.currentTimeMillis();
     }
