@@ -38,7 +38,7 @@ public class UserController {
     // 4. Admin change password
     @PutMapping("/change/password/business")
     public ResponseEntity<GlobalResponseDto> changeBusiness(@Valid @RequestBody PasswordChangeRequestDto passwordChangeRequestDto,
-                                                            @AuthenticationPrincipal UserDetailsImpl userDetails){
+                                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return adminService.changePassword(passwordChangeRequestDto, userDetails.getAdmin());
     }
 
@@ -69,7 +69,7 @@ public class UserController {
     // 9. Guest change password
     @PutMapping("/change/password/guest")
     public ResponseEntity<GlobalResponseDto> changeGuest(@Valid @RequestBody PasswordChangeRequestDto passwordChangeRequestDto,
-                                                            @AuthenticationPrincipal UserDetailsImpl userDetails){
+                                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return guestService.changePassword(passwordChangeRequestDto, userDetails.getGuest());
     }
 
@@ -87,7 +87,8 @@ public class UserController {
 
     // 12. Create Lobby Id
     @PostMapping("/signup/lobbyId")
-    public ResponseEntity<GlobalResponseDto> createLobbyId(@RequestBody LobbyRequestDto lobbyRequestDto) throws MessagingException {
-        return adminService.createLobbyId(lobbyRequestDto);
+    public ResponseEntity<GlobalResponseDto> createLobbyId(@RequestBody LobbyRequestDto lobbyRequestDto,
+                                                           @AuthenticationPrincipal UserDetailsImpl userDetails) throws MessagingException {
+        return adminService.createLobbyId(lobbyRequestDto,userDetails.getAdmin());
     }
 }

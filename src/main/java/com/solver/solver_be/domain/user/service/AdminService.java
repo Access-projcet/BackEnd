@@ -138,7 +138,7 @@ public class AdminService {
         // Send ID After Email Authentication
         if (emailService.verifyEmailCode(userSearchRequestDto.getEmail(), userSearchRequestDto.getCode())) {
             emailService.sendUserSearchEmail(userSearchRequestDto.getEmail(), admin.getUserId());
-        }else {
+        } else {
             throw new UserException(ResponseCode.AUTH_FAILED);
         }
 
@@ -166,7 +166,7 @@ public class AdminService {
             adminRepository.save(admin);
 
             emailService.sendPasswordResetEmail(passwordResetRequestDto.getEmail(), newPassword);
-        }else {
+        } else {
             throw new UserException(ResponseCode.AUTH_FAILED);
         }
 
@@ -175,26 +175,22 @@ public class AdminService {
 
     // 6. Create Lobby Id
     @Transactional
-    public ResponseEntity<GlobalResponseDto> createLobbyId(LobbyRequestDto lobbyRequestDto) throws MessagingException {
+    public ResponseEntity<GlobalResponseDto> createLobbyId(LobbyRequestDto lobbyRequestDto, Admin admin) throws MessagingException {
+
+        // LobbyId Already Given
+        if(admin.getIsIssued()){
+            throw new UserException(ResponseCode.LOOBBYID_ALREADY_DONE);
+        }
 
         // Check for registered companies
-        Optional<Company> company = companyRepository.findByCompanyName(lobbyRequestDto.getCompanyName());
-        if (company.isEmpty()) {
-            throw new UserException(ResponseCode.COMPANY_NOT_FOUND);
-        }
-
-        // Already LobbyId Check
-        Optional <Admin> adminCheck = adminRepository.findById(company.get().getId());
-        if(adminCheck.isPresent() && adminCheck.get().getIsIssued()){
-            throw new AccessException(ResponseCode.LOOBBYID_ALREADY_DONE);
-        }
+        Company company = admin.getCompany();
 
         // Lobby ID Data
         String userId = generateRandomId();
         String password = generateRandomPassword();
         String name = lobbyRequestDto.getCompanyName() + "LobbyId";
-        String phoneNum = company.get().getCompanyCallNum();
-        String companyToken = company.get().getCompanyToken();
+        String phoneNum = company.getCompanyCallNum();
+        String companyToken = company.getCompanyToken();
 
         // Create lobby ID and send mail
         emailService.sendLobbyId(lobbyRequestDto.getEmail(), userId, password);
@@ -209,7 +205,7 @@ public class AdminService {
         UserRoleEnum role = UserRoleEnum.ADMIN;
 
         // AdminRepo Save
-        adminRepository.save(Admin.of(adminSignupRequestDto, lobbyPassword, role, company.get(), true));
+        adminRepository.save(Admin.of(adminSignupRequestDto, lobbyPassword, role, company, true));
 
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.LOBBYID_SIGN_UP));
     }
