@@ -84,4 +84,10 @@ public class UserController {
     public ResponseEntity<GlobalResponseDto> resetGuestPassword(@RequestBody PasswordResetRequestDto passwordResetRequestDto) throws MessagingException {
         return guestService.resetGuestPassword(passwordResetRequestDto);
     }
+
+    // 12. Create Lobby Id
+    @PostMapping("/signup/lobbyId")
+    public ResponseEntity<GlobalResponseDto> createLobbyId(@RequestBody LobbyRequestDto lobbyRequestDto) throws MessagingException {
+        return adminService.createLobbyId(lobbyRequestDto);
+    }
 }

@@ -1,11 +1,13 @@
 package com.solver.solver_be.domain.user.dto;
 
+import lombok.Builder;
 import lombok.Getter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 @Getter
+@Builder
 public class AdminSignupRequestDto {
 
     @NotBlank(message = "아이디는 필수입니다.")
@@ -32,4 +34,13 @@ public class AdminSignupRequestDto {
 
     @NotBlank
     private String companyToken = "";
+
+    public static AdminSignupRequestDto of(String userId, String name, String phoneNum, String companyToken){
+        return AdminSignupRequestDto.builder()
+                .userId(userId)
+                .name(name)
+                .phoneNum(phoneNum)
+                .companyToken(companyToken)
+                .build();
+    }
 }
