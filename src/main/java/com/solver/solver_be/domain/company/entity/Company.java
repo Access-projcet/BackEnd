@@ -1,7 +1,6 @@
 package com.solver.solver_be.domain.company.entity;
 
 import com.solver.solver_be.domain.company.dto.CompanyRequestDto;
-import com.solver.solver_be.domain.user.dto.AdminSignupRequestDto;
 import com.solver.solver_be.global.util.TimeStamped;
 import lombok.*;
 
@@ -10,7 +9,6 @@ import java.math.BigDecimal;
 
 @Entity
 @Getter
-@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -38,7 +36,7 @@ public class Company extends TimeStamped {
     @Column(unique = true)
     private String companyToken;
 
-    @Column(unique = true)
+    @Column
     private Boolean lobbyIdIssued;
 
     @Column(precision = 10, scale = 7)
@@ -46,18 +44,6 @@ public class Company extends TimeStamped {
 
     @Column(precision = 10, scale = 7)
     private BigDecimal y;
-
-    public static Company of(CompanyRequestDto companyRequestDto) {
-        return Company.builder()
-                .businessNum(companyRequestDto.getBusinessNum())
-                .businessCode(companyRequestDto.getBusinessCode())
-                .companyName(companyRequestDto.getCompanyName())
-                .companyAddress(companyRequestDto.getCompanyAddress())
-                .companyCallNum(companyRequestDto.getCompanyCallNum())
-                .x(BigDecimal.valueOf(companyRequestDto.getX()))
-                .y(BigDecimal.valueOf(companyRequestDto.getY()))
-                .build();
-    }
 
     public static Company of(CompanyRequestDto companyRequestDto, String companyToken) {
         return Company.builder()
@@ -69,6 +55,7 @@ public class Company extends TimeStamped {
                 .x(BigDecimal.valueOf(companyRequestDto.getX()))
                 .y(BigDecimal.valueOf(companyRequestDto.getY()))
                 .companyToken(companyToken)
+                .lobbyIdIssued(false)
                 .build();
     }
 
@@ -80,5 +67,9 @@ public class Company extends TimeStamped {
         this.companyCallNum = companyRequestDto.getCompanyCallNum();
         this.x = BigDecimal.valueOf(companyRequestDto.getX());
         this.y = BigDecimal.valueOf(companyRequestDto.getY());
+    }
+
+    public void setLobbyIdIssued(Boolean lobbyIdIssued) {
+        this.lobbyIdIssued = lobbyIdIssued;
     }
 }

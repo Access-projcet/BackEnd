@@ -5,18 +5,17 @@ import com.solver.solver_be.domain.company.repository.CompanyRepository;
 import com.solver.solver_be.domain.user.dto.*;
 import com.solver.solver_be.domain.user.entity.Admin;
 import com.solver.solver_be.domain.user.entity.Guest;
-import com.solver.solver_be.global.exception.exceptionType.CompanyException;
-import com.solver.solver_be.global.type.UserRoleEnum;
 import com.solver.solver_be.domain.user.repository.AdminRepository;
 import com.solver.solver_be.domain.user.repository.GuestRepository;
-import com.solver.solver_be.global.exception.exceptionType.AccessException;
+import com.solver.solver_be.global.exception.exceptionType.CompanyException;
 import com.solver.solver_be.global.exception.exceptionType.UserException;
 import com.solver.solver_be.global.response.GlobalResponseDto;
-import com.solver.solver_be.global.type.ResponseCode;
 import com.solver.solver_be.global.security.jwt.JwtUtil;
 import com.solver.solver_be.global.security.refreshtoken.RefreshToken;
 import com.solver.solver_be.global.security.refreshtoken.RefreshTokenRepository;
 import com.solver.solver_be.global.security.refreshtoken.TokenDto;
+import com.solver.solver_be.global.type.ResponseCode;
+import com.solver.solver_be.global.type.UserRoleEnum;
 import com.solver.solver_be.global.util.email.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -174,9 +173,10 @@ public class AdminService {
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.PASSWORD_RESET_SUCCESS));
     }
 
-    // 6. Create Lobby Id
+    // 6. Create LobbyId
     @Transactional
     public ResponseEntity<GlobalResponseDto> createLobbyId(LobbyRequestDto lobbyRequestDto, Admin admin) throws MessagingException {
+
         // Check for registered companies
         Company company = admin.getCompany();
 
@@ -188,7 +188,7 @@ public class AdminService {
         // Lobby ID Data
         String userId = generateRandomId();
         String password = generateRandomPassword();
-        String name = lobbyRequestDto.getCompanyName() + "LobbyId";
+        String name = company.getCompanyName() + "LobbyId";
         String phoneNum = company.getCompanyCallNum();
         String companyToken = company.getCompanyToken();
 
@@ -210,7 +210,10 @@ public class AdminService {
         // Make Issued
         company.setLobbyIdIssued(true);
 
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.LOBBYID_SIGN_UP));
+        // CompanyRepo Save
+        companyRepository.save(company);
+
+        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.LOBBYID_SIGN_UP, "이메일을 확인 하세요"));
     }
 
     // Method : Generating a temporary password
