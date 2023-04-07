@@ -28,16 +28,16 @@ public class EmitterRepositoryImpl implements EmitterRepository{
     }
 
     @Override
-    public Map<String, SseEmitter> findAllEmitterStartWithByGuestId(String userId) {
+    public Map<String, SseEmitter> findAllEmitterStartWithByAdminId(Long id) {
         return emitters.entrySet().stream()
-                .filter(entry -> entry.getKey().startsWith(String.valueOf(userId)))
+                .filter(entry -> entry.getKey().startsWith(String.valueOf(id)))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     @Override
-    public Map<String, Object> findAllEventCacheStartWithByGuestId(String userId) {
+    public Map<String, Object> findAllEventCacheStartWithByAdminId(Long id) {
         return eventCache.entrySet().stream()
-                .filter(entry -> entry.getKey().startsWith(String.valueOf(userId)))
+                .filter(entry -> entry.getKey().startsWith(String.valueOf(id)))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 

@@ -1,6 +1,6 @@
 package com.solver.solver_be.global.util.sse.entity;
 
-import com.solver.solver_be.domain.user.entity.Guest;
+import com.solver.solver_be.domain.user.entity.Admin;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,12 +25,12 @@ public class Notification {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "GUEST_ID")
-    private Guest guest;
+    @JoinColumn(name = "ADMIN_ID")
+    private Admin admin;
 
     @Builder
-    public Notification(Guest guest, String content){
-        this.guest = guest;
+    public Notification(Admin admin, String content){
+        this.admin = admin;
         this.content = new NotificationContent(content);
     }
 

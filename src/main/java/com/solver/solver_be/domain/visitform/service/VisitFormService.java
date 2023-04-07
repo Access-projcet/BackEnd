@@ -35,14 +35,14 @@ public class VisitFormService {
     public ResponseEntity<GlobalResponseDto> createVisitForm(VisitFormRequestDto visitFormRequestDto, Guest guest) {
 
         // Admin Check
-        Optional<Admin> admin = adminRepository.findByName(visitFormRequestDto.getTarget());
-        if (admin.isEmpty()) {
+        Admin admin = adminRepository.findByName(visitFormRequestDto.getTarget());
+        if (admin == null) {
             throw new VisitFormException(ResponseCode.ADMIN_NOT_FOUND);
         }
 
         // VisitForm Duplicated Check
         Optional<VisitForm> found = visitFormRepository.findByAdminIdAndStartTimeLessThanEqualAndEndTimeGreaterThanEqual(
-                admin.get().getId(),
+                admin.getId(),
                 LocalDateTime.parse(visitFormRequestDto.getEndTime()),
                 LocalDateTime.parse(visitFormRequestDto.getStartTime())
         );
@@ -51,12 +51,10 @@ public class VisitFormService {
         }
 
         // VisitFormRepo Save
-        VisitForm visitForm = visitFormRepository.saveAndFlush(VisitForm.of(visitFormRequestDto, guest, admin.get()));
-        log.info("createVisitForm : " + guest.getUserId());
+        VisitForm visitForm = visitFormRepository.saveAndFlush(VisitForm.of(visitFormRequestDto, guest, admin));
 
         // SSE Send
-        notificationService.send(guest, "새로운 로그인 요청이 들어왔습니다.");
-        log.info("notificationService.send 통과");
+        notificationService.send(admin,  "새로운 " + guest.getName() + "님이 방문했습니다.");
 
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.VISITFORM_WRITE_SUCCESS, VisitFormResponseDto.of(visitForm, guest)));
     }
@@ -176,7 +174,7 @@ public class VisitFormService {
         List<VisitForm> visitFormList;
         switch (orderBy) {
             case "guestName":
-                visitFormList = visitFormRepository.findAllByOrderByGuestNameDesc();
+                visitFormList = visitFormRepository.findByAdminIdOrderByGuestNameDesc(admin.getId());
                 break;
             case "location":
                 visitFormList = visitFormRepository.findAllByOrderByLocationAsc();
