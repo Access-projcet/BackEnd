@@ -1,4 +1,4 @@
-package com.solver.solver_be.domain.user.entity;
+package com.solver.solver_be.global.type;
 
 public enum UserRoleEnum {
 

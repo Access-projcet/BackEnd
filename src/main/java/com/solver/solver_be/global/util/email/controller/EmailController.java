@@ -1,7 +1,7 @@
 package com.solver.solver_be.global.util.email.controller;
 
 import com.solver.solver_be.global.response.GlobalResponseDto;
-import com.solver.solver_be.global.response.ResponseCode;
+import com.solver.solver_be.global.type.ResponseCode;
 import com.solver.solver_be.global.util.email.dto.EmailRequestDto;
 import com.solver.solver_be.global.util.email.service.EmailService;
 import lombok.RequiredArgsConstructor;

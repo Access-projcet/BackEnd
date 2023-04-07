@@ -2,13 +2,12 @@ package com.solver.solver_be.global.util.sms.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.solver.solver_be.global.response.GlobalResponseDto;
-import com.solver.solver_be.global.response.ResponseCode;
+import com.solver.solver_be.global.type.ResponseCode;
 import com.solver.solver_be.global.util.sms.dto.MessageRequestDto;
 import com.solver.solver_be.global.util.sms.dto.SmsResponseDto;
 import com.solver.solver_be.global.util.sms.service.SmsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;

@@ -1,4 +1,4 @@
-package com.solver.solver_be.global.response;
+package com.solver.solver_be.global.type;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

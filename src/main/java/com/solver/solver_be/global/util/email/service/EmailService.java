@@ -3,7 +3,7 @@ package com.solver.solver_be.global.util.email.service;
 import com.solver.solver_be.domain.company.entity.Company;
 import com.solver.solver_be.domain.company.repository.CompanyRepository;
 import com.solver.solver_be.global.exception.exceptionType.UserException;
-import com.solver.solver_be.global.response.ResponseCode;
+import com.solver.solver_be.global.type.ResponseCode;
 import com.solver.solver_be.global.util.email.dto.EmailRequestDto;
 import com.solver.solver_be.global.util.redis.RedisUtil;
 import lombok.RequiredArgsConstructor;

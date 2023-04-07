@@ -2,7 +2,7 @@ package com.solver.solver_be.global.security.webSecurity;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.solver.solver_be.global.response.GlobalResponseDto;
-import com.solver.solver_be.global.response.ResponseCode;
+import com.solver.solver_be.global.type.ResponseCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;

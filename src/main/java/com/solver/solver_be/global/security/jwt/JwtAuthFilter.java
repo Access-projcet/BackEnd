@@ -1,6 +1,6 @@
 package com.solver.solver_be.global.security.jwt;
 
-import com.solver.solver_be.global.response.ResponseCode;
+import com.solver.solver_be.global.type.ResponseCode;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

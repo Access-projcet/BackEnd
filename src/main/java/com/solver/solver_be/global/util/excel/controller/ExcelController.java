@@ -1,7 +1,5 @@
 package com.solver.solver_be.global.util.excel.controller;
 
-import com.solver.solver_be.global.response.GlobalResponseDto;
-import com.solver.solver_be.global.response.ResponseCode;
 import com.solver.solver_be.global.security.webSecurity.UserDetailsImpl;
 import com.solver.solver_be.global.util.excel.service.ExcelService;
 import lombok.RequiredArgsConstructor;
@@ -11,8 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor

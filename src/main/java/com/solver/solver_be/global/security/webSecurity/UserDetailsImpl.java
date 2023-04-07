@@ -2,7 +2,7 @@ package com.solver.solver_be.global.security.webSecurity;
 
 import com.solver.solver_be.domain.user.entity.Admin;
 import com.solver.solver_be.domain.user.entity.Guest;
-import com.solver.solver_be.domain.user.entity.UserRoleEnum;
+import com.solver.solver_be.global.type.UserRoleEnum;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

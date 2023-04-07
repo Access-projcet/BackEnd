@@ -1,5 +1,6 @@
 package com.solver.solver_be.global.response;
 
+import com.solver.solver_be.global.type.ResponseCode;
 import lombok.Builder;
 import lombok.Getter;
 

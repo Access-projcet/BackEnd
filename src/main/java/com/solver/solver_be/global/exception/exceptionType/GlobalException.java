@@ -1,6 +1,6 @@
 package com.solver.solver_be.global.exception.exceptionType;
 
-import com.solver.solver_be.global.response.ResponseCode;
+import com.solver.solver_be.global.type.ResponseCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

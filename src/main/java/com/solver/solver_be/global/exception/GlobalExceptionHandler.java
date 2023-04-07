@@ -2,7 +2,7 @@ package com.solver.solver_be.global.exception;
 
 import com.solver.solver_be.global.exception.exceptionType.*;
 import com.solver.solver_be.global.response.GlobalResponseDto;
-import com.solver.solver_be.global.response.ResponseCode;
+import com.solver.solver_be.global.type.ResponseCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

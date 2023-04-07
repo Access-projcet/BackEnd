@@ -9,7 +9,7 @@ import com.solver.solver_be.domain.user.entity.Guest;
 import com.solver.solver_be.global.exception.exceptionType.CompanyException;
 import com.solver.solver_be.global.exception.exceptionType.UserException;
 import com.solver.solver_be.global.response.GlobalResponseDto;
-import com.solver.solver_be.global.response.ResponseCode;
+import com.solver.solver_be.global.type.ResponseCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

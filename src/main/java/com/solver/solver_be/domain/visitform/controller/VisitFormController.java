@@ -70,7 +70,8 @@ public class VisitFormController {
     // 6. Sort VisitForms
     @GetMapping("/visit-forms/sort")
     public ResponseEntity<GlobalResponseDto> getLocation(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                         @RequestParam(required = false, value = "orderby") String orderby) {
-        return visitorService.sortVisitForms(userDetails.getAdmin(), orderby);
+                                                         @RequestParam(required = false, value = "orderBy") String orderBy,
+                                                         @RequestParam(value = "isAsc") Boolean isAsc) {
+        return visitorService.sortVisitForms(userDetails.getAdmin(), orderBy, isAsc);
     }
 }
