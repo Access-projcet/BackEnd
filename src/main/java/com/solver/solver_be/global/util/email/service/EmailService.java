@@ -121,6 +121,17 @@ public class EmailService {
         mailSender.send(message);
     }
 
+    // 8. Create lobby ID and send mail
+    public void sendLobbyId(String toEmail, String userId, String password) throws MessagingException {
+        MimeMessage message = mailSender.createMimeMessage();
+        message.addRecipients(MimeMessage.RecipientType.TO, toEmail);
+        message.setSubject("로비 아이디가 도착했습니다.");
+        message.setFrom(configEmail);
+        message.setText("로비 아이디 : " + userId + " 로비 비밀번호 : " + password, "utf-8", "html");
+
+        mailSender.send(message);
+    }
+
     // Create an authentication code
     private String createdCode() {
         int leftLimit = 48; // number '0'

@@ -14,6 +14,7 @@ public enum ResponseCode {
     LOG_IN_SUCCESS(200, "로그인이 완료되었습니다."),
     FIND_USER_ID(200, "아이디 찾기 성공"),
     PASSWORD_RESET_SUCCESS(200, "비밀번호 재설정 성공"),
+    LOBBYID_SIGN_UP(200, "로비 아이디 생성 완료" ),
 
     // VisitForm Success
     VISITFORM_WRITE_SUCCESS(200, "방문 문서 작성 성공"),
@@ -56,6 +57,7 @@ public enum ResponseCode {
     PASSWORD_MISMATCH(400, "비밀번호가 일치하지 않습니다."),
     INVALID_COMPANY_TOKEN(400, "유효하지 않은 회사 코드입니다."),
     AUTH_FAILED(400, "이메일 인증 실패" ),
+    LOOBBYID_ALREADY_DONE(400, "로비 아이디가 발급 되어있습니다." ),
 
     // Visitor Fail
     VISITFORM_NOT_FOUND(400, "방문 신청 기록이 없습니다."),

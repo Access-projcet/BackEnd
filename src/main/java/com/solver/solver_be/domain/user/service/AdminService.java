@@ -5,10 +5,10 @@ import com.solver.solver_be.domain.company.repository.CompanyRepository;
 import com.solver.solver_be.domain.user.dto.*;
 import com.solver.solver_be.domain.user.entity.Admin;
 import com.solver.solver_be.domain.user.entity.Guest;
-import com.solver.solver_be.domain.user.entity.QGuest;
 import com.solver.solver_be.domain.user.entity.UserRoleEnum;
 import com.solver.solver_be.domain.user.repository.AdminRepository;
 import com.solver.solver_be.domain.user.repository.GuestRepository;
+import com.solver.solver_be.global.exception.exceptionType.AccessException;
 import com.solver.solver_be.global.exception.exceptionType.UserException;
 import com.solver.solver_be.global.response.GlobalResponseDto;
 import com.solver.solver_be.global.response.ResponseCode;
@@ -173,11 +173,66 @@ public class AdminService {
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.PASSWORD_RESET_SUCCESS));
     }
 
+    // 6. Create Lobby Id
+    @Transactional
+    public ResponseEntity<GlobalResponseDto> createLobbyId(LobbyRequestDto lobbyRequestDto) throws MessagingException {
+
+        // Check for registered companies
+        Optional<Company> company = companyRepository.findByCompanyName(lobbyRequestDto.getCompanyName());
+        if (company.isEmpty()) {
+            throw new UserException(ResponseCode.COMPANY_NOT_FOUND);
+        }
+
+        // Already LobbyId Check
+        Optional <Admin> adminCheck = adminRepository.findById(company.get().getId());
+        if(adminCheck.isPresent() && adminCheck.get().getIsIssued()){
+            throw new AccessException(ResponseCode.LOOBBYID_ALREADY_DONE);
+        }
+
+        // Lobby ID Data
+        String userId = generateRandomId();
+        String password = generateRandomPassword();
+        String name = lobbyRequestDto.getCompanyName() + "LobbyId";
+        String phoneNum = company.get().getCompanyCallNum();
+        String companyToken = company.get().getCompanyToken();
+
+        // Create lobby ID and send mail
+        emailService.sendLobbyId(lobbyRequestDto.getEmail(), userId, password);
+
+        // Password Encoder
+        String lobbyPassword = passwordEncoder.encode(password);
+
+        // Lobby ID Data
+        AdminSignupRequestDto adminSignupRequestDto = AdminSignupRequestDto.of(userId, name, phoneNum, companyToken);
+
+        // Give Admin UserRole
+        UserRoleEnum role = UserRoleEnum.ADMIN;
+
+        // AdminRepo Save
+        adminRepository.save(Admin.of(adminSignupRequestDto, lobbyPassword, role, company.get(), true));
+
+        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.LOBBYID_SIGN_UP));
+    }
+
     // Method : Generating a temporary password
     private String generateRandomPassword() {
         int leftLimit = 48; // number '0'
         int rightLimit = 122; // alphabet 'z'
         int targetStringLength = 10;
+        Random random = new Random();
+
+        return random.ints(leftLimit, rightLimit + 1)
+                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+                .limit(targetStringLength)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
+    }
+
+    // Method : Generating a temporary Id
+    private String generateRandomId() {
+        int leftLimit = 48; // number '0'
+        int rightLimit = 122; // alphabet 'z'
+        int targetStringLength = 6;
         Random random = new Random();
 
         return random.ints(leftLimit, rightLimit + 1)

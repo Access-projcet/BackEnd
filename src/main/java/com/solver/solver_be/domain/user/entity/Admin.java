@@ -29,6 +29,9 @@ public class Admin {
     @Column(nullable = false)
     private String name;
 
+    @Column
+    private Boolean isIssued;           // 로비 아이디 발급 확인
+
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
@@ -45,6 +48,18 @@ public class Admin {
                 .name(signupRequestDto.getName())
                 .role(role)
                 .company(company)
+                .build();
+    }
+
+    public static Admin of(AdminSignupRequestDto signupRequestDto, String password, UserRoleEnum role, Company company, Boolean isIssued) {
+        return Admin.builder()
+                .userId(signupRequestDto.getUserId())
+                .password(password)
+                .phoneNum(signupRequestDto.getPhoneNum())
+                .name(signupRequestDto.getName())
+                .role(role)
+                .company(company)
+                .isIssued(isIssued)
                 .build();
     }
 
