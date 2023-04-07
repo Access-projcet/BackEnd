@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -36,6 +37,9 @@ public class Company extends TimeStamped {
 
     @Column(unique = true)
     private String companyToken;
+
+    @Column(unique = true)
+    private Boolean lobbyIdIssued;
 
     @Column(precision = 10, scale = 7)
     private BigDecimal x;

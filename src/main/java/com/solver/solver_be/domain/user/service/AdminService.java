@@ -5,6 +5,7 @@ import com.solver.solver_be.domain.company.repository.CompanyRepository;
 import com.solver.solver_be.domain.user.dto.*;
 import com.solver.solver_be.domain.user.entity.Admin;
 import com.solver.solver_be.domain.user.entity.Guest;
+import com.solver.solver_be.global.exception.exceptionType.CompanyException;
 import com.solver.solver_be.global.type.UserRoleEnum;
 import com.solver.solver_be.domain.user.repository.AdminRepository;
 import com.solver.solver_be.domain.user.repository.GuestRepository;
@@ -176,14 +177,13 @@ public class AdminService {
     // 6. Create Lobby Id
     @Transactional
     public ResponseEntity<GlobalResponseDto> createLobbyId(LobbyRequestDto lobbyRequestDto, Admin admin) throws MessagingException {
-
-        // LobbyId Already Given
-        if(admin.getIsIssued()){
-            throw new UserException(ResponseCode.LOOBBYID_ALREADY_DONE);
-        }
-
         // Check for registered companies
         Company company = admin.getCompany();
+
+        // Issued Check
+        if(company.getLobbyIdIssued()){
+            throw new CompanyException(ResponseCode.LOOBBYID_ALREADY_DONE);
+        }
 
         // Lobby ID Data
         String userId = generateRandomId();
@@ -205,7 +205,10 @@ public class AdminService {
         UserRoleEnum role = UserRoleEnum.ADMIN;
 
         // AdminRepo Save
-        adminRepository.save(Admin.of(adminSignupRequestDto, lobbyPassword, role, company, true));
+        adminRepository.save(Admin.of(adminSignupRequestDto, lobbyPassword, role, company));
+
+        // Make Issued
+        company.setLobbyIdIssued(true);
 
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.LOBBYID_SIGN_UP));
     }
