@@ -14,7 +14,7 @@ public enum ResponseCode {
     LOG_IN_SUCCESS(200, "로그인이 완료되었습니다."),
     FIND_USER_ID(200, "아이디 찾기 성공"),
     PASSWORD_RESET_SUCCESS(200, "비밀번호 재설정 성공"),
-    LOBBYID_SIGN_UP(200, "로비 아이디 생성 완료" ),
+    LOBBYID_SIGN_UP(200, "로비 아이디 생성 완료"),
 
     // VisitForm Success
     VISITFORM_WRITE_SUCCESS(200, "방문 문서 작성 성공"),
@@ -27,13 +27,13 @@ public enum ResponseCode {
     // Token Success
     TOKEN_UPDATE_SUCCESS(200, "토큰이 업데이트되었습니다."),
 
-   // Company Success
+    // Company Success
     COMPANY_REGISTER_SUCCESS(200, "회사 정보 등록을 완료했습니다."),
     COMPANY_GET_SUCCESS(200, "등록된 회사 가져오기 성공했습니다. "),
     COMPANY_UPDATE_SUCCESS(200, "회사 정보 변경을 완료했습니다."),
     COMPANY_DELETE_SUCCESS(200, "회사 정보 삭제를 완료했습니다."),
     ACCESS_IN_SUCCESS(200, "어서오십시오" ),
-    ACCESS_OUT_SUCCESS(200, "안녕히 가십시오" ),
+    ACCESS_OUT_SUCCESS(200, "안녕히 가십시오"),
     ACCESS_STATUS_SUCCESS(200, "출입관리 목록 불러오기 완료."),
 
     // Email Success
@@ -63,17 +63,21 @@ public enum ResponseCode {
     PASSWORD_MISMATCH(400, "비밀번호가 일치하지 않습니다."),
     INVALID_COMPANY_TOKEN(400, "유효하지 않은 회사 코드입니다."),
     AUTH_FAILED(400, "이메일 인증 실패" ),
-    LOOBBYID_ALREADY_DONE(400, "로비 아이디가 발급 되어있습니다." ),
+    LOOBBYID_ALREADY_DONE(400, "로비 아이디가 발급 되어있습니다."),
 
     // Visitor Fail
     VISITFORM_NOT_FOUND(400, "방문 신청 기록이 없습니다."),
     VISITFORM_UPDATE_FAILED(400, "본인은 방문 기록이 아닙니다."),
     VISITFORM_EXIST(400, "동일한 시간에 방문 기록이 있습니다."),
     ADMIN_NOT_FOUND(400, "담당자가 없습니다."),
+    NOT_VALID_STATUS(400, "2 = 승인,3 = 거절 하나로 보내주십시오."),
 
-   // Company Fail
+    // Company Fail
     COMPANY_ALREADY_EXIST(400, "등록된 회사가 이미 존재합니다."),
     COMPANY_NOT_FOUND(400, "회사를 찾을 수 없습니다."),
+    COMPANY_NOT_EQUALS(400, "관리자의 회사와 동일하지 않습니다."),
+
+    // Access Fail
     ACCESS_RECORD_NOT_FOUND(400, "출입기록을 찾을 수 없습니다." ),
     ACCESS_IN_ALREADY_DONE(401, "이미 체크인 되었습니다." ),
     ACCESS_OUT_ALREADY_DONE(402, "이미 체크아웃 되었습니다." ),

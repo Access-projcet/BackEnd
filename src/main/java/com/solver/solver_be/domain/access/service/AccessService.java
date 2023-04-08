@@ -76,6 +76,10 @@ public class AccessService {
             throw new VisitFormException(ResponseCode.VISITFORM_NOT_FOUND);
         }
 
+        // Visit completed
+        visitForm.updateStatus("완료");
+        visitFormRepository.save(visitForm);
+
         // Already CheckIn Check
         Optional <Access> accessCheck = accessRepository.findByVisitFormId(visitForm.getId());
         if(accessCheck.isPresent() && accessCheck.get().getStatus()){
@@ -147,7 +151,7 @@ public class AccessService {
             int applyCount = visitFormByDate.size();
             int approveCount = 0;
             for (VisitForm visitForm : visitFormByDate) {
-                if ("3".equals(visitForm.getStatus())) {
+                if ("완료".equals(visitForm.getStatus())) {
                     approveCount += 1;
                 }
             }
