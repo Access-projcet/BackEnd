@@ -28,14 +28,22 @@ public class Notification {
     @JoinColumn(name = "ADMIN_ID")
     private Admin admin;
 
+    @Column
+    private Boolean isRead;
+
     @Builder
-    public Notification(Admin admin, String content){
+    public Notification(Admin admin, Boolean isRead, String content){
         this.admin = admin;
+        this.isRead = isRead;
         this.content = new NotificationContent(content);
     }
 
     public String getContent() {
         return content.getContent();
+    }
+
+    public void read() {
+        isRead = true;
     }
 
 }

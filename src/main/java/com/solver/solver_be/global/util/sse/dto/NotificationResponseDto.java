@@ -15,10 +15,12 @@ public class NotificationResponseDto {
 
     private Long id;
 
+    private Boolean isRead;
+
     private String content;
 
-    public static NotificationResponseDto from(Notification notification) {
-        return new NotificationResponseDto(notification.getId(), notification.getContent());
+    public static NotificationResponseDto of(Notification notification) {
+        return new NotificationResponseDto(notification.getId(), notification.getIsRead(), notification.getContent());
     }
 }
 

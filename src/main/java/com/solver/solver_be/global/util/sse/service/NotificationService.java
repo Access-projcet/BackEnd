@@ -1,21 +1,28 @@
 package com.solver.solver_be.global.util.sse.service;
 
 import com.solver.solver_be.domain.user.entity.Admin;
+import com.solver.solver_be.global.response.GlobalResponseDto;
+import com.solver.solver_be.global.security.webSecurity.UserDetailsImpl;
+import com.solver.solver_be.global.type.ResponseCode;
 import com.solver.solver_be.global.util.sse.dto.NotificationResponseDto;
 import com.solver.solver_be.global.util.sse.entity.Notification;
 import com.solver.solver_be.global.util.sse.repository.EmitterRepository;
 import com.solver.solver_be.global.util.sse.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -82,9 +89,33 @@ public class NotificationService {
         emitters.forEach(
                 (key, emitter) -> {
                     emitterRepository.saveEventCache(key, emitter);
-                    sendNotification(emitter, eventId, key, NotificationResponseDto.from(notification));
+                    sendNotification(emitter, eventId, key, NotificationResponseDto.of(notification));
                 }
         );
+    }
+
+    // View All Notifications
+    @Transactional(readOnly = true)
+    public List<NotificationResponseDto> findAllNotifications(Admin admin){
+        List<Notification> notificationList = notificationRepository.findByAdminIdOrderByIdDesc(admin.getId());
+        return notificationList.stream()
+                .map(NotificationResponseDto::of)
+                .collect(Collectors.toList());
+    }
+
+    // Delete a notification
+    @Transactional
+    public ResponseEntity<GlobalResponseDto> deleteByNotifications(Long notificationId) {
+        notificationRepository.deleteById(notificationId);
+        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.NOTIFICATION_DELETE_SUCCESS));
+    }
+
+    // Delete all notifications
+    @Transactional
+    public ResponseEntity<GlobalResponseDto> deleteAllByNotifications(Admin admin) {
+        Long adminId = admin.getId();
+        notificationRepository.deleteAllByAdminId(adminId);
+        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.NOTIFICATIONS_DELETE_SUCCESS));
     }
 
     //==================================== Method ==========================================
