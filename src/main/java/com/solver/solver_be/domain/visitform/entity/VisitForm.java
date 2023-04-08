@@ -62,7 +62,7 @@ public class VisitForm extends TimeStamped {
                 .endDate(LocalDate.parse(visitorRequestDto.getEndDate()))
                 .startTime(LocalDateTime.parse(visitorRequestDto.getStartTime()))
                 .endTime(LocalDateTime.parse(visitorRequestDto.getEndTime()))
-                .status(visitorRequestDto.getStatus())
+                .status("대기")
                 .guest(guest)
                 .admin(admin)
                 .build();
@@ -78,7 +78,7 @@ public class VisitForm extends TimeStamped {
         this.endTime = LocalDateTime.parse(visitorRequestDto.getEndTime());
     }
 
-    public void updateStatus(VisitFormRequestDto visitFormRequestDto) {
-        this.status = visitFormRequestDto.getStatus();
+    public void updateStatus(String status) {
+        this.status = status;
     }
 }

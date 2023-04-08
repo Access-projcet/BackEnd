@@ -40,6 +40,11 @@ public class VisitFormService {
             throw new VisitFormException(ResponseCode.ADMIN_NOT_FOUND);
         }
 
+        // Admin Company Equals location Check
+        if (!admin.getCompany().getCompanyName().equals(visitFormRequestDto.getLocation())){
+            throw new VisitFormException(ResponseCode.COMPANY_NOT_EQUALS);
+        }
+
         // VisitForm Duplicated Check
         Optional<VisitForm> found = visitFormRepository.findByAdminIdAndStartTimeLessThanEqualAndEndTimeGreaterThanEqual(
                 admin.getId(),
@@ -120,12 +125,21 @@ public class VisitFormService {
         VisitForm visitForm = visitFormRepository.findByIdAndAdminId(id, admin.getId());
 
         // VisitForm Validation
-        if (!visitForm.getAdmin().equals(admin)) {
+        if (!visitForm.getAdmin().getId().equals(admin.getId())) {
             throw new VisitFormException(ResponseCode.VISITFORM_UPDATE_FAILED);
         }
 
         // Update VisitForm
-        visitForm.updateStatus(visitFormRequestDto);
+        if (visitFormRequestDto.getStatus().equals("2")) {
+            visitForm.updateStatus("승인");
+        } else if (visitFormRequestDto.getStatus().equals("3")) {
+            visitForm.updateStatus("거절");
+        } else {
+            throw new VisitFormException(ResponseCode.NOT_VALID_STATUS);
+        }
+
+        // Update VisitForm Save
+        visitFormRepository.save(visitForm);
 
         return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.VISITFORM_STATUS_UPDATE_SUCCESS));
     }
