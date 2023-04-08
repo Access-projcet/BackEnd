@@ -39,7 +39,13 @@ public enum ResponseCode {
     // Email Success
     EMAIL_CHECK(200, "이메일 전송 완료."),
 
+    // Excel Success
     EXCEL_DOWNLOAD_SUCCESS(200, "엑셀 다운로드 완료" ),
+
+    // Notification Success
+    NOTIFICATION_DELETE_SUCCESS(200, "알람 삭제 완료"),
+    NOTIFICATIONS_DELETE_SUCCESS(200, "알람 전체 삭제 완료"),
+    NOTIFICATIONS_READ_SUCCESS(200, "알람 확인 완료"),
 
     /*============================ FAIL ================================*/
 
@@ -70,7 +76,10 @@ public enum ResponseCode {
     COMPANY_NOT_FOUND(400, "회사를 찾을 수 없습니다."),
     ACCESS_RECORD_NOT_FOUND(400, "출입기록을 찾을 수 없습니다." ),
     ACCESS_IN_ALREADY_DONE(401, "이미 체크인 되었습니다." ),
-    ACCESS_OUT_ALREADY_DONE(402, "이미 체크아웃 되었습니다." );
+    ACCESS_OUT_ALREADY_DONE(402, "이미 체크아웃 되었습니다." ),
+
+    // Notification Fail
+    NOTIFICATION_NOT_FOUND(400, "알람을 찾을 수 없습니다.");
 
     private final int statusCode;
     private final String message;

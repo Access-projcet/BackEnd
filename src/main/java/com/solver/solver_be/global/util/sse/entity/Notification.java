@@ -20,6 +20,9 @@ public class Notification {
     @Column(name = "notification_id")
     private Long id;
 
+    @Column
+    private Boolean isRead = false;
+
     @Embedded
     private NotificationContent content;
 
@@ -29,13 +32,18 @@ public class Notification {
     private Admin admin;
 
     @Builder
-    public Notification(Admin admin, String content){
+    public Notification(Admin admin, Boolean isRead, String content){
         this.admin = admin;
+        this.isRead = isRead;
         this.content = new NotificationContent(content);
     }
 
     public String getContent() {
         return content.getContent();
+    }
+
+    public void read() {
+        isRead = true;
     }
 
 }
