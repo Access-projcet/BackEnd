@@ -151,7 +151,7 @@ public class AccessService {
             int applyCount = visitFormByDate.size();
             int approveCount = 0;
             for (VisitForm visitForm : visitFormByDate) {
-                if ("거절".equals(visitForm.getStatus())) {
+                if ("완료".equals(visitForm.getStatus())) {
                     approveCount += 1;
                 }
             }
