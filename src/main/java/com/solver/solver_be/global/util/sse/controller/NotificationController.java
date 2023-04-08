@@ -29,12 +29,18 @@ public class NotificationController {
         return notificationService.findAllNotifications(userDetails.getAdmin());
     }
 
+    @PutMapping("/notification/{notificationId}")
+    public ResponseEntity<GlobalResponseDto> isReadNotification(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                @PathVariable Long notificationId){
+        return notificationService.isReadNotification(userDetails.getAdmin(), notificationId);
+    }
+
     @DeleteMapping(value = "/notifications/delete")
     public ResponseEntity<GlobalResponseDto> deleteNotifications(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return notificationService.deleteAllByNotifications(userDetails.getAdmin());
     }
 
-    @DeleteMapping(value = "/notifications/delete/{notificationId}")
+    @DeleteMapping(value = "/notification/delete/{notificationId}")
     public ResponseEntity<GlobalResponseDto> deleteNotifications(@PathVariable Long notificationId) {
         return notificationService.deleteByNotifications(notificationId);
     }

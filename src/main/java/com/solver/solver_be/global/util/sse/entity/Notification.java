@@ -20,6 +20,9 @@ public class Notification {
     @Column(name = "notification_id")
     private Long id;
 
+    @Column
+    private Boolean isRead = false;
+
     @Embedded
     private NotificationContent content;
 
@@ -27,9 +30,6 @@ public class Notification {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "ADMIN_ID")
     private Admin admin;
-
-    @Column
-    private Boolean isRead;
 
     @Builder
     public Notification(Admin admin, Boolean isRead, String content){

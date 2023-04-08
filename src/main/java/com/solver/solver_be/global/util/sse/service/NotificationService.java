@@ -1,6 +1,9 @@
 package com.solver.solver_be.global.util.sse.service;
 
 import com.solver.solver_be.domain.user.entity.Admin;
+import com.solver.solver_be.global.exception.exceptionType.GlobalException;
+import com.solver.solver_be.global.exception.exceptionType.NotificationException;
+import com.solver.solver_be.global.exception.exceptionType.UserException;
 import com.solver.solver_be.global.response.GlobalResponseDto;
 import com.solver.solver_be.global.security.webSecurity.UserDetailsImpl;
 import com.solver.solver_be.global.type.ResponseCode;
@@ -19,6 +22,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -103,6 +107,17 @@ public class NotificationService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    public ResponseEntity<GlobalResponseDto> isReadNotification(Admin admin, Long id){
+        Optional<Notification> notification = notificationRepository.findById(id);
+        if(notification.isEmpty())
+            throw new NotificationException(ResponseCode.NOTIFICATION_NOT_FOUND);
+
+        notification.get().read();
+
+        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.NOTIFICATIONS_READ_SUCCESS));
+    }
+
     // Delete a notification
     @Transactional
     public ResponseEntity<GlobalResponseDto> deleteByNotifications(Long notificationId) {
@@ -123,6 +138,7 @@ public class NotificationService {
     private Notification createNotification(Admin admin, String content) {
         return Notification.builder()
                 .admin(admin)
+                .isRead(false)
                 .content(content)
                 .build();
     }

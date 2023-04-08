@@ -68,6 +68,14 @@ public class GlobalExceptionHandler {
                 .body(GlobalResponseDto.of(responseCode));
     }
 
+    @ExceptionHandler(NotificationException.class)
+    public ResponseEntity<GlobalResponseDto> handleNotificationException(NotificationException e) {
+        ResponseCode responseCode = e.getStatusCode();
+        log.error(responseCode.getMessage());
+        return ResponseEntity.badRequest()
+                .body(GlobalResponseDto.of(responseCode));
+    }
+
     // Validation Handler
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<GlobalResponseDto> handleMethodException(MethodArgumentNotValidException e) {
