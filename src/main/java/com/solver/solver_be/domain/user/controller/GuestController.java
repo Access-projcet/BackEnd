@@ -45,8 +45,8 @@ public class GuestController {
 
     // 4. Find Guest UserId
     @PostMapping("/guest/user-id")
-    public ResponseEntity<GlobalResponseDto> guestIdSearch(@RequestBody UserSearchRequestDto userSearchRequestDto) throws MessagingException {
-        return guestService.findGuestSearchId(userSearchRequestDto);
+    public ResponseEntity<GlobalResponseDto> guestUserData(@RequestBody UserSearchRequestDto userSearchRequestDto) throws MessagingException {
+        return guestService.findGuestUserData(userSearchRequestDto);
     }
 
     // 5. Reset Guest Password

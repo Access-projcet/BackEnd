@@ -4,17 +4,17 @@ import com.solver.solver_be.domain.user.dto.requestDto.*;
 import com.solver.solver_be.domain.user.dto.responseDto.LoginResponseDto;
 import com.solver.solver_be.domain.user.entity.Admin;
 import com.solver.solver_be.domain.user.entity.Guest;
-import com.solver.solver_be.global.type.SuccessType;
-import com.solver.solver_be.global.type.UserRoleEnum;
 import com.solver.solver_be.domain.user.repository.AdminRepository;
 import com.solver.solver_be.domain.user.repository.GuestRepository;
 import com.solver.solver_be.global.exception.exceptionType.UserException;
 import com.solver.solver_be.global.response.GlobalResponseDto;
-import com.solver.solver_be.global.type.ErrorType;
 import com.solver.solver_be.global.security.jwt.JwtUtil;
 import com.solver.solver_be.global.security.refreshtoken.RefreshToken;
 import com.solver.solver_be.global.security.refreshtoken.RefreshTokenRepository;
 import com.solver.solver_be.global.security.refreshtoken.TokenDto;
+import com.solver.solver_be.global.type.ErrorType;
+import com.solver.solver_be.global.type.SuccessType;
+import com.solver.solver_be.global.type.UserRoleEnum;
 import com.solver.solver_be.global.util.email.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
-import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -51,6 +50,11 @@ public class GuestService {
         Optional<Guest> foundGuest = guestRepository.findByUserId(signupRequestDto.getUserId());
         if (foundAdmin.isPresent() || foundGuest.isPresent()) {
             throw new UserException(ErrorType.USER_ID_EXIST);
+        }
+
+        // Password Equals Check
+        if (!signupRequestDto.getPassword().equals(signupRequestDto.getCheckPassword())){
+            throw new UserException(ErrorType.PASSWORD_MISMATCH);
         }
 
         // UserRole Check
@@ -108,6 +112,11 @@ public class GuestService {
             throw new UserException(ErrorType.PASSWORD_MISMATCH);
         }
 
+        // NewPassword Equals Check
+        if (!passwordChangeRequestDto.getNewPassword().equals(passwordChangeRequestDto.getCheckPassword())){
+            throw new UserException(ErrorType.PASSWORD_MISMATCH);
+        }
+
         // New Password Set
         String newPasswordEncoded = passwordEncoder.encode(passwordChangeRequestDto.getNewPassword());
 
@@ -118,22 +127,17 @@ public class GuestService {
         return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.PASSWORD_RESET_SUCCESS));
     }
 
-    // 4. Found Guest userId
     @Transactional
-    public ResponseEntity<GlobalResponseDto> findGuestSearchId(UserSearchRequestDto userSearchRequestDto) throws MessagingException {
+    public ResponseEntity<GlobalResponseDto> findGuestUserData(UserSearchRequestDto userSearchRequestDto) throws MessagingException {
 
-        // Find your ID by name and phone number
+        // Find guest data by name and phone number
         Guest guest = guestRepository.findGuestByNameAndPhoneNum(userSearchRequestDto.getName(), userSearchRequestDto.getPhoneNum());
         if (guest == null) {
             throw new UserException(ErrorType.USER_NOT_FOUND);
         }
 
-        // Send ID After Email Authentication
-        if (emailService.verifyEmailCode(userSearchRequestDto.getEmail(), userSearchRequestDto.getCode())) {
-            emailService.sendUserSearchEmail(userSearchRequestDto.getEmail(), guest.getUserId());
-        }else {
-            throw new UserException(ErrorType.AUTH_FAILED);
-        }
+        // Send Guest UserId
+        emailService.sendUserSearchEmail(userSearchRequestDto.getEmail(), guest.getUserId());
 
         return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.FIND_USER_ID));
     }
@@ -148,21 +152,14 @@ public class GuestService {
             throw new UserException(ErrorType.USER_NOT_FOUND);
         }
 
-        // Send a new password after email authentication
-        if (emailService.verifyEmailCode(passwordResetRequestDto.getEmail(), passwordResetRequestDto.getCode())) {
+        // Provisional Password Issue
+        String newPassword = infoProvider.generateRandomPassword();
 
-            // Provisional Password Issue
-            String newPassword = infoProvider.generateRandomPassword();
+        // Replace existing password
+        guest.setPassword(passwordEncoder.encode(newPassword));
+        guestRepository.save(guest);
 
-            // Replace existing password
-            guest.setPassword(passwordEncoder.encode(newPassword));
-            guestRepository.save(guest);
-
-            emailService.sendPasswordResetEmail(passwordResetRequestDto.getEmail(), newPassword);
-
-        }else {
-            throw new UserException(ErrorType.AUTH_FAILED);
-        }
+        emailService.sendPasswordResetEmail(passwordResetRequestDto.getEmail(), newPassword);
 
         return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.PASSWORD_RESET_SUCCESS));
     }

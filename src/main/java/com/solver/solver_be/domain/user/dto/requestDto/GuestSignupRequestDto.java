@@ -16,6 +16,9 @@ public class GuestSignupRequestDto {
     @Pattern(regexp = "^[a-zA-Z0-9~!@#$%^&*()_+=?,./<>{}\\[\\]\\-]{8,15}$", message = "비밀번호는 8~15자리 영문 대소문자(a~z, A~Z), 숫자(0~9), 특수문자를 사용하세요.")
     private String password;
 
+    @NotBlank(message = "비밀번호 확인은 필수입니다.")
+    private String checkPassword;
+
     @NotBlank(message = "개인 전화번호는 필수입니다.")
     @Pattern(regexp = "^\\d{3}-\\d{3,4}-\\d{4}$", message = "전화번호는 010-XXXX-XXXX 형식입니다.")
     private String phoneNum;

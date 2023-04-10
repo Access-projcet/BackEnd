@@ -55,6 +55,11 @@ public class AdminService {
             throw new UserException(ErrorType.USER_ID_EXIST);
         }
 
+        // Password Equals Check
+        if (!signupRequestDto.getPassword().equals(signupRequestDto.getCheckPassword())){
+            throw new UserException(ErrorType.PASSWORD_MISMATCH);
+        }
+
         // Get Company By CompanyToken And CompanyName
         Optional<Company> company = companyRepository.findByCompanyTokenAndCompanyName(signupRequestDto.getCompanyToken(), signupRequestDto.getCompanyName());
         if (company.isEmpty()) {
@@ -116,6 +121,11 @@ public class AdminService {
             throw new UserException(ErrorType.PASSWORD_MISMATCH);
         }
 
+        // NewPassword Equals Check
+        if (!passwordChangeRequestDto.getNewPassword().equals(passwordChangeRequestDto.getCheckPassword())){
+            throw new UserException(ErrorType.PASSWORD_MISMATCH);
+        }
+
         // New Password Set
         String newPasswordEncoded = passwordEncoder.encode(passwordChangeRequestDto.getNewPassword());
 
@@ -126,7 +136,7 @@ public class AdminService {
         return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.PASSWORD_RESET_SUCCESS));
     }
 
-    // 4. Found Admin userId
+    // 4. Find Admin userId
     @Transactional
     public ResponseEntity<GlobalResponseDto> findAdminSearchId(UserSearchRequestDto userSearchRequestDto) throws MessagingException {
 
@@ -136,12 +146,8 @@ public class AdminService {
             throw new UserException(ErrorType.USER_NOT_FOUND);
         }
 
-        // Send ID After Email Authentication
-        if (emailService.verifyEmailCode(userSearchRequestDto.getEmail(), userSearchRequestDto.getCode())) {
-            emailService.sendUserSearchEmail(userSearchRequestDto.getEmail(), admin.getUserId());
-        } else {
-            throw new UserException(ErrorType.AUTH_FAILED);
-        }
+        // Send Admin UserId
+        emailService.sendUserSearchEmail(userSearchRequestDto.getEmail(), admin.getUserId());
 
         return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.FIND_USER_ID));
     }
@@ -156,20 +162,14 @@ public class AdminService {
             throw new UserException(ErrorType.USER_NOT_FOUND);
         }
 
-        // Send a new password after email authentication
-        if (emailService.verifyEmailCode(passwordResetRequestDto.getEmail(), passwordResetRequestDto.getCode())) {
+        // Provisional Password Issue
+        String newPassword = infoProvider.generateRandomPassword();
 
-            // Provisional Password Issue
-            String newPassword = infoProvider.generateRandomPassword();
+        // Replace existing password
+        admin.setPassword(passwordEncoder.encode(newPassword));
+        adminRepository.save(admin);
 
-            // Replace existing password
-            admin.setPassword(passwordEncoder.encode(newPassword));
-            adminRepository.save(admin);
-
-            emailService.sendPasswordResetEmail(passwordResetRequestDto.getEmail(), newPassword);
-        } else {
-            throw new UserException(ErrorType.AUTH_FAILED);
-        }
+        emailService.sendPasswordResetEmail(passwordResetRequestDto.getEmail(), newPassword);
 
         return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.PASSWORD_RESET_SUCCESS));
     }
