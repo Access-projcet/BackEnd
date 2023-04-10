@@ -2,10 +2,12 @@ package com.solver.solver_be.domain.user.service;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.Random;
 
 @Getter
+@Service
 @RequiredArgsConstructor
 public class InfoProvider {
 
