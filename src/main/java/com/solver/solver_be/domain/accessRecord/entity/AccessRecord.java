@@ -1,9 +1,7 @@
 package com.solver.solver_be.domain.accessRecord.entity;
 
 import com.solver.solver_be.domain.access.entity.Access;
-import com.solver.solver_be.domain.user.entity.Admin;
-import com.solver.solver_be.domain.user.entity.Guest;
-import com.solver.solver_be.domain.visitform.entity.VisitForm;
+
 import lombok.*;
 
 import javax.persistence.*;
@@ -22,10 +20,10 @@ public class AccessRecord {
     private Long id;
 
     @Column(nullable = false)
-    private LocalDateTime inTime;
+    private LocalDateTime inTime;           // 출입시간
 
     @Column(unique = true)
-    private LocalDateTime outTime;
+    private LocalDateTime outTime;          // 나간시간
 
     @ManyToOne
     @JoinColumn(name = "ACCESS_ID", nullable = false)

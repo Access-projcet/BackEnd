@@ -3,12 +3,13 @@ package com.solver.solver_be.domain.user.service;
 import com.solver.solver_be.domain.user.dto.*;
 import com.solver.solver_be.domain.user.entity.Admin;
 import com.solver.solver_be.domain.user.entity.Guest;
+import com.solver.solver_be.global.type.SuccessType;
 import com.solver.solver_be.global.type.UserRoleEnum;
 import com.solver.solver_be.domain.user.repository.AdminRepository;
 import com.solver.solver_be.domain.user.repository.GuestRepository;
 import com.solver.solver_be.global.exception.exceptionType.UserException;
 import com.solver.solver_be.global.response.GlobalResponseDto;
-import com.solver.solver_be.global.type.ResponseCode;
+import com.solver.solver_be.global.type.ErrorType;
 import com.solver.solver_be.global.security.jwt.JwtUtil;
 import com.solver.solver_be.global.security.refreshtoken.RefreshToken;
 import com.solver.solver_be.global.security.refreshtoken.RefreshTokenRepository;
@@ -47,7 +48,7 @@ public class GuestService {
         Optional<Admin> foundAdmin = adminRepository.findByUserId(signupRequestDto.getUserId());
         Optional<Guest> foundGuest = guestRepository.findByUserId(signupRequestDto.getUserId());
         if (foundAdmin.isPresent() || foundGuest.isPresent()) {
-            throw new UserException(ResponseCode.USER_ID_EXIST);
+            throw new UserException(ErrorType.USER_ID_EXIST);
         }
 
         // UserRole Check
@@ -56,7 +57,7 @@ public class GuestService {
         // Save Entity
         guestRepository.save(Guest.of(signupRequestDto, password, role));
 
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.SIGN_UP_SUCCESS));
+        return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.SIGN_UP_SUCCESS));
     }
 
     // 2. Guest Login
@@ -65,13 +66,13 @@ public class GuestService {
 
         // User Existed Check
         if (guestRepository.findByUserId(loginRequestDto.getUserId()).isEmpty()) {
-            throw new UserException(ResponseCode.USER_ACCOUNT_NOT_EXIST);
+            throw new UserException(ErrorType.USER_ACCOUNT_NOT_EXIST);
         }
 
         // Password Decode Check
         Guest guest = guestRepository.findByUserId(loginRequestDto.getUserId()).get();
         if (!passwordEncoder.matches(loginRequestDto.getPassword(), guest.getPassword())) {
-            throw new UserException(ResponseCode.PASSWORD_MISMATCH);
+            throw new UserException(ErrorType.PASSWORD_MISMATCH);
         }
 
         // Granting AccessToken
@@ -87,7 +88,7 @@ public class GuestService {
         }
         jwtUtil.setHeader(response, tokenDto);
 
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.LOG_IN_SUCCESS, LoginResponseDto.of(guest)));
+        return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.LOG_IN_SUCCESS, LoginResponseDto.of(guest)));
     }
 
     // 3. Guest change password
@@ -97,12 +98,12 @@ public class GuestService {
         // User Existed Check
         Optional<Guest> guestFound = guestRepository.findByUserId(guest.getUserId());
         if (guestFound.isEmpty()) {
-            throw new UserException(ResponseCode.USER_ACCOUNT_NOT_EXIST);
+            throw new UserException(ErrorType.USER_ACCOUNT_NOT_EXIST);
         }
 
         // Current Password Check
         if (!passwordEncoder.matches(passwordChangeRequestDto.getPassword(), guestFound.get().getPassword())) {
-            throw new UserException(ResponseCode.PASSWORD_MISMATCH);
+            throw new UserException(ErrorType.PASSWORD_MISMATCH);
         }
 
         // New Password Set
@@ -112,7 +113,7 @@ public class GuestService {
         guest.setPassword(newPasswordEncoded);
         guestRepository.save(guest);
 
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.PASSWORD_RESET_SUCCESS));
+        return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.PASSWORD_RESET_SUCCESS));
     }
 
     // 4. Found Guest userId
@@ -122,17 +123,17 @@ public class GuestService {
         // Find your ID by name and phone number
         Guest guest = guestRepository.findGuestByNameAndPhoneNum(userSearchRequestDto.getName(), userSearchRequestDto.getPhoneNum());
         if (guest == null) {
-            throw new UserException(ResponseCode.USER_NOT_FOUND);
+            throw new UserException(ErrorType.USER_NOT_FOUND);
         }
 
         // Send ID After Email Authentication
         if (emailService.verifyEmailCode(userSearchRequestDto.getEmail(), userSearchRequestDto.getCode())) {
             emailService.sendUserSearchEmail(userSearchRequestDto.getEmail(), guest.getUserId());
         }else {
-            throw new UserException(ResponseCode.AUTH_FAILED);
+            throw new UserException(ErrorType.AUTH_FAILED);
         }
 
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.FIND_USER_ID));
+        return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.FIND_USER_ID));
     }
 
     // 5. Reset Guest Password
@@ -142,7 +143,7 @@ public class GuestService {
         Guest guest = guestRepository.findGuestByNameAndPhoneNumAndUserId(passwordResetRequestDto.getName(), passwordResetRequestDto.getPhoneNum(), passwordResetRequestDto.getUserId());
 
         if (guest == null) {
-            throw new UserException(ResponseCode.USER_NOT_FOUND);
+            throw new UserException(ErrorType.USER_NOT_FOUND);
         }
 
         // Send a new password after email authentication
@@ -157,10 +158,10 @@ public class GuestService {
 
             emailService.sendPasswordResetEmail(passwordResetRequestDto.getEmail(), newPassword);
         }else {
-            throw new UserException(ResponseCode.AUTH_FAILED);
+            throw new UserException(ErrorType.AUTH_FAILED);
         }
 
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.PASSWORD_RESET_SUCCESS));
+        return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.PASSWORD_RESET_SUCCESS));
     }
 
     // Method : Generating a temporary password

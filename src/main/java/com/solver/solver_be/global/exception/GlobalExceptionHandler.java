@@ -2,7 +2,7 @@ package com.solver.solver_be.global.exception;
 
 import com.solver.solver_be.global.exception.exceptionType.*;
 import com.solver.solver_be.global.response.GlobalResponseDto;
-import com.solver.solver_be.global.type.ResponseCode;
+import com.solver.solver_be.global.type.ErrorType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,63 +17,63 @@ public class GlobalExceptionHandler {
     // UserException Handler
     @ExceptionHandler(UserException.class)
     public ResponseEntity<GlobalResponseDto> handleUserException(UserException e) {
-        ResponseCode responseCode = e.getStatusCode();
-        log.error(responseCode.getMessage());
+        ErrorType errorType = e.getStatusCode();
+        log.error(errorType.getMessage());
         return ResponseEntity.badRequest()
-                .body(GlobalResponseDto.of(responseCode));
+                .body(GlobalResponseDto.of(errorType));
     }
 
     // CompanyException
     @ExceptionHandler(CompanyException.class)
     public ResponseEntity<GlobalResponseDto> handleCompanyException(CompanyException e) {
-        ResponseCode responseCode = e.getStatusCode();
-        log.error(responseCode.getMessage());
+        ErrorType errorType = e.getStatusCode();
+        log.error(errorType.getMessage());
         return ResponseEntity.badRequest()
-                .body(GlobalResponseDto.of(responseCode));
+                .body(GlobalResponseDto.of(errorType));
     }
 
     // VisitFormException
     @ExceptionHandler(VisitFormException.class)
     public ResponseEntity<GlobalResponseDto> handleVisitFormException(VisitFormException e) {
-        ResponseCode responseCode = e.getStatusCode();
-        log.error(responseCode.getMessage());
+        ErrorType errorType = e.getStatusCode();
+        log.error(errorType.getMessage());
         return ResponseEntity.badRequest()
-                .body(GlobalResponseDto.of(responseCode));
+                .body(GlobalResponseDto.of(errorType));
     }
 
     // AccessRecordException
     @ExceptionHandler(AccessRecordException.class)
     public ResponseEntity<GlobalResponseDto> handleAccessRecordException(AccessRecordException e) {
-        ResponseCode responseCode = e.getStatusCode();
-        log.error(responseCode.getMessage());
+        ErrorType errorType = e.getStatusCode();
+        log.error(errorType.getMessage());
         return ResponseEntity.badRequest()
-                .body(GlobalResponseDto.of(responseCode));
+                .body(GlobalResponseDto.of(errorType));
     }
 
     // AccessException
     @ExceptionHandler(AccessException.class)
     public ResponseEntity<GlobalResponseDto> handleAccessException(AccessException e) {
-        ResponseCode responseCode = e.getStatusCode();
-        log.error(responseCode.getMessage());
+        ErrorType errorType = e.getStatusCode();
+        log.error(errorType.getMessage());
         return ResponseEntity.badRequest()
-                .body(GlobalResponseDto.of(responseCode));
+                .body(GlobalResponseDto.of(errorType));
     }
 
     // GlobalException Handler
     @ExceptionHandler(GlobalException.class)
     public ResponseEntity<GlobalResponseDto> handleGlobalException(GlobalException e) {
-        ResponseCode responseCode = e.getStatusCode();
-        log.error(responseCode.getMessage());
+        ErrorType errorType = e.getStatusCode();
+        log.error(errorType.getMessage());
         return ResponseEntity.badRequest()
-                .body(GlobalResponseDto.of(responseCode));
+                .body(GlobalResponseDto.of(errorType));
     }
 
     @ExceptionHandler(NotificationException.class)
     public ResponseEntity<GlobalResponseDto> handleNotificationException(NotificationException e) {
-        ResponseCode responseCode = e.getStatusCode();
-        log.error(responseCode.getMessage());
+        ErrorType errorType = e.getStatusCode();
+        log.error(errorType.getMessage());
         return ResponseEntity.badRequest()
-                .body(GlobalResponseDto.of(responseCode));
+                .body(GlobalResponseDto.of(errorType));
     }
 
     // Validation Handler

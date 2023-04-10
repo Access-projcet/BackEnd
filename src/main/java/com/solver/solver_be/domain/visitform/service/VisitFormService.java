@@ -10,7 +10,8 @@ import com.solver.solver_be.domain.visitform.entity.VisitForm;
 import com.solver.solver_be.domain.visitform.repository.VisitFormRepository;
 import com.solver.solver_be.global.exception.exceptionType.VisitFormException;
 import com.solver.solver_be.global.response.GlobalResponseDto;
-import com.solver.solver_be.global.type.ResponseCode;
+import com.solver.solver_be.global.type.ErrorType;
+import com.solver.solver_be.global.type.SuccessType;
 import com.solver.solver_be.global.util.sse.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,12 +38,12 @@ public class VisitFormService {
         // Admin Check
         Admin admin = adminRepository.findByName(visitFormRequestDto.getTarget());
         if (admin == null) {
-            throw new VisitFormException(ResponseCode.ADMIN_NOT_FOUND);
+            throw new VisitFormException(ErrorType.ADMIN_NOT_FOUND);
         }
 
         // Admin Company Equals location Check
-        if (!admin.getCompany().getCompanyName().equals(visitFormRequestDto.getLocation())){
-            throw new VisitFormException(ResponseCode.COMPANY_NOT_EQUALS);
+        if (!admin.getCompany().getCompanyName().equals(visitFormRequestDto.getLocation())) {
+            throw new VisitFormException(ErrorType.COMPANY_NOT_EQUALS);
         }
 
         // VisitForm Duplicated Check
@@ -52,16 +53,16 @@ public class VisitFormService {
                 LocalDateTime.parse(visitFormRequestDto.getStartTime())
         );
         if (found.isPresent()) {
-            throw new VisitFormException(ResponseCode.VISITFORM_EXIST);
+            throw new VisitFormException(ErrorType.VISITFORM_EXIST);
         }
 
         // VisitFormRepo Save
         VisitForm visitForm = visitFormRepository.saveAndFlush(VisitForm.of(visitFormRequestDto, guest, admin));
 
         // SSE Send
-        notificationService.send(admin,  "새로운 " + guest.getName() + "님이 방문했습니다.");
+        notificationService.send(admin, "새로운 " + guest.getName() + "님이 방문했습니다.");
 
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.VISITFORM_WRITE_SUCCESS, VisitFormResponseDto.of(visitForm, guest)));
+        return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.VISITFORM_WRITE_SUCCESS, VisitFormResponseDto.of(visitForm, guest)));
     }
 
     // 2-1. Get VisitForm List (Guest)
@@ -77,7 +78,7 @@ public class VisitFormService {
             visitFormResponseDtoList.add(VisitFormResponseDto.of(visitForm));
         }
 
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.VISITFORM_GET_SUCCESS, visitFormResponseDtoList));
+        return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.VISITFORM_GET_SUCCESS, visitFormResponseDtoList));
     }
 
     // 2-2 Get VisitForm List (Admin)
@@ -93,7 +94,7 @@ public class VisitFormService {
             visitFormResponseDtoList.add(VisitFormResponseDto.of(visitForm));
         }
 
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.VISITFORM_GET_SUCCESS, visitFormResponseDtoList));
+        return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.VISITFORM_GET_SUCCESS, visitFormResponseDtoList));
     }
 
     // 3-1. Update VisitForm (Guest)
@@ -105,7 +106,7 @@ public class VisitFormService {
 
         // VisitForm Validation
         if (!visitForm.getGuest().equals(guest)) {
-            throw new VisitFormException(ResponseCode.VISITFORM_UPDATE_FAILED);
+            throw new VisitFormException(ErrorType.VISITFORM_UPDATE_FAILED);
         }
 
         // Update VisitForm Repo
@@ -114,7 +115,7 @@ public class VisitFormService {
         // Create VisitFormResponseDto
         VisitFormResponseDto visitFormResponseDto = VisitFormResponseDto.of(visitForm, guest);
 
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.VISITFORM_UPDATE_SUCCESS, visitFormResponseDto));
+        return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.VISITFORM_UPDATE_SUCCESS, visitFormResponseDto));
     }
 
     // 3-2. Update VisitForm (Admin) ... Change Status Only
@@ -126,7 +127,7 @@ public class VisitFormService {
 
         // VisitForm Validation
         if (!visitForm.getAdmin().getId().equals(admin.getId())) {
-            throw new VisitFormException(ResponseCode.VISITFORM_UPDATE_FAILED);
+            throw new VisitFormException(ErrorType.VISITFORM_UPDATE_FAILED);
         }
 
         // Update VisitForm
@@ -135,13 +136,13 @@ public class VisitFormService {
         } else if (visitFormRequestDto.getStatus().equals("3")) {
             visitForm.updateStatus("거절");
         } else {
-            throw new VisitFormException(ResponseCode.NOT_VALID_STATUS);
+            throw new VisitFormException(ErrorType.NOT_VALID_STATUS);
         }
 
         // Update VisitForm Save
         visitFormRepository.save(visitForm);
 
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.VISITFORM_STATUS_UPDATE_SUCCESS));
+        return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.VISITFORM_STATUS_UPDATE_SUCCESS));
     }
 
     // 4. Delete VisitForm
@@ -153,13 +154,13 @@ public class VisitFormService {
 
         // VisitForm Validation
         if (!visitForm.getGuest().equals(guest)) {
-            throw new VisitFormException(ResponseCode.VISITFORM_UPDATE_FAILED);
+            throw new VisitFormException(ErrorType.VISITFORM_UPDATE_FAILED);
         }
 
         // Delete VisitFormRepo
         visitFormRepository.deleteById(id);
 
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.VISITFORM_DELETE_SUCCESS));
+        return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.VISITFORM_DELETE_SUCCESS));
     }
 
     // 5. Search VisitForms
@@ -177,14 +178,14 @@ public class VisitFormService {
                 requestDto.getStatus()
         );
 
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.VISITFORM_SEARCH_SUCCESS, visitFormList));
+        return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.VISITFORM_SEARCH_SUCCESS, visitFormList));
     }
 
     // 6. Sort VisitForms
     @Transactional
-    public ResponseEntity<GlobalResponseDto> sortVisitForms(Admin admin, String orderBy, Boolean isAsc){
+    public ResponseEntity<GlobalResponseDto> sortVisitForms(Admin admin, String orderBy, Boolean isAsc) {
         List<VisitForm> visitFormList;
-        if(isAsc) {
+        if (isAsc) {
             // Sort VisitFormList By orderBy And Asc
             switch (orderBy) {
                 case "guestName":
@@ -211,8 +212,7 @@ public class VisitFormService {
                 default:
                     visitFormList = visitFormRepository.findByAdminId(admin.getId());
             }
-        }
-        else{
+        } else {
             // Sort VisitFormList By orderBy And Desc
             switch (orderBy) {
                 case "guestName":
@@ -241,12 +241,12 @@ public class VisitFormService {
             }
         }
 
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.VISITFORM_SEARCH_SUCCESS, visitFormList));
+        return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.VISITFORM_SEARCH_SUCCESS, visitFormList));
     }
 
 
     // Method : Get User's VisitForm List
     private VisitForm getVisitFormById(Long id) {
-        return visitFormRepository.findById(id).orElseThrow(() -> new VisitFormException(ResponseCode.VISITFORM_NOT_FOUND));
+        return visitFormRepository.findById(id).orElseThrow(() -> new VisitFormException(ErrorType.VISITFORM_NOT_FOUND));
     }
 }

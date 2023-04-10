@@ -1,7 +1,8 @@
 package com.solver.solver_be.global.util.sse.entity;
 
 import com.solver.solver_be.global.exception.exceptionType.GlobalException;
-import com.solver.solver_be.global.type.ResponseCode;
+import com.solver.solver_be.global.type.ErrorType;
+import com.solver.solver_be.global.type.SuccessType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -21,7 +22,7 @@ public class NotificationContent {
 
     public NotificationContent(String content){
         if (ValidNotify(content)){
-            throw new GlobalException(ResponseCode.VISITFORM_STATUS_UPDATE_SUCCESS);
+            throw new GlobalException(ErrorType.CONTENT_NOT_VALID);
         }
         this.content = content;
     }

@@ -9,7 +9,8 @@ import com.solver.solver_be.domain.user.entity.Guest;
 import com.solver.solver_be.global.exception.exceptionType.CompanyException;
 import com.solver.solver_be.global.exception.exceptionType.UserException;
 import com.solver.solver_be.global.response.GlobalResponseDto;
-import com.solver.solver_be.global.type.ResponseCode;
+import com.solver.solver_be.global.type.ErrorType;
+import com.solver.solver_be.global.type.SuccessType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -35,7 +36,7 @@ public class CompanyService {
 
         // Company Duplicate Validation
         if (companyRepository.findByCompanyName(companyRequestDto.getCompanyName()).isPresent()) {
-            throw new UserException(ResponseCode.COMPANY_ALREADY_EXIST);
+            throw new UserException(ErrorType.COMPANY_ALREADY_EXIST);
         }
 
         // Create Company Token
@@ -44,7 +45,7 @@ public class CompanyService {
         // CompanyRepo Save
         Company company = companyRepository.saveAndFlush(Company.of(companyRequestDto, companyToken));
 
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.COMPANY_REGISTER_SUCCESS, CompanyResponseDto.of(company)));
+        return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.COMPANY_REGISTER_SUCCESS, CompanyResponseDto.of(company)));
     }
 
     // 2. Get Company List
@@ -56,7 +57,7 @@ public class CompanyService {
 
         // CompanyList Validation
         if (companyList.isEmpty()) {
-            throw new CompanyException(ResponseCode.COMPANY_NOT_FOUND);
+            throw new CompanyException(ErrorType.COMPANY_NOT_FOUND);
         }
 
         // Create CompanyResponseDtoList
@@ -65,7 +66,7 @@ public class CompanyService {
             companyResponseDtoList.add(CompanyResponseDto.of(company));
         }
 
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.COMPANY_GET_SUCCESS, companyResponseDtoList));
+        return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.COMPANY_GET_SUCCESS, companyResponseDtoList));
     }
 
     // 3. Update Company Info
@@ -77,7 +78,7 @@ public class CompanyService {
 
         // Company Validation
         if (company.isEmpty()) {
-            throw new CompanyException(ResponseCode.COMPANY_NOT_FOUND);
+            throw new CompanyException(ErrorType.COMPANY_NOT_FOUND);
         }
 
         // CompanyRepo Update
@@ -86,7 +87,7 @@ public class CompanyService {
         // Create Company ResponseDto
         CompanyResponseDto companyResponseDto = CompanyResponseDto.of(company.get());
 
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.COMPANY_UPDATE_SUCCESS, companyResponseDto));
+        return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.COMPANY_UPDATE_SUCCESS, companyResponseDto));
     }
 
     // 4. Delete Company Info
@@ -98,13 +99,13 @@ public class CompanyService {
 
         // Company Validation
         if (company.isEmpty()) {
-            throw new CompanyException(ResponseCode.COMPANY_NOT_FOUND);
+            throw new CompanyException(ErrorType.COMPANY_NOT_FOUND);
         }
 
         // CompanyRepo Delete
         companyRepository.deleteById(id);
 
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.COMPANY_DELETE_SUCCESS));
+        return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.COMPANY_DELETE_SUCCESS));
     }
 
     // Method : Create Company Token

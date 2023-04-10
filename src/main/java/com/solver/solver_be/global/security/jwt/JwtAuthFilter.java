@@ -1,6 +1,6 @@
 package com.solver.solver_be.global.security.jwt;
 
-import com.solver.solver_be.global.type.ResponseCode;
+import com.solver.solver_be.global.type.ErrorType;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +31,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         // 1. 토큰이 없는 상황
         if (accessToken == null) {
-            request.setAttribute("exception", ResponseCode.TOKEN_NOT_FOUND);
+            request.setAttribute("exception", ErrorType.TOKEN_NOT_FOUND);
             filterChain.doFilter(request, response);
             return;
         }
@@ -45,10 +45,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     response.addHeader(JwtUtil.ACCESS_TOKEN, newAccessToken);
                     this.setAuthentication(userEmail);
                 } else { // refresh Token 이 유효하지 않음
-                    request.setAttribute("exception", ResponseCode.NOT_VALID_REFRESH_TOKEN);
+                    request.setAttribute("exception", ErrorType.NOT_VALID_REFRESH_TOKEN);
                 }
             } else { // 토큰 만료
-                request.setAttribute("exception", ResponseCode.NOT_VALID_TOKEN);
+                request.setAttribute("exception", ErrorType.NOT_VALID_TOKEN);
             }
             filterChain.doFilter(request, response);
             return;
@@ -58,7 +58,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         try {
             setAuthentication(info.getSubject());
         } catch (UsernameNotFoundException e) {
-            request.setAttribute("exception", ResponseCode.USER_NOT_FOUND);
+            request.setAttribute("exception", ErrorType.USER_NOT_FOUND);
         }
         filterChain.doFilter(request, response);
     }

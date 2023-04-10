@@ -3,7 +3,7 @@ package com.solver.solver_be.global.util.email.service;
 import com.solver.solver_be.domain.company.entity.Company;
 import com.solver.solver_be.domain.company.repository.CompanyRepository;
 import com.solver.solver_be.global.exception.exceptionType.UserException;
-import com.solver.solver_be.global.type.ResponseCode;
+import com.solver.solver_be.global.type.ErrorType;
 import com.solver.solver_be.global.util.email.dto.EmailRequestDto;
 import com.solver.solver_be.global.util.redis.RedisUtil;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +33,7 @@ public class EmailService {
         Optional<Company> foundCompany = companyRepository.findByCompanyName(emailRequestDto.getCompanyName());
         // Company Existence
         if (foundCompany.isEmpty()) {
-            throw new UserException(ResponseCode.COMPANY_NOT_FOUND);
+            throw new UserException(ErrorType.COMPANY_NOT_FOUND);
         }
 
         MimeMessage message = mailSender.createMimeMessage();
