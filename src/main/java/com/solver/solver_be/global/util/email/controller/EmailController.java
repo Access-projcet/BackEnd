@@ -1,7 +1,8 @@
 package com.solver.solver_be.global.util.email.controller;
 
 import com.solver.solver_be.global.response.GlobalResponseDto;
-import com.solver.solver_be.global.type.ResponseCode;
+import com.solver.solver_be.global.type.ErrorType;
+import com.solver.solver_be.global.type.SuccessType;
 import com.solver.solver_be.global.util.email.dto.EmailRequestDto;
 import com.solver.solver_be.global.util.email.service.EmailService;
 import lombok.RequiredArgsConstructor;
@@ -22,13 +23,13 @@ public class EmailController {
     @PostMapping("/email")
     public ResponseEntity<GlobalResponseDto> sendEmailPath(@RequestBody EmailRequestDto emailRequestDto) throws MessagingException {
         emailService.sendEmail(emailRequestDto);
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.EMAIL_CHECK));
+        return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.EMAIL_CHECK));
     }
 
     // 2. Send email authentication code by mail
     @PostMapping("/email/authcode")
     public ResponseEntity<GlobalResponseDto> sendAuthCode(@RequestBody EmailRequestDto emailRequestDto) throws MessagingException {
         emailService.sendAuthCode(emailRequestDto);
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.EMAIL_CHECK));
+        return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.EMAIL_CHECK));
     }
 }

@@ -14,7 +14,8 @@ import com.solver.solver_be.global.security.jwt.JwtUtil;
 import com.solver.solver_be.global.security.refreshtoken.RefreshToken;
 import com.solver.solver_be.global.security.refreshtoken.RefreshTokenRepository;
 import com.solver.solver_be.global.security.refreshtoken.TokenDto;
-import com.solver.solver_be.global.type.ResponseCode;
+import com.solver.solver_be.global.type.ErrorType;
+import com.solver.solver_be.global.type.SuccessType;
 import com.solver.solver_be.global.type.UserRoleEnum;
 import com.solver.solver_be.global.util.email.service.EmailService;
 import lombok.RequiredArgsConstructor;
@@ -51,13 +52,13 @@ public class AdminService {
         Optional<Admin> foundAdmin = adminRepository.findByUserId(signupRequestDto.getUserId());
         Optional<Guest> foundGuest = guestRepository.findByUserId(signupRequestDto.getUserId());
         if (foundAdmin.isPresent() || foundGuest.isPresent()) {
-            throw new UserException(ResponseCode.USER_ID_EXIST);
+            throw new UserException(ErrorType.USER_ID_EXIST);
         }
 
         // Get Company By CompanyToken And CompanyName
         Optional<Company> company = companyRepository.findByCompanyTokenAndCompanyName(signupRequestDto.getCompanyToken(), signupRequestDto.getCompanyName());
         if (company.isEmpty()) {
-            throw new UserException(ResponseCode.INVALID_COMPANY_TOKEN);
+            throw new UserException(ErrorType.INVALID_COMPANY_TOKEN);
         }
 
         // Give Admin UserRole
@@ -66,7 +67,7 @@ public class AdminService {
         // AdminRepo Save
         adminRepository.save(Admin.of(signupRequestDto, password, role, company.get()));
 
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.SIGN_UP_SUCCESS));
+        return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.SIGN_UP_SUCCESS));
     }
 
     // 2. Admin Login
@@ -75,13 +76,13 @@ public class AdminService {
 
         // Admin Existed Check
         if (adminRepository.findByUserId(loginRequestDto.getUserId()).isEmpty()) {
-            throw new UserException(ResponseCode.USER_ACCOUNT_NOT_EXIST);
+            throw new UserException(ErrorType.USER_ACCOUNT_NOT_EXIST);
         }
 
         // Password Decode Check
         Admin admin = adminRepository.findByUserId(loginRequestDto.getUserId()).get();
         if (!passwordEncoder.matches(loginRequestDto.getPassword(), admin.getPassword())) {
-            throw new UserException(ResponseCode.PASSWORD_MISMATCH);
+            throw new UserException(ErrorType.PASSWORD_MISMATCH);
         }
 
         // Granting AccessToken
@@ -97,7 +98,7 @@ public class AdminService {
         }
         jwtUtil.setHeader(response, tokenDto);
 
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.LOG_IN_SUCCESS, LoginResponseDto.of(admin)));
+        return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.LOG_IN_SUCCESS, LoginResponseDto.of(admin)));
     }
 
     // 3. Admin change password
@@ -107,12 +108,12 @@ public class AdminService {
         // Admin Existed Check
         Optional<Admin> adminFound = adminRepository.findByUserId(admin.getUserId());
         if (adminFound.isEmpty()) {
-            throw new UserException(ResponseCode.USER_ACCOUNT_NOT_EXIST);
+            throw new UserException(ErrorType.USER_ACCOUNT_NOT_EXIST);
         }
 
         // Current Password Check
         if (!passwordEncoder.matches(passwordChangeRequestDto.getPassword(), adminFound.get().getPassword())) {
-            throw new UserException(ResponseCode.PASSWORD_MISMATCH);
+            throw new UserException(ErrorType.PASSWORD_MISMATCH);
         }
 
         // New Password Set
@@ -122,7 +123,7 @@ public class AdminService {
         admin.setPassword(newPasswordEncoded);
         adminRepository.save(admin);
 
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.PASSWORD_RESET_SUCCESS));
+        return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.PASSWORD_RESET_SUCCESS));
     }
 
     // 4. Found Admin userId
@@ -132,17 +133,17 @@ public class AdminService {
         // Find your ID by name and phone number
         Admin admin = adminRepository.findAdminByNameAndPhoneNum(userSearchRequestDto.getName(), userSearchRequestDto.getPhoneNum());
         if (admin == null) {
-            throw new UserException(ResponseCode.USER_NOT_FOUND);
+            throw new UserException(ErrorType.USER_NOT_FOUND);
         }
 
         // Send ID After Email Authentication
         if (emailService.verifyEmailCode(userSearchRequestDto.getEmail(), userSearchRequestDto.getCode())) {
             emailService.sendUserSearchEmail(userSearchRequestDto.getEmail(), admin.getUserId());
         } else {
-            throw new UserException(ResponseCode.AUTH_FAILED);
+            throw new UserException(ErrorType.AUTH_FAILED);
         }
 
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.FIND_USER_ID));
+        return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.FIND_USER_ID));
     }
 
     // 5. Reset Admin Password
@@ -152,7 +153,7 @@ public class AdminService {
         Admin admin = adminRepository.findAdminByNameAndPhoneNumAndUserId(passwordResetRequestDto.getName(), passwordResetRequestDto.getPhoneNum(), passwordResetRequestDto.getUserId());
 
         if (admin == null) {
-            throw new UserException(ResponseCode.USER_NOT_FOUND);
+            throw new UserException(ErrorType.USER_NOT_FOUND);
         }
 
         // Send a new password after email authentication
@@ -167,10 +168,10 @@ public class AdminService {
 
             emailService.sendPasswordResetEmail(passwordResetRequestDto.getEmail(), newPassword);
         } else {
-            throw new UserException(ResponseCode.AUTH_FAILED);
+            throw new UserException(ErrorType.AUTH_FAILED);
         }
 
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.PASSWORD_RESET_SUCCESS));
+        return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.PASSWORD_RESET_SUCCESS));
     }
 
     // 6. Create LobbyId
@@ -182,7 +183,7 @@ public class AdminService {
 
         // Issued Check
         if(company.getLobbyIdIssued()){
-            throw new CompanyException(ResponseCode.LOOBBYID_ALREADY_DONE);
+            throw new CompanyException(ErrorType.LOOBBYID_ALREADY_DONE);
         }
 
         // Lobby ID Data
@@ -213,7 +214,7 @@ public class AdminService {
         // CompanyRepo Save
         companyRepository.save(company);
 
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.LOBBYID_SIGN_UP, "이메일을 확인 하세요"));
+        return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.LOBBYID_SIGN_UP));
     }
 
     // Method : Generating a temporary password
@@ -230,10 +231,10 @@ public class AdminService {
                 .toString();
     }
 
-    // Method : Generating a temporary Id
+    // Method : Generating a temporary id
     private String generateRandomId() {
-        int leftLimit = 48; // number '0'
-        int rightLimit = 122; // alphabet 'z'
+        int leftLimit = 48;                     // number '0'
+        int rightLimit = 122;                   // alphabet 'z'
         int targetStringLength = 6;
         Random random = new Random();
 

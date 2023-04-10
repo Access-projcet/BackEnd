@@ -1,6 +1,6 @@
 package com.solver.solver_be.global.exception.exceptionType;
 
-import com.solver.solver_be.global.type.ResponseCode;
+import com.solver.solver_be.global.type.ErrorType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GlobalException extends RuntimeException {
 
-    private ResponseCode statusCode;
-    public GlobalException(ResponseCode statusCode) {
+    private ErrorType statusCode;
+    public GlobalException(ErrorType statusCode) {
         this.statusCode = statusCode;
     }
 }

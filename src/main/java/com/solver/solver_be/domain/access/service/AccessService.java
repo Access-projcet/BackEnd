@@ -16,7 +16,8 @@ import com.solver.solver_be.global.exception.exceptionType.AccessRecordException
 import com.solver.solver_be.global.exception.exceptionType.UserException;
 import com.solver.solver_be.global.exception.exceptionType.VisitFormException;
 import com.solver.solver_be.global.response.GlobalResponseDto;
-import com.solver.solver_be.global.type.ResponseCode;
+import com.solver.solver_be.global.type.ErrorType;
+import com.solver.solver_be.global.type.SuccessType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -47,13 +48,13 @@ public class AccessService {
 
         // Guest check
         Guest guest = guestRepository.findByName(accessInRequestDto.getName()).orElseThrow(
-                () -> new UserException(ResponseCode.USER_NOT_FOUND)
+                () -> new UserException(ErrorType.USER_NOT_FOUND)
         );
 
         // Get VisitFormList By Info
         List<VisitForm> visitForms = visitFormRepository.findByGuestAndStartTimeBetweenAndAdminCompany(guest, startTimeBeforeOneHour, startTimeAfterOneHour, admin.getCompany());
         if (visitForms == null) {
-            throw new VisitFormException(ResponseCode.VISITFORM_NOT_FOUND);
+            throw new VisitFormException(ErrorType.VISITFORM_NOT_FOUND);
         }
 
         // Get VisitForm by Time
@@ -68,12 +69,12 @@ public class AccessService {
                 }
             }
             if (visitForm == null) {
-                throw new VisitFormException(ResponseCode.VISITFORM_NOT_FOUND);
+                throw new VisitFormException(ErrorType.VISITFORM_NOT_FOUND);
             }
         } else if (visitForms.size() == 1) {
             visitForm = visitForms.get(0);
         } else {
-            throw new VisitFormException(ResponseCode.VISITFORM_NOT_FOUND);
+            throw new VisitFormException(ErrorType.VISITFORM_NOT_FOUND);
         }
 
         // Visit completed
@@ -83,7 +84,7 @@ public class AccessService {
         // Already CheckIn Check
         Optional <Access> accessCheck = accessRepository.findByVisitFormId(visitForm.getId());
         if(accessCheck.isPresent() && accessCheck.get().getStatus()){
-            throw new AccessException(ResponseCode.ACCESS_IN_ALREADY_DONE);
+            throw new AccessException(ErrorType.ACCESS_IN_ALREADY_DONE);
         }
 
         // Save AccessRepo
@@ -92,7 +93,7 @@ public class AccessService {
         // Save AccessRecordRepo
         accessRecordRepository.save(AccessRecord.of(nowTime, null, access));
 
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.ACCESS_IN_SUCCESS));
+        return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.ACCESS_IN_SUCCESS));
     }
 
     // 2. Access Out
@@ -104,17 +105,17 @@ public class AccessService {
 
         // Access Check
         Access access = accessRepository.findLatestByGuestName(accessRequestDto.getName()).orElseThrow(
-                () -> new UserException(ResponseCode.USER_NOT_FOUND)
+                () -> new UserException(ErrorType.USER_NOT_FOUND)
         );
 
         // Already Checkout Check
         if(!access.getStatus()){
-            throw new AccessException(ResponseCode.ACCESS_OUT_ALREADY_DONE);
+            throw new AccessException(ErrorType.ACCESS_OUT_ALREADY_DONE);
         }
 
         // AccessRecord Check (Latest)
         AccessRecord accessRecord = accessRecordRepository.findLatestAccessRecordByAccess(access).orElseThrow(
-                () -> new AccessRecordException(ResponseCode.ACCESS_RECORD_NOT_FOUND)
+                () -> new AccessRecordException(ErrorType.ACCESS_RECORD_NOT_FOUND)
         );
 
         // Set AccessRecord Out and Save Repo
@@ -125,7 +126,7 @@ public class AccessService {
         access.setStatus(false);
         accessRepository.save(access);
 
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.ACCESS_OUT_SUCCESS));
+        return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.ACCESS_OUT_SUCCESS));
     }
 
     // 3. Get AccessStatus
@@ -159,6 +160,6 @@ public class AccessService {
             accessStatusResponseDtoList.add(accessStatusResponseDto);
         }
 
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.ACCESS_STATUS_SUCCESS, accessStatusResponseDtoList));
+        return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.ACCESS_STATUS_SUCCESS, accessStatusResponseDtoList));
     }
 }

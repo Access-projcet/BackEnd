@@ -2,7 +2,8 @@ package com.solver.solver_be.global.util.sms.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.solver.solver_be.global.response.GlobalResponseDto;
-import com.solver.solver_be.global.type.ResponseCode;
+import com.solver.solver_be.global.type.ErrorType;
+import com.solver.solver_be.global.type.SuccessType;
 import com.solver.solver_be.global.util.sms.dto.MessageRequestDto;
 import com.solver.solver_be.global.util.sms.dto.SmsResponseDto;
 import com.solver.solver_be.global.util.sms.service.SmsService;
@@ -26,6 +27,6 @@ public class SmsController {
     @PostMapping("/sms/send")
     public  ResponseEntity<GlobalResponseDto> sendSms(@RequestBody MessageRequestDto messageDto) throws JsonProcessingException, RestClientException, URISyntaxException, InvalidKeyException, NoSuchAlgorithmException, UnsupportedEncodingException {
         SmsResponseDto response = smsService.sendSms(messageDto);
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.SIGN_UP_SUCCESS,response));
+        return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.SIGN_UP_SUCCESS,response));
     }
 }

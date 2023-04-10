@@ -2,7 +2,7 @@ package com.solver.solver_be.global.security.webSecurity;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.solver.solver_be.global.response.GlobalResponseDto;
-import com.solver.solver_be.global.type.ResponseCode;
+import com.solver.solver_be.global.type.ErrorType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -19,32 +19,30 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        ResponseCode exception = (ResponseCode) request.getAttribute("exception");
+        ErrorType exception = (ErrorType) request.getAttribute("exception");
 
-        if (exception.equals(ResponseCode.NOT_VALID_REQUEST)) {
-            exceptionHandler(response, ResponseCode.NOT_VALID_REQUEST);
+        if (exception.equals(ErrorType.NOT_VALID_REQUEST)) {
+            exceptionHandler(response, ErrorType.NOT_VALID_REQUEST);
             return;
         }
-
-        if (exception.equals(ResponseCode.TOKEN_NOT_FOUND)) {
-            exceptionHandler(response, ResponseCode.TOKEN_NOT_FOUND);
+        if (exception.equals(ErrorType.TOKEN_NOT_FOUND)) {
+            exceptionHandler(response, ErrorType.TOKEN_NOT_FOUND);
             return;
         }
-
-        if (exception.equals(ResponseCode.NOT_VALID_TOKEN)) {
-            exceptionHandler(response, ResponseCode.NOT_VALID_TOKEN);
+        if (exception.equals(ErrorType.NOT_VALID_TOKEN)) {
+            exceptionHandler(response, ErrorType.NOT_VALID_TOKEN);
             return;
         }
-        if (exception.equals(ResponseCode.NOT_VALID_REFRESH_TOKEN)) {
-            exceptionHandler(response, ResponseCode.NOT_VALID_REFRESH_TOKEN);
+        if (exception.equals(ErrorType.NOT_VALID_REFRESH_TOKEN)) {
+            exceptionHandler(response, ErrorType.NOT_VALID_REFRESH_TOKEN);
             return;
         }
-        if (exception.equals(ResponseCode.USER_NOT_FOUND)) {
-            exceptionHandler(response, ResponseCode.USER_NOT_FOUND);
+        if (exception.equals(ErrorType.USER_NOT_FOUND)) {
+            exceptionHandler(response, ErrorType.USER_NOT_FOUND);
         }
     }
 
-    public void exceptionHandler(HttpServletResponse response, ResponseCode error) {
+    public void exceptionHandler(HttpServletResponse response, ErrorType error) {
         response.setStatus(error.getStatusCode());
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");

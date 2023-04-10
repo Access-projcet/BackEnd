@@ -1,10 +1,10 @@
 package com.solver.solver_be.global.exception.exceptionType;
 
-import com.solver.solver_be.global.type.ResponseCode;
+import com.solver.solver_be.global.type.ErrorType;
 
 public class AccessException extends GlobalException{
 
-    public AccessException(ResponseCode statusCode) {
+    public AccessException(ErrorType statusCode) {
         super(statusCode);
     }
 }

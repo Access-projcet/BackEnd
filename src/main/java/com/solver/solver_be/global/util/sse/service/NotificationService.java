@@ -1,12 +1,10 @@
 package com.solver.solver_be.global.util.sse.service;
 
 import com.solver.solver_be.domain.user.entity.Admin;
-import com.solver.solver_be.global.exception.exceptionType.GlobalException;
 import com.solver.solver_be.global.exception.exceptionType.NotificationException;
-import com.solver.solver_be.global.exception.exceptionType.UserException;
 import com.solver.solver_be.global.response.GlobalResponseDto;
-import com.solver.solver_be.global.security.webSecurity.UserDetailsImpl;
-import com.solver.solver_be.global.type.ResponseCode;
+import com.solver.solver_be.global.type.ErrorType;
+import com.solver.solver_be.global.type.SuccessType;
 import com.solver.solver_be.global.util.sse.dto.NotificationResponseDto;
 import com.solver.solver_be.global.util.sse.entity.Notification;
 import com.solver.solver_be.global.util.sse.repository.EmitterRepository;
@@ -111,18 +109,18 @@ public class NotificationService {
     public ResponseEntity<GlobalResponseDto> isReadNotification(Admin admin, Long id){
         Optional<Notification> notification = notificationRepository.findById(id);
         if(notification.isEmpty())
-            throw new NotificationException(ResponseCode.NOTIFICATION_NOT_FOUND);
+            throw new NotificationException(ErrorType.NOTIFICATION_NOT_FOUND);
 
         notification.get().read();
 
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.NOTIFICATIONS_READ_SUCCESS));
+        return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.NOTIFICATIONS_READ_SUCCESS));
     }
 
     // Delete a notification
     @Transactional
     public ResponseEntity<GlobalResponseDto> deleteByNotifications(Long notificationId) {
         notificationRepository.deleteById(notificationId);
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.NOTIFICATION_DELETE_SUCCESS));
+        return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.NOTIFICATION_DELETE_SUCCESS));
     }
 
     // Delete all notifications
@@ -130,7 +128,7 @@ public class NotificationService {
     public ResponseEntity<GlobalResponseDto> deleteAllByNotifications(Admin admin) {
         Long adminId = admin.getId();
         notificationRepository.deleteAllByAdminId(adminId);
-        return ResponseEntity.ok(GlobalResponseDto.of(ResponseCode.NOTIFICATIONS_DELETE_SUCCESS));
+        return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.NOTIFICATIONS_DELETE_SUCCESS));
     }
 
     //==================================== Method ==========================================
