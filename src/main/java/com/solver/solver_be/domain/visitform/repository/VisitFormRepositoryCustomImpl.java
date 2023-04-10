@@ -20,7 +20,7 @@ public class VisitFormRepositoryCustomImpl implements CustomVisitFormRepository 
 
     // 1. Search VisitForm By Keyword
     @Override
-    public List<VisitForm> findByGuestNameOrLocationOrAdminNameOrStartDateOrEndDateOrPurposeAndStatus(String guestName, String location, String adminName, String startDate, String endDate, String purpose, String status) {
+    public List<VisitForm> findByGuestNameOrLocationOrAdminNameOrStartDateOrEndDateOrPurposeAndStatus(String guestName, String location, String adminName, LocalDate startDate, LocalDate endDate, String purpose, String status) {
 
         BooleanBuilder builder = new BooleanBuilder();
 
@@ -34,10 +34,10 @@ public class VisitFormRepositoryCustomImpl implements CustomVisitFormRepository 
             builder.or(visitForm.admin.name.eq(adminName));
         }
         if (startDate != null) {
-            builder.or(visitForm.startDate.eq(LocalDate.parse(startDate)));
+            builder.or(visitForm.startDate.eq(startDate));
         }
         if (endDate != null) {
-            builder.or(visitForm.endDate.eq(LocalDate.parse(endDate)));
+            builder.or(visitForm.endDate.eq(endDate));
         }
         if (purpose != null) {
             builder.or(visitForm.purpose.eq(purpose));

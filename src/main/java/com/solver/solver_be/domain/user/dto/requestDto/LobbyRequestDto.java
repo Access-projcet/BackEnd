@@ -1,4 +1,4 @@
-package com.solver.solver_be.domain.user.dto;
+package com.solver.solver_be.domain.user.dto.requestDto;
 
 import lombok.Getter;
 

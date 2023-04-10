@@ -14,14 +14,15 @@ import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.util.Optional;
-import java.util.Random;
+
+import static com.solver.solver_be.domain.user.service.InfoProvider.getRandomTarget;
 
 @Service
 @RequiredArgsConstructor
 public class EmailService {
 
-    private final JavaMailSender mailSender;
     private final RedisUtil redisUtil;
+    private final JavaMailSender mailSender;
     private final CompanyRepository companyRepository;
 
     @Value("${spring.mail.username}")
@@ -137,12 +138,6 @@ public class EmailService {
         int leftLimit = 48; // number '0'
         int rightLimit = 122; // alphabet 'z'
         int targetStringLength = 6;
-        Random random = new Random();
-
-        return random.ints(leftLimit, rightLimit + 1)
-                .filter(i -> (i <=57 || i >=65) && (i <= 90 || i>= 97))
-                .limit(targetStringLength)
-                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-                .toString();
+        return getRandomTarget(targetStringLength, leftLimit, rightLimit);
     }
 }

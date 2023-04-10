@@ -1,7 +1,7 @@
 package com.solver.solver_be.domain.user.entity;
 
 import com.solver.solver_be.domain.company.entity.Company;
-import com.solver.solver_be.domain.user.dto.AdminSignupRequestDto;
+import com.solver.solver_be.domain.user.dto.requestDto.AdminSignupRequestDto;
 import com.solver.solver_be.global.type.UserRoleEnum;
 import lombok.*;
 
