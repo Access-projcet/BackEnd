@@ -34,4 +34,10 @@ public class AccessController {
     public ResponseEntity<GlobalResponseDto> getAccessStatus(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return accessService.getAccessStatus(userDetails.getAdmin());
     }
+
+    // 4. Get Access List
+    @GetMapping("/access")
+    public ResponseEntity<GlobalResponseDto> getAccessList(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return accessService.getAccessList(userDetails.getAdmin());
+    }
 }

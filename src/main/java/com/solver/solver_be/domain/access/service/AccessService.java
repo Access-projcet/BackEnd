@@ -1,5 +1,6 @@
 package com.solver.solver_be.domain.access.service;
 
+import com.solver.solver_be.domain.access.dto.AccessResponseDto;
 import com.solver.solver_be.domain.access.dto.AccessRequestDto;
 import com.solver.solver_be.domain.access.entity.Access;
 import com.solver.solver_be.domain.access.repository.AccessRepository;
@@ -9,6 +10,7 @@ import com.solver.solver_be.domain.user.entity.Admin;
 import com.solver.solver_be.domain.user.entity.Guest;
 import com.solver.solver_be.domain.access.dto.AccessStatusResponseDto;
 import com.solver.solver_be.domain.user.repository.GuestRepository;
+import com.solver.solver_be.domain.visitform.dto.VisitFormResponseDto;
 import com.solver.solver_be.domain.visitform.entity.VisitForm;
 import com.solver.solver_be.domain.visitform.repository.VisitFormRepository;
 import com.solver.solver_be.global.exception.exceptionType.AccessException;
@@ -82,17 +84,21 @@ public class AccessService {
         visitFormRepository.save(visitForm);
 
         // Already CheckIn Check
-        Optional <Access> accessCheck = accessRepository.findByVisitFormId(visitForm.getId());
-        if(accessCheck.isPresent() && accessCheck.get().getStatus()){
-            throw new AccessException(ErrorType.ACCESS_IN_ALREADY_DONE);
+        Optional<Access> accessCheck = accessRepository.findByVisitFormId(visitForm.getId());
+        if (accessCheck.isPresent()) {
+            if (accessCheck.get().getStatus()) {
+                throw new AccessException(ErrorType.ACCESS_IN_ALREADY_DONE);
+            }
+            accessCheck.get().setStatus(true);
+            accessRepository.save(accessCheck.get());
+            accessRecordRepository.save(AccessRecord.of(nowTime, null, accessCheck.get()));
         }
-
-        // Save AccessRepo
-        Access access = accessRepository.save(Access.of(guest, visitForm.getAdmin(), visitForm,true));
-
-        // Save AccessRecordRepo
-        accessRecordRepository.save(AccessRecord.of(nowTime, null, access));
-
+        else{
+            // Save AccessRepo
+            Access access = accessRepository.save(Access.of(guest, visitForm.getAdmin(), visitForm, true));
+            // Save AccessRecordRepo
+            accessRecordRepository.save(AccessRecord.of(nowTime, null, access));
+        }
         return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.ACCESS_IN_SUCCESS));
     }
 
@@ -104,17 +110,18 @@ public class AccessService {
         LocalDateTime outTime = LocalDateTime.now();
 
         // Access Check
-        Access access = accessRepository.findLatestByGuestName(accessRequestDto.getName()).orElseThrow(
+        Access access = accessRepository.findLatestByGuestNameAndGuestPhoneNum(accessRequestDto.getName(), accessRequestDto.getPhoneNum()).orElseThrow(
                 () -> new UserException(ErrorType.USER_NOT_FOUND)
         );
 
         // Already Checkout Check
-        if(!access.getStatus()){
+        if (!access.getStatus()) {
             throw new AccessException(ErrorType.ACCESS_OUT_ALREADY_DONE);
         }
 
+
         // AccessRecord Check (Latest)
-        AccessRecord accessRecord = accessRecordRepository.findLatestAccessRecordByAccess(access).orElseThrow(
+        AccessRecord accessRecord = accessRecordRepository.findTopByAccessOrderByInTimeDesc(access).orElseThrow(
                 () -> new AccessRecordException(ErrorType.ACCESS_RECORD_NOT_FOUND)
         );
 
@@ -162,4 +169,21 @@ public class AccessService {
 
         return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.ACCESS_STATUS_SUCCESS, accessStatusResponseDtoList));
     }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<GlobalResponseDto> getAccessList(Admin admin) {
+
+        // Get VisitFormList By AdminId
+        List<Access> accessList = accessRepository.findByAdminId(admin.getId());
+
+        // Create VisitFormResponseDtoList
+        List<AccessResponseDto> accessResponseDtoList = new ArrayList<>();
+        for (Access access : accessList) {
+            AccessRecord accessRecord = accessRecordRepository.findFirstByAccessOrderByInTimeDesc(access);
+            accessResponseDtoList.add(AccessResponseDto.of(access.getVisitForm(), accessRecord));
+        }
+
+        return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.VISITFORM_GET_SUCCESS, accessResponseDtoList));
+    }
 }
+

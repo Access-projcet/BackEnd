@@ -8,5 +8,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface AccessRecordRepository extends JpaRepository <AccessRecord,Long> {
-    Optional<AccessRecord> findLatestAccessRecordByAccess(Access access);
+    AccessRecord findByAccessId(Long id);
+
+
+    Optional<AccessRecord> findTopByAccessOrderByInTimeDesc(Access access);
+
+    AccessRecord findFirstByAccessOrderByInTimeDesc(Access access);
 }
