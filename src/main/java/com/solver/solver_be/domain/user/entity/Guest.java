@@ -1,6 +1,6 @@
 package com.solver.solver_be.domain.user.entity;
 
-import com.solver.solver_be.domain.user.dto.GuestSignupRequestDto;
+import com.solver.solver_be.domain.user.dto.requestDto.GuestSignupRequestDto;
 import com.solver.solver_be.global.type.UserRoleEnum;
 import lombok.*;
 
