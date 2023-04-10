@@ -1,6 +1,7 @@
 package com.solver.solver_be.domain.user.service;
 
-import com.solver.solver_be.domain.user.dto.*;
+import com.solver.solver_be.domain.user.dto.requestDto.*;
+import com.solver.solver_be.domain.user.dto.responseDto.LoginResponseDto;
 import com.solver.solver_be.domain.user.entity.Admin;
 import com.solver.solver_be.domain.user.entity.Guest;
 import com.solver.solver_be.global.type.SuccessType;
@@ -31,6 +32,7 @@ import java.util.Random;
 public class GuestService {
 
     private final JwtUtil jwtUtil;
+    private final InfoProvider infoProvider;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
     private final GuestRepository guestRepository;
@@ -150,31 +152,18 @@ public class GuestService {
         if (emailService.verifyEmailCode(passwordResetRequestDto.getEmail(), passwordResetRequestDto.getCode())) {
 
             // Provisional Password Issue
-            String newPassword = generateRandomPassword();
+            String newPassword = infoProvider.generateRandomPassword();
 
             // Replace existing password
             guest.setPassword(passwordEncoder.encode(newPassword));
             guestRepository.save(guest);
 
             emailService.sendPasswordResetEmail(passwordResetRequestDto.getEmail(), newPassword);
+
         }else {
             throw new UserException(ErrorType.AUTH_FAILED);
         }
 
         return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.PASSWORD_RESET_SUCCESS));
-    }
-
-    // Method : Generating a temporary password
-    private String generateRandomPassword() {
-        int leftLimit = 48; // number '0'
-        int rightLimit = 122; // alphabet 'z'
-        int targetStringLength = 10;
-        Random random = new Random();
-
-        return random.ints(leftLimit, rightLimit + 1)
-                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
-                .limit(targetStringLength)
-                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-                .toString();
     }
 }

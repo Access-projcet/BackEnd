@@ -1,4 +1,4 @@
-package com.solver.solver_be.domain.user.dto;
+package com.solver.solver_be.domain.user.dto.responseDto;
 
 import com.solver.solver_be.domain.user.entity.Admin;
 import com.solver.solver_be.domain.user.entity.Guest;

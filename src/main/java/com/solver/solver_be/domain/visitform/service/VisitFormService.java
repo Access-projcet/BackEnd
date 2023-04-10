@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -28,8 +29,8 @@ import java.util.*;
 public class VisitFormService {
 
     private final AdminRepository adminRepository;
-    private final VisitFormRepository visitFormRepository;
     private final NotificationService notificationService;
+    private final VisitFormRepository visitFormRepository;
 
     // 1. Create VisitForm (Guest)
     @Transactional
@@ -172,78 +173,14 @@ public class VisitFormService {
                 requestDto.getGuestName(),
                 requestDto.getLocation(),
                 requestDto.getAdminName(),
-                requestDto.getStartDate(),
-                requestDto.getEndDate(),
+                LocalDate.parse(requestDto.getStartDate()),
+                LocalDate.parse(requestDto.getEndDate()),
                 requestDto.getPurpose(),
                 requestDto.getStatus()
         );
 
         return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.VISITFORM_SEARCH_SUCCESS, visitFormList));
     }
-
-    // 6. Sort VisitForms
-    @Transactional
-    public ResponseEntity<GlobalResponseDto> sortVisitForms(Admin admin, String orderBy, Boolean isAsc) {
-        List<VisitForm> visitFormList;
-        if (isAsc) {
-            // Sort VisitFormList By orderBy And Asc
-            switch (orderBy) {
-                case "guestName":
-                    visitFormList = visitFormRepository.findByAdminIdOrderByGuestNameAsc(admin.getId());
-                    break;
-                case "location":
-                    visitFormList = visitFormRepository.findByAdminIdOrderByLocationAsc(admin.getId());
-                    break;
-                case "target":
-                    visitFormList = visitFormRepository.findByAdminIdOrderByAdminNameAsc(admin.getId());
-                    break;
-                case "startDate":
-                    visitFormList = visitFormRepository.findByAdminIdOrderByStartDateAsc(admin.getId());
-                    break;
-                case "endDate":
-                    visitFormList = visitFormRepository.findByAdminIdOrderByEndDateAsc(admin.getId());
-                    break;
-                case "purpose":
-                    visitFormList = visitFormRepository.findByAdminIdOrderByPurposeAsc(admin.getId());
-                    break;
-                case "status":
-                    visitFormList = visitFormRepository.findByAdminIdOrderByStatusAsc(admin.getId());
-                    break;
-                default:
-                    visitFormList = visitFormRepository.findByAdminId(admin.getId());
-            }
-        } else {
-            // Sort VisitFormList By orderBy And Desc
-            switch (orderBy) {
-                case "guestName":
-                    visitFormList = visitFormRepository.findByAdminIdOrderByGuestNameDesc(admin.getId());
-                    break;
-                case "location":
-                    visitFormList = visitFormRepository.findByAdminIdOrderByLocationDesc(admin.getId());
-                    break;
-                case "target":
-                    visitFormList = visitFormRepository.findByAdminIdOrderByAdminNameDesc(admin.getId());
-                    break;
-                case "startDate":
-                    visitFormList = visitFormRepository.findByAdminIdOrderByStartDateDesc(admin.getId());
-                    break;
-                case "endDate":
-                    visitFormList = visitFormRepository.findByAdminIdOrderByEndDateDesc(admin.getId());
-                    break;
-                case "purpose":
-                    visitFormList = visitFormRepository.findByAdminIdOrderByPurposeDesc(admin.getId());
-                    break;
-                case "status":
-                    visitFormList = visitFormRepository.findByAdminIdOrderByStatusDesc(admin.getId());
-                    break;
-                default:
-                    visitFormList = visitFormRepository.findByAdminId(admin.getId());
-            }
-        }
-
-        return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.VISITFORM_SEARCH_SUCCESS, visitFormList));
-    }
-
 
     // Method : Get User's VisitForm List
     private VisitForm getVisitFormById(Long id) {
