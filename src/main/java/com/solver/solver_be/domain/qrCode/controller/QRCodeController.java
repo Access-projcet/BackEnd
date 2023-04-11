@@ -39,8 +39,9 @@ public class QRCodeController {
     // 2. Send QRCode Message
     @PostMapping("/qrCode")
     public ResponseEntity<GlobalResponseDto> sendQRCode(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody QRCodeRequestDto qrCodeRequestDto) throws JsonProcessingException, RestClientException, URISyntaxException, InvalidKeyException, NoSuchAlgorithmException, UnsupportedEncodingException {
+        String sendNumber = userDetails.getGuest().getPhoneNum().replaceAll("-", "");
         MessageRequestDto messageRequestDto = MessageRequestDto.builder()
-                .to(userDetails.getGuest().getPhoneNum())
+                .to(sendNumber)
                 .content(qrCodeRequestDto.getImgUrl())
                 .build();
         SmsResponseDto response = smsService.sendSms(messageRequestDto);
