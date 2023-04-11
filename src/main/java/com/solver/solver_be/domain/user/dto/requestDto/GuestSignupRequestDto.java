@@ -9,7 +9,7 @@ import javax.validation.constraints.Pattern;
 public class GuestSignupRequestDto {
 
     @NotBlank(message = "아이디는 필수입니다.")
-    @Pattern(regexp = "^[a-z0-9]{4,10}$", message = "아이디는 4~10자 영문 대 소문자, 숫자를 사용하세요.")
+    @Pattern(regexp = "^[a-zA-Z0-9]{4,10}$", message = "아이디는 4~10자 영문 대 소문자, 숫자를 사용하세요.")
     private String userId;
 
     @NotBlank(message = "비밀번호는 필수입니다.")

@@ -53,29 +53,29 @@ public class VisitForm extends TimeStamped {
     @JoinColumn(name = "ADMIN_ID")      // 찾아갈 분 (Admin)
     private Admin admin;
 
-    public static VisitForm of(VisitFormRequestDto visitorRequestDto, Guest guest, Admin admin) {
+    public static VisitForm of(VisitFormRequestDto visitFormRequestDto, Guest guest, Admin admin) {
         return VisitForm.builder()
-                .location(visitorRequestDto.getLocation())
-                .place(visitorRequestDto.getPlace())
-                .purpose(visitorRequestDto.getPurpose())
-                .startDate(LocalDate.parse(visitorRequestDto.getStartDate()))
-                .endDate(LocalDate.parse(visitorRequestDto.getEndDate()))
-                .startTime(LocalDateTime.parse(visitorRequestDto.getStartTime()))
-                .endTime(LocalDateTime.parse(visitorRequestDto.getEndTime()))
+                .location(visitFormRequestDto.getLocation())
+                .place(visitFormRequestDto.getPlace())
+                .purpose(visitFormRequestDto.getPurpose())
+                .startDate(LocalDate.parse(visitFormRequestDto.getStartDate()))
+                .endDate(LocalDate.parse(visitFormRequestDto.getEndDate()))
+                .startTime(LocalDateTime.parse(visitFormRequestDto.getStartTime()))
+                .endTime(LocalDateTime.parse(visitFormRequestDto.getEndTime()))
                 .status("대기")
                 .guest(guest)
                 .admin(admin)
                 .build();
     }
 
-    public void update(VisitFormRequestDto visitorRequestDto) {
-        this.location = visitorRequestDto.getLocation();
-        this.place = visitorRequestDto.getPlace();
-        this.purpose = visitorRequestDto.getPurpose();
-        this.startDate = LocalDate.parse(visitorRequestDto.getStartDate());
-        this.endDate = LocalDate.parse(visitorRequestDto.getEndDate());
-        this.startTime = LocalDateTime.parse(visitorRequestDto.getStartTime());
-        this.endTime = LocalDateTime.parse(visitorRequestDto.getEndTime());
+    public void update(VisitFormRequestDto visitFormRequestDto) {
+        this.location = visitFormRequestDto.getLocation();
+        this.place = visitFormRequestDto.getPlace();
+        this.purpose = visitFormRequestDto.getPurpose();
+        this.startDate = LocalDate.parse(visitFormRequestDto.getStartDate());
+        this.endDate = LocalDate.parse(visitFormRequestDto.getEndDate());
+        this.startTime = LocalDateTime.parse(visitFormRequestDto.getStartTime());
+        this.endTime = LocalDateTime.parse(visitFormRequestDto.getEndTime());
     }
 
     public void updateStatus(String status) {
