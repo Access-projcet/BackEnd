@@ -168,13 +168,23 @@ public class VisitFormService {
     @Transactional
     public ResponseEntity<GlobalResponseDto> searchVisitForms(VisitFormSearchRequestDto requestDto, Admin admin) {
 
+        LocalDate startDate = null;
+        if (requestDto.getStartDate() != null) {
+            startDate = LocalDate.parse(requestDto.getStartDate());
+        }
+
+        LocalDate endDate = null;
+        if (requestDto.getEndDate() != null) {
+            endDate = LocalDate.parse(requestDto.getEndDate());
+        }
+
         // Get VisitFormListBy KeyWords
         List<VisitForm> visitFormList = visitFormRepository.findByGuestNameOrLocationOrAdminNameOrStartDateOrEndDateOrPurposeAndStatus(
                 requestDto.getGuestName(),
                 requestDto.getLocation(),
                 requestDto.getAdminName(),
-                LocalDate.parse(requestDto.getStartDate()),
-                LocalDate.parse(requestDto.getEndDate()),
+                startDate,
+                endDate,
                 requestDto.getPurpose(),
                 requestDto.getStatus()
         );
