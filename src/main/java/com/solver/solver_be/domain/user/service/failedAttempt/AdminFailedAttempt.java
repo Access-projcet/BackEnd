@@ -20,7 +20,7 @@ public class AdminFailedAttempt {
         // Failed Count Check
         if (failedAttemptCount >= 3) {
             // Last Failed Attempt Time Compare Now Time
-            if (lastFailedAttemptTime.plusHours(2).isBefore(LocalDateTime.now())) {
+            if (lastFailedAttemptTime.plusSeconds(10).isBefore(LocalDateTime.now())) {
                 adminResetFailedAttempt();
             } else {
                 throw new UserException(ErrorType.NOT_IMPOSSIBLE_TRY);
