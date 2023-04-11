@@ -2,7 +2,10 @@ package com.solver.solver_be.domain.visitform.repository;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.solver.solver_be.domain.visitform.dto.VisitFormSearchRequestDto;
 import com.solver.solver_be.domain.visitform.entity.VisitForm;
+import org.springframework.stereotype.Repository;
+
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.List;
@@ -10,7 +13,8 @@ import java.util.List;
 import static com.solver.solver_be.domain.visitform.entity.QVisitForm.visitForm;
 
 
-public class VisitFormRepositoryCustomImpl implements CustomVisitFormRepository {
+@Repository
+public class VisitFormRepositoryCustomImpl{
 
     private final JPAQueryFactory queryFactory;
 
@@ -19,35 +23,36 @@ public class VisitFormRepositoryCustomImpl implements CustomVisitFormRepository 
     }
 
     // 1. Search VisitForm By Keyword
-    @Override
-    public List<VisitForm> findByGuestNameOrLocationOrAdminNameOrStartDateOrEndDateOrPurposeAndStatus(String guestName, String location, String adminName, LocalDate startDate, LocalDate endDate, String purpose, String status) {
+    public List<VisitForm> findAllByContainKeyword(int page, VisitFormSearchRequestDto visitFormSearchRequestDto) {
 
         BooleanBuilder builder = new BooleanBuilder();
-
-        if (guestName != null) {
-            builder.or(visitForm.guest.name.eq(guestName));
+        
+        if(visitFormSearchRequestDto.getGuestName() != null){
+            builder.and(visitForm.guest.name.containsIgnoreCase(visitFormSearchRequestDto.getGuestName()));
         }
-        if (location != null) {
-            builder.or(visitForm.location.eq(location));
+        if(visitFormSearchRequestDto.getLocation() != null){
+            builder.and(visitForm.location.containsIgnoreCase(visitFormSearchRequestDto.getLocation()));
         }
-        if (adminName != null) {
-            builder.or(visitForm.admin.name.eq(adminName));
+        if(visitFormSearchRequestDto.getAdminName() != null){
+            builder.and(visitForm.admin.name.containsIgnoreCase(visitFormSearchRequestDto.getAdminName()));
         }
-        if (startDate != null) {
-            builder.or(visitForm.startDate.eq(startDate));
+        if(visitFormSearchRequestDto.getStartDate() != null){
+            builder.and(visitForm.startDate.goe(LocalDate.parse(visitFormSearchRequestDto.getStartDate())));
         }
-        if (endDate != null) {
-            builder.or(visitForm.endDate.eq(endDate));
+        if(visitFormSearchRequestDto.getEndDate() != null){
+            builder.and(visitForm.endDate.loe(LocalDate.parse(visitFormSearchRequestDto.getEndDate())));
         }
-        if (purpose != null) {
-            builder.or(visitForm.purpose.eq(purpose));
+        if(visitFormSearchRequestDto.getPurpose() != null){
+            builder.and(visitForm.purpose.containsIgnoreCase(visitFormSearchRequestDto.getPurpose()));
         }
-        if (status != null) {
-            builder.or(visitForm.status.eq(status));
+        if(visitFormSearchRequestDto.getStatus() != null){
+            builder.and(visitForm.status.containsIgnoreCase(visitFormSearchRequestDto.getStatus()));
         }
 
         return queryFactory.selectFrom(visitForm)
                 .where(builder)
+                .offset((page-1)*10)
+                .limit(10)
                 .orderBy(
                         visitForm.guest.name.asc(),
                         visitForm.location.asc(),
@@ -58,5 +63,35 @@ public class VisitFormRepositoryCustomImpl implements CustomVisitFormRepository 
                         visitForm.status.asc()
                 )
                 .fetch();
+    }
+    public Long count(VisitFormSearchRequestDto visitFormSearchRequestDto) {
+
+        BooleanBuilder builder = new BooleanBuilder();
+
+        if(visitFormSearchRequestDto.getGuestName() != null){
+            builder.and(visitForm.guest.name.containsIgnoreCase(visitFormSearchRequestDto.getGuestName()));
+        }
+        if(visitFormSearchRequestDto.getLocation() != null){
+            builder.and(visitForm.location.containsIgnoreCase(visitFormSearchRequestDto.getLocation()));
+        }
+        if(visitFormSearchRequestDto.getAdminName() != null){
+            builder.and(visitForm.admin.name.containsIgnoreCase(visitFormSearchRequestDto.getAdminName()));
+        }
+        if(visitFormSearchRequestDto.getStartDate() != null){
+            builder.and(visitForm.startDate.goe(LocalDate.parse(visitFormSearchRequestDto.getStartDate())));
+        }
+        if(visitFormSearchRequestDto.getEndDate() != null){
+            builder.and(visitForm.endDate.loe(LocalDate.parse(visitFormSearchRequestDto.getEndDate())));
+        }
+        if(visitFormSearchRequestDto.getPurpose() != null){
+            builder.and(visitForm.purpose.containsIgnoreCase(visitFormSearchRequestDto.getPurpose()));
+        }
+        if(visitFormSearchRequestDto.getStatus() != null){
+            builder.and(visitForm.status.containsIgnoreCase(visitFormSearchRequestDto.getStatus()));
+        }
+
+        return queryFactory.select(visitForm.count()).from(visitForm)
+                .where(builder)
+                .fetchOne();
     }
 }
