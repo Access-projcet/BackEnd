@@ -8,6 +8,7 @@ import com.solver.solver_be.domain.user.entity.Admin;
 import com.solver.solver_be.domain.user.entity.Guest;
 import com.solver.solver_be.domain.user.repository.AdminRepository;
 import com.solver.solver_be.domain.user.repository.GuestRepository;
+import com.solver.solver_be.domain.user.service.failedAttempt.AdminFailedAttempt;
 import com.solver.solver_be.global.exception.exceptionType.CompanyException;
 import com.solver.solver_be.global.exception.exceptionType.UserException;
 import com.solver.solver_be.global.response.GlobalResponseDto;
@@ -39,6 +40,7 @@ public class AdminService {
     private final AdminRepository adminRepository;
     private final GuestRepository guestRepository;
     private final CompanyRepository companyRepository;
+    private final AdminFailedAttempt adminFailedAttempt;
     private final RefreshTokenRepository refreshTokenRepository;
 
     // 1. Admin SignUp
@@ -140,11 +142,19 @@ public class AdminService {
     @Transactional
     public ResponseEntity<GlobalResponseDto> findAdminSearchId(UserSearchRequestDto userSearchRequestDto) throws MessagingException {
 
-        // Find your ID by name and phone number
+        // Failed Process
+        adminFailedAttempt.adminFailedAttempt();
+
+        // Find Admin Data by name and phone number
         Admin admin = adminRepository.findAdminByNameAndPhoneNum(userSearchRequestDto.getName(), userSearchRequestDto.getPhoneNum());
         if (admin == null) {
+            // Failed Count Up
+            adminFailedAttempt.adminFailedCountUp();
             throw new UserException(ErrorType.USER_NOT_FOUND);
         }
+
+        // Find Success And Reset FailedAttempt
+        adminFailedAttempt.adminResetFailedAttempt();
 
         // Send Admin UserId
         emailService.sendUserSearchEmail(userSearchRequestDto.getEmail(), admin.getUserId());
@@ -156,11 +166,20 @@ public class AdminService {
     @Transactional
     public ResponseEntity<GlobalResponseDto> resetAdminPassword(PasswordResetRequestDto passwordResetRequestDto) throws MessagingException {
 
+        // Failed Process
+        adminFailedAttempt.adminFailedAttempt();
+
+        // Find Admin Data by Name and PhoneNum and UserId
         Admin admin = adminRepository.findAdminByNameAndPhoneNumAndUserId(passwordResetRequestDto.getName(), passwordResetRequestDto.getPhoneNum(), passwordResetRequestDto.getUserId());
 
         if (admin == null) {
+            // Failed Count Up
+            adminFailedAttempt.adminFailedCountUp();
             throw new UserException(ErrorType.USER_NOT_FOUND);
         }
+
+        // Find Success And Reset FailedAttempt
+        adminFailedAttempt.adminResetFailedAttempt();
 
         // Provisional Password Issue
         String newPassword = infoProvider.generateRandomPassword();
@@ -169,6 +188,7 @@ public class AdminService {
         admin.setPassword(passwordEncoder.encode(newPassword));
         adminRepository.save(admin);
 
+        // Send Temporary Password
         emailService.sendPasswordResetEmail(passwordResetRequestDto.getEmail(), newPassword);
 
         return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.PASSWORD_RESET_SUCCESS));
@@ -183,7 +203,7 @@ public class AdminService {
 
         // Issued Check
         if(company.getLobbyIdIssued()){
-            throw new CompanyException(ErrorType.LOOBBYID_ALREADY_DONE);
+            throw new CompanyException(ErrorType.LOBBYID_ALREADY_DONE);
         }
 
         // Lobby ID Data
@@ -216,4 +236,6 @@ public class AdminService {
 
         return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.LOBBYID_SIGN_UP));
     }
+
+
 }

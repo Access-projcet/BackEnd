@@ -6,6 +6,7 @@ import com.solver.solver_be.domain.user.entity.Admin;
 import com.solver.solver_be.domain.user.entity.Guest;
 import com.solver.solver_be.domain.user.repository.AdminRepository;
 import com.solver.solver_be.domain.user.repository.GuestRepository;
+import com.solver.solver_be.domain.user.service.failedAttempt.GuestFailedAttempt;
 import com.solver.solver_be.global.exception.exceptionType.UserException;
 import com.solver.solver_be.global.response.GlobalResponseDto;
 import com.solver.solver_be.global.security.jwt.JwtUtil;
@@ -36,6 +37,7 @@ public class GuestService {
     private final PasswordEncoder passwordEncoder;
     private final GuestRepository guestRepository;
     private final AdminRepository adminRepository;
+    private final GuestFailedAttempt guestFailedAttempt;
     private final RefreshTokenRepository refreshTokenRepository;
 
     // 1. Guest SignUp
@@ -128,13 +130,21 @@ public class GuestService {
     }
 
     @Transactional
-    public ResponseEntity<GlobalResponseDto> findGuestUserData(UserSearchRequestDto userSearchRequestDto) throws MessagingException {
+    public ResponseEntity<GlobalResponseDto> findGuestSearchId(UserSearchRequestDto userSearchRequestDto) throws MessagingException {
+
+        // Failed Process
+        guestFailedAttempt.guestFailedAttempt();
 
         // Find guest data by name and phone number
         Guest guest = guestRepository.findGuestByNameAndPhoneNum(userSearchRequestDto.getName(), userSearchRequestDto.getPhoneNum());
         if (guest == null) {
+            // Failed Count Up
+            guestFailedAttempt.guestFailedCountUp();
             throw new UserException(ErrorType.USER_NOT_FOUND);
         }
+
+        // Find Success And Reset FailedAttempt
+        guestFailedAttempt.guestResetFailedAttempt();
 
         // Send Guest UserId
         emailService.sendUserSearchEmail(userSearchRequestDto.getEmail(), guest.getUserId());
@@ -146,11 +156,20 @@ public class GuestService {
     @Transactional
     public ResponseEntity<GlobalResponseDto> resetGuestPassword(PasswordResetRequestDto passwordResetRequestDto) throws MessagingException {
 
+        // Failed Process
+        guestFailedAttempt.guestFailedAttempt();
+
+        // Find guest data by Name and PhoneNum and UserId
         Guest guest = guestRepository.findGuestByNameAndPhoneNumAndUserId(passwordResetRequestDto.getName(), passwordResetRequestDto.getPhoneNum(), passwordResetRequestDto.getUserId());
 
         if (guest == null) {
+            // Failed Count Up
+            guestFailedAttempt.guestFailedCountUp();
             throw new UserException(ErrorType.USER_NOT_FOUND);
         }
+
+        // Find Success And Reset FailedAttempt
+        guestFailedAttempt.guestResetFailedAttempt();
 
         // Provisional Password Issue
         String newPassword = infoProvider.generateRandomPassword();
@@ -159,6 +178,7 @@ public class GuestService {
         guest.setPassword(passwordEncoder.encode(newPassword));
         guestRepository.save(guest);
 
+        // Send Temporary Password
         emailService.sendPasswordResetEmail(passwordResetRequestDto.getEmail(), newPassword);
 
         return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.PASSWORD_RESET_SUCCESS));
