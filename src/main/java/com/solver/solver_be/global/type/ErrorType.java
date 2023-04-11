@@ -21,7 +21,8 @@ public enum ErrorType {
     PASSWORD_MISMATCH(400, "비밀번호가 일치하지 않습니다."),
     INVALID_COMPANY_TOKEN(400, "유효하지 않은 회사 코드입니다."),
     AUTH_FAILED(400, "이메일 인증 실패" ),
-    LOOBBYID_ALREADY_DONE(400, "로비 아이디가 발급 되어있습니다."),
+    LOBBYID_ALREADY_DONE(400, "로비 아이디가 발급 되어있습니다."),
+    NOT_IMPOSSIBLE_TRY(400, "일정 횟수를 실패하여 일정 시간 시도가 불가능 합니다." ),
 
     // Visitor Fail
     VISITFORM_NOT_FOUND(400, "방문 신청 기록이 없습니다."),

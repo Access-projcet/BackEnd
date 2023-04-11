@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LoginResponseDto {
-    private String companyName;         // 회사 이름
+
     private String name;                // 로그인한 Guest/Admin 이름
     private String phoneNum;            // 로그인한 Guest/Admin 휴대폰 번호
 

@@ -2,14 +2,10 @@ package com.solver.solver_be.domain.company.dto;
 
 import lombok.Getter;
 
-import javax.persistence.Column;
-
 @Getter
 public class CompanyRequestDto {
 
     private String businessNum;         // 사업자 번호
-
-    private String businessCode;        // 회사 인증 Token
 
     private String companyName;         // 회사 이름
 
