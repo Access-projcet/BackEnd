@@ -3,11 +3,13 @@ package com.solver.solver_be.domain.visitform.service;
 import com.solver.solver_be.domain.user.entity.Admin;
 import com.solver.solver_be.domain.user.entity.Guest;
 import com.solver.solver_be.domain.user.repository.AdminRepository;
+import com.solver.solver_be.domain.visitform.dto.VisitFormPageDto;
 import com.solver.solver_be.domain.visitform.dto.VisitFormRequestDto;
 import com.solver.solver_be.domain.visitform.dto.VisitFormResponseDto;
 import com.solver.solver_be.domain.visitform.dto.VisitFormSearchRequestDto;
 import com.solver.solver_be.domain.visitform.entity.VisitForm;
 import com.solver.solver_be.domain.visitform.repository.VisitFormRepository;
+import com.solver.solver_be.domain.visitform.repository.VisitFormRepositoryCustomImpl;
 import com.solver.solver_be.global.exception.exceptionType.VisitFormException;
 import com.solver.solver_be.global.response.GlobalResponseDto;
 import com.solver.solver_be.global.type.ErrorType;
@@ -31,6 +33,7 @@ public class VisitFormService {
     private final AdminRepository adminRepository;
     private final NotificationService notificationService;
     private final VisitFormRepository visitFormRepository;
+    private final VisitFormRepositoryCustomImpl visitFormRepositoryCustomImpl;
 
     // 1. Create VisitForm (Guest)
     @Transactional
@@ -166,30 +169,26 @@ public class VisitFormService {
 
     // 5. Search VisitForms
     @Transactional
-    public ResponseEntity<GlobalResponseDto> searchVisitForms(VisitFormSearchRequestDto requestDto, Admin admin) {
+    public ResponseEntity<GlobalResponseDto> searchVisitForms(int page, VisitFormSearchRequestDto visitFormSearchRequestDto, Admin admin) {
 
         LocalDate startDate = null;
-        if (requestDto.getStartDate() != null) {
-            startDate = LocalDate.parse(requestDto.getStartDate());
+        if (visitFormSearchRequestDto.getStartDate() != null) {
+            startDate = LocalDate.parse(visitFormSearchRequestDto.getStartDate());
         }
 
         LocalDate endDate = null;
-        if (requestDto.getEndDate() != null) {
-            endDate = LocalDate.parse(requestDto.getEndDate());
+        if (visitFormSearchRequestDto.getEndDate() != null) {
+            endDate = LocalDate.parse(visitFormSearchRequestDto.getEndDate());
         }
 
         // Get VisitFormListBy KeyWords
-        List<VisitForm> visitFormList = visitFormRepository.findByGuestNameOrLocationOrAdminNameOrStartDateOrEndDateOrPurposeAndStatus(
-                requestDto.getGuestName(),
-                requestDto.getLocation(),
-                requestDto.getAdminName(),
-                startDate,
-                endDate,
-                requestDto.getPurpose(),
-                requestDto.getStatus()
-        );
+        List<VisitForm> visitFormList = visitFormRepositoryCustomImpl.findAllByContainKeyword(page, visitFormSearchRequestDto);
 
-        return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.VISITFORM_SEARCH_SUCCESS, visitFormList));
+        Long count = visitFormRepositoryCustomImpl.count(visitFormSearchRequestDto);
+
+        Long totalPage = count%10 > 0 ? count/10 + 1 : count/10;
+
+        return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.VISITFORM_SEARCH_SUCCESS, VisitFormPageDto.of(totalPage, visitFormList)));
     }
 
     // Method : Get User's VisitForm List

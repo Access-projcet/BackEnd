@@ -2,6 +2,8 @@ package com.solver.solver_be.domain.visitform.dto;
 
 import lombok.Getter;
 
+import java.time.LocalDate;
+
 @Getter
 public class VisitFormSearchRequestDto {
 
