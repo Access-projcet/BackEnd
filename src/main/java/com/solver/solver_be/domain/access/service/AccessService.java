@@ -158,12 +158,16 @@ public class AccessService {
             List<VisitForm> visitFormByDate = visitFormMap.get(date);
             int applyCount = visitFormByDate.size();
             int approveCount = 0;
+            int accessCount = 0;
             for (VisitForm visitForm : visitFormByDate) {
-                if ("완료".equals(visitForm.getStatus())) {
+                if ("승인".equals(visitForm.getStatus())) {
                     approveCount += 1;
                 }
+                if ("완료".equals(visitForm.getStatus())) {
+                    accessCount += 1;
+                }
             }
-            AccessStatusResponseDto accessStatusResponseDto = AccessStatusResponseDto.of(date, (long) applyCount, (long) approveCount, (long) (applyCount + approveCount));
+            AccessStatusResponseDto accessStatusResponseDto = AccessStatusResponseDto.of(date, (long) applyCount, (long) approveCount, (long) (accessCount));
             accessStatusResponseDtoList.add(accessStatusResponseDto);
         }
 

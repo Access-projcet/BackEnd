@@ -171,6 +171,16 @@ public class VisitFormService {
     @Transactional
     public ResponseEntity<GlobalResponseDto> searchVisitForms(int page, VisitFormSearchRequestDto visitFormSearchRequestDto, Admin admin) {
 
+        LocalDate startDate = null;
+        if (visitFormSearchRequestDto.getStartDate() != null) {
+            startDate = LocalDate.parse(visitFormSearchRequestDto.getStartDate());
+        }
+
+        LocalDate endDate = null;
+        if (visitFormSearchRequestDto.getEndDate() != null) {
+            endDate = LocalDate.parse(visitFormSearchRequestDto.getEndDate());
+        }
+
         // Get VisitFormListBy KeyWords
         List<VisitForm> visitFormList = visitFormRepositoryCustomImpl.findAllByContainKeyword(page, visitFormSearchRequestDto);
 
