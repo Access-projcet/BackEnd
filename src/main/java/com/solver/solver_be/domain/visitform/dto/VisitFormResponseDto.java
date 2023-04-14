@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Getter
@@ -36,8 +37,10 @@ public class VisitFormResponseDto {
 
         String startDateStr = visitForm.getStartDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         String startTimeStr = visitForm.getStartTime().format(formatter);
+        startTimeStr = startTimeStr.substring(0, startTimeStr.length() - 3);  // 초 제거
         String endDateStr = visitForm.getEndDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         String endTimeStr = visitForm.getEndTime().format(formatter);
+        endTimeStr = endTimeStr.substring(0, endTimeStr.length() - 3);  // 초 제거
 
         return VisitFormResponseDto.builder()
                 .id(visitForm.getId())
@@ -61,8 +64,10 @@ public class VisitFormResponseDto {
 
         String startDateStr = visitForm.getStartDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         String startTimeStr = visitForm.getStartTime().format(formatter);
+        startTimeStr = startTimeStr.substring(0, startTimeStr.length() - 3);  // 초 제거
         String endDateStr = visitForm.getEndDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         String endTimeStr = visitForm.getEndTime().format(formatter);
+        endTimeStr = endTimeStr.substring(0, endTimeStr.length() - 3);  // 초 제거
 
         return VisitFormResponseDto.builder()
                 .id(visitForm.getId())
