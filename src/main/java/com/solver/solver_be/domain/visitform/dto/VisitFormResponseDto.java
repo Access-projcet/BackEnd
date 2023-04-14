@@ -32,7 +32,7 @@ public class VisitFormResponseDto {
 
     public static VisitFormResponseDto of(VisitForm visitForm) {
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
 
         String startDateStr = visitForm.getStartDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         String startTimeStr = visitForm.getStartTime().format(formatter);
@@ -57,7 +57,7 @@ public class VisitFormResponseDto {
 
     public static VisitFormResponseDto of(VisitForm visitForm, Guest guest) {
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
 
         String startDateStr = visitForm.getStartDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         String startTimeStr = visitForm.getStartTime().format(formatter);
