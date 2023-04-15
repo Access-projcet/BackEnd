@@ -12,13 +12,12 @@ import com.solver.solver_be.global.exception.exceptionType.CompanyException;
 import com.solver.solver_be.global.exception.exceptionType.UserException;
 import com.solver.solver_be.global.response.GlobalResponseDto;
 import com.solver.solver_be.global.security.jwt.JwtUtil;
-import com.solver.solver_be.global.security.refreshtoken.RefreshToken;
-import com.solver.solver_be.global.security.refreshtoken.RefreshTokenRepository;
 import com.solver.solver_be.global.security.refreshtoken.TokenDto;
 import com.solver.solver_be.global.type.ErrorType;
 import com.solver.solver_be.global.type.SuccessType;
 import com.solver.solver_be.global.type.UserRoleEnum;
 import com.solver.solver_be.global.util.email.service.EmailService;
+import com.solver.solver_be.global.util.redis.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,13 +32,13 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AdminService {
     private final JwtUtil jwtUtil;
+    private final RedisUtil redisUtil;
     private final InfoProvider infoProvider;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
     private final AdminRepository adminRepository;
     private final GuestRepository guestRepository;
     private final CompanyRepository companyRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
 
     // 1. Admin SignUp
     @Transactional
@@ -94,12 +93,11 @@ public class AdminService {
         TokenDto tokenDto = jwtUtil.createAllToken(loginRequestDto.getUserId());
 
         // Granting RefreshToken
-        Optional<RefreshToken> refreshToken = refreshTokenRepository.findAllByUserEmail(loginRequestDto.getUserId());
-        if (refreshToken.isPresent()) {
-            refreshTokenRepository.save(refreshToken.get().updateToken(tokenDto.getRefreshToken()));
+        if (redisUtil.existData(loginRequestDto.getUserId())) {
+            redisUtil.deleteData(loginRequestDto.getUserId());
+            redisUtil.setDataExpire(loginRequestDto.getUserId(), tokenDto.getRefreshToken(), 7 * 24 * 60 * 60 * 1000L);
         } else {
-            RefreshToken newToken = new RefreshToken(tokenDto.getRefreshToken(), loginRequestDto.getUserId());
-            refreshTokenRepository.save(newToken);
+            redisUtil.setDataExpire(loginRequestDto.getUserId(), tokenDto.getRefreshToken(), 7 * 24 * 60 * 60 * 1000L);
         }
         jwtUtil.setHeader(response, tokenDto);
 
