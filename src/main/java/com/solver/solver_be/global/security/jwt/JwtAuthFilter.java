@@ -28,28 +28,26 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String accessToken = jwtUtil.resolveToken(request, "Access");
         String refreshToken = jwtUtil.resolveToken(request, "Refresh");
 
-
         // 1. 토큰이 없는 상황
         if (accessToken == null) {
             request.setAttribute("exception", ErrorType.TOKEN_NOT_FOUND);
             filterChain.doFilter(request, response);
             return;
         }
+
         // 2. 토큰이 유효하지 않은 상황
         if (!jwtUtil.validateToken(accessToken)) {
-            if (refreshToken != null) { // 토큰 만료 후, 재 요청
-                boolean validateRefreshToken = jwtUtil.validateToken(refreshToken);
-                if (validateRefreshToken) { // refreshToken 이 유효
-                    String userEmail = jwtUtil.getUserEmail(refreshToken);
-                    String newAccessToken = jwtUtil.createToken(userEmail, "Access");
-                    response.addHeader(JwtUtil.ACCESS_TOKEN, newAccessToken);
-                    this.setAuthentication(userEmail);
-                } else { // refresh Token 이 유효하지 않음
-                    request.setAttribute("exception", ErrorType.NOT_VALID_REFRESH_TOKEN);
-                }
-            } else { // 토큰 만료
-                request.setAttribute("exception", ErrorType.NOT_VALID_TOKEN);
+            if (refreshToken != null && jwtUtil.validateRefreshToken(refreshToken)) { // 토큰 만료 후, 재 요청
+                String userEmail = jwtUtil.getUserEmail(refreshToken);
+                String newAccessToken = jwtUtil.createToken(userEmail, "Access");
+                response.addHeader(JwtUtil.ACCESS_TOKEN, newAccessToken);
+                this.setAuthentication(userEmail);
+            } else { // refresh Token 이 유효하지 않음
+                request.setAttribute("exception", ErrorType.NOT_VALID_REFRESH_TOKEN);
+                filterChain.doFilter(request, response);
+                return;
             }
+            request.setAttribute("exception", ErrorType.NOT_VALID_TOKEN);
             filterChain.doFilter(request, response);
             return;
         }
@@ -70,5 +68,4 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         SecurityContextHolder.setContext(context);
     }
-
 }

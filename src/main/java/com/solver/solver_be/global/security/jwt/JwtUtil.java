@@ -2,6 +2,7 @@ package com.solver.solver_be.global.security.jwt;
 
 import com.solver.solver_be.global.security.refreshtoken.TokenDto;
 import com.solver.solver_be.global.security.webSecurity.UserDetailsServiceImpl;
+import com.solver.solver_be.global.util.redis.RedisUtil;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +28,8 @@ import java.util.Enumeration;
 public class JwtUtil {
 
     private final UserDetailsServiceImpl userDetailsService;
+    private final RedisUtil redisUtil;
     private static final long ACCESS_TIME = 60 * 60 * 1000L;
-
     private static final long REFRESH_TIME = 7 * 24 * 60 * 60 * 1000L;
     public static final String ACCESS_TOKEN = "Authorization";
     public static final String REFRESH_TOKEN = "RefreshToken";
@@ -100,6 +101,19 @@ public class JwtUtil {
             log.info("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
         }
         return false;
+    }
+
+    // 리프레시 토큰 검증
+    public Boolean validateRefreshToken(String refreshToken){
+
+        if (!validateToken(refreshToken)){
+            return false;
+        }
+
+        String findUserId = getUserEmail(refreshToken);
+        String redisData = redisUtil.getData(findUserId);
+
+        return redisData != null && redisData.equals("Bearer " + refreshToken);
     }
 
     // 토큰에서 사용자 정보 가져오기

@@ -23,14 +23,4 @@ public class RefreshToken {
 
     @NotBlank
     private String userEmail;
-
-    public RefreshToken(String refreshToken, String userEmail) {
-        this.refreshToken = refreshToken;
-        this.userEmail = userEmail;
-    }
-
-    public RefreshToken updateToken(String token) {
-        this.refreshToken = token;
-        return this;
-    }
 }
