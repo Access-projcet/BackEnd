@@ -3,6 +3,7 @@ package com.solver.solver_be.domain.access.entity;
 import com.solver.solver_be.domain.user.entity.Admin;
 import com.solver.solver_be.domain.user.entity.Guest;
 import com.solver.solver_be.domain.visitform.entity.VisitForm;
+import com.solver.solver_be.global.util.TimeStamped;
 import lombok.*;
 
 import javax.persistence.*;
@@ -13,7 +14,7 @@ import javax.persistence.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Access {
+public class Access extends TimeStamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
