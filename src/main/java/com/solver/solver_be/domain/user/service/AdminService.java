@@ -62,7 +62,7 @@ public class AdminService {
         // Get Company By CompanyToken And CompanyName
         Optional<Company> company = companyRepository.findByCompanyTokenAndCompanyName(signupRequestDto.getCompanyToken(), signupRequestDto.getCompanyName());
         if (company.isEmpty()) {
-            throw new UserException(ErrorType.INVALID_COMPANY_TOKEN);
+            throw new CompanyException(ErrorType.INVALID_COMPANY_TOKEN);
         }
 
         // Give Admin UserRole

@@ -8,8 +8,6 @@ import java.util.Optional;
 
 public interface AccessRepository extends JpaRepository<Access, Long> {
 
-    Optional<Access> findLatestByGuestName(String name);
-
     Optional<Access> findByVisitFormId(Long id);
 
     List<Access> findByAdminId(Long id);
