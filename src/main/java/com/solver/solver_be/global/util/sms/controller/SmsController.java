@@ -2,7 +2,6 @@ package com.solver.solver_be.global.util.sms.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.solver.solver_be.global.response.GlobalResponseDto;
-import com.solver.solver_be.global.type.ErrorType;
 import com.solver.solver_be.global.type.SuccessType;
 import com.solver.solver_be.global.util.sms.dto.MessageRequestDto;
 import com.solver.solver_be.global.util.sms.dto.SmsResponseDto;
@@ -24,9 +23,11 @@ import java.security.NoSuchAlgorithmException;
 public class SmsController {
     private final SmsService smsService;
 
+    // 1. Send Short Message Service
     @PostMapping("/sms/send")
     public  ResponseEntity<GlobalResponseDto> sendSms(@RequestBody MessageRequestDto messageDto) throws JsonProcessingException, RestClientException, URISyntaxException, InvalidKeyException, NoSuchAlgorithmException, UnsupportedEncodingException {
         SmsResponseDto response = smsService.sendSms(messageDto);
         return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.SIGN_UP_SUCCESS,response));
     }
+
 }

@@ -31,6 +31,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class AdminService {
+
     private final JwtUtil jwtUtil;
     private final RedisUtil redisUtil;
     private final InfoProvider infoProvider;
@@ -216,6 +217,5 @@ public class AdminService {
 
         return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.LOBBYID_SIGN_UP));
     }
-
 
 }

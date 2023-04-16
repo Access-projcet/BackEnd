@@ -99,6 +99,7 @@ public class AccessService {
             // Save AccessRecordRepo
             accessRecordRepository.save(AccessRecord.of(nowTime, null, access));
         }
+
         return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.ACCESS_IN_SUCCESS));
     }
 
@@ -189,5 +190,6 @@ public class AccessService {
 
         return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.VISITFORM_GET_SUCCESS, accessResponseDtoList));
     }
+
 }
 

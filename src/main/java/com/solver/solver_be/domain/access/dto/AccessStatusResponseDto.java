@@ -26,4 +26,5 @@ public class AccessStatusResponseDto {
                 .date(date)
                 .build();
     }
+
 }

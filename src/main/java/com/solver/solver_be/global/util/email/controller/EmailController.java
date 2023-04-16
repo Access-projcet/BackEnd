@@ -1,7 +1,6 @@
 package com.solver.solver_be.global.util.email.controller;
 
 import com.solver.solver_be.global.response.GlobalResponseDto;
-import com.solver.solver_be.global.type.ErrorType;
 import com.solver.solver_be.global.type.SuccessType;
 import com.solver.solver_be.global.util.email.dto.EmailRequestDto;
 import com.solver.solver_be.global.util.email.service.EmailService;
@@ -32,4 +31,5 @@ public class EmailController {
         emailService.sendAuthCode(emailRequestDto);
         return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.EMAIL_CHECK));
     }
+
 }

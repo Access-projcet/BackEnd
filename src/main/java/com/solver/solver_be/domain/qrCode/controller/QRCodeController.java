@@ -47,4 +47,5 @@ public class QRCodeController {
         SmsResponseDto response = smsService.sendSms(messageRequestDto);
         return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.SIGN_UP_SUCCESS, response));
     }
+
 }

@@ -36,4 +36,5 @@ public class CompanyResponseDto {
                 .y(company.getY().doubleValue())
                 .build();
     }
+
 }

@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GlobalResponseDto {
+
     private int statusCode;
     private String message;
     private Object data;
@@ -46,4 +47,5 @@ public class GlobalResponseDto {
                 .message(successType.getMessage())
                 .build();
     }
+
 }

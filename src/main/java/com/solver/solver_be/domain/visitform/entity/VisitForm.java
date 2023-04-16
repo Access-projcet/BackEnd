@@ -82,4 +82,5 @@ public class VisitForm extends TimeStamped {
     public void updateStatus(String status) {
         this.status = status;
     }
+
 }

@@ -19,4 +19,5 @@ public enum UserRoleEnum {
         public static final String GUEST = "ROLE_GUEST";
         public static final String ADMIN = "ROLE_ADMIN";
     }
+
 }

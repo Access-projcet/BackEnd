@@ -1,8 +1,6 @@
 package com.solver.solver_be.domain.accessRecord.entity;
 
 import com.solver.solver_be.domain.access.entity.Access;
-
-import com.solver.solver_be.global.util.TimeStamped;
 import lombok.*;
 
 import javax.persistence.*;
@@ -37,4 +35,5 @@ public class AccessRecord {
                 .access(access)
                 .build();
     }
+
 }

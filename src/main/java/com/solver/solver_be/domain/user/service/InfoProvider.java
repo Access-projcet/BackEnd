@@ -27,8 +27,15 @@ public class InfoProvider {
         return getRandomTarget(targetStringLength, LEFT_LIMIT, RIGHT_LIMIT);
     }
 
-    // 3. Get RandomTarget
+    // 3. Create an authentication code
+    public String createdCode() {
+        int targetStringLength = 6;
+        return getRandomTarget(targetStringLength, LEFT_LIMIT, RIGHT_LIMIT);
+    }
+
+    // 4. Get RandomTarget
     public static String getRandomTarget(int targetStringLength, int leftLimit, int rightLimit) {
+
         Random random = new Random();
         StringBuilder sb = new StringBuilder(targetStringLength);
         for (int i = 0; i < targetStringLength; i++) {

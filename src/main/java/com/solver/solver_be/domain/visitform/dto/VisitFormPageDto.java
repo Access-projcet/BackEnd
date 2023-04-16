@@ -22,4 +22,5 @@ public class VisitFormPageDto {
                 .visitFormList(visitFormList)
                 .build();
     }
+
 }

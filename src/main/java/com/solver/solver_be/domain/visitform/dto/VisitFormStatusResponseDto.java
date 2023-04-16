@@ -20,4 +20,5 @@ public class VisitFormStatusResponseDto {
                 .status(visitForm.getStatus())
                 .build();
     }
+
 }

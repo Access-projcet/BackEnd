@@ -7,7 +7,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Getter
@@ -84,4 +83,5 @@ public class VisitFormResponseDto {
                 .status(visitForm.getStatus())
                 .build();
     }
+
 }

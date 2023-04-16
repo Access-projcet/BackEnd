@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MessageRequestDto {
-    String to;
-    String content;
+
+    String to;                      // 메세지 받을 사용자
+    String content;                 // 메세지 내용
+
 }

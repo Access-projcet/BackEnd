@@ -68,6 +68,7 @@ public class GlobalExceptionHandler {
                 .body(GlobalResponseDto.of(errorType));
     }
 
+    // NotificationException Handler
     @ExceptionHandler(NotificationException.class)
     public ResponseEntity<GlobalResponseDto> handleNotificationException(NotificationException e) {
         ErrorType errorType = e.getStatusCode();
@@ -84,4 +85,5 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest()
                 .body(new GlobalResponseDto(HttpStatus.BAD_REQUEST.value(), message, null));
     }
+
 }
