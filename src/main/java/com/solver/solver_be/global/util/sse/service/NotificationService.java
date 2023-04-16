@@ -36,7 +36,7 @@ public class NotificationService {
     private final EmitterRepository emitterRepository;
     private final NotificationRepository notificationRepository;
 
-    // Set up an SSE connection
+    // 1. Set up an SSE connection
     public SseEmitter subscribe(Admin admin, String lastEventId) {
 
         String emitterId = admin.getId() + "_" + System.currentTimeMillis();
@@ -96,7 +96,7 @@ public class NotificationService {
         );
     }
 
-    // View All Notifications
+    // 2. View All Notifications
     @Transactional(readOnly = true)
     public List<NotificationResponseDto> findAllNotifications(Admin admin){
         List<Notification> notificationList = notificationRepository.findByAdminIdOrderByIdDesc(admin.getId());
@@ -105,6 +105,7 @@ public class NotificationService {
                 .collect(Collectors.toList());
     }
 
+    // 3. Check Read Notification
     @Transactional
     public ResponseEntity<GlobalResponseDto> isReadNotification(Admin admin, Long id){
         Optional<Notification> notification = notificationRepository.findById(id);
@@ -116,14 +117,14 @@ public class NotificationService {
         return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.NOTIFICATIONS_READ_SUCCESS));
     }
 
-    // Delete a notification
+    // 4. Delete a Notification
     @Transactional
     public ResponseEntity<GlobalResponseDto> deleteByNotifications(Long notificationId) {
         notificationRepository.deleteById(notificationId);
         return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.NOTIFICATION_DELETE_SUCCESS));
     }
 
-    // Delete all notifications
+    // 5. Delete All Notifications
     @Transactional
     public ResponseEntity<GlobalResponseDto> deleteAllByNotifications(Admin admin) {
         Long adminId = admin.getId();
@@ -131,8 +132,7 @@ public class NotificationService {
         return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.NOTIFICATIONS_DELETE_SUCCESS));
     }
 
-    //==================================== Method ==========================================
-
+    // Method : Create Notification
     private Notification createNotification(Admin admin, String content) {
         return Notification.builder()
                 .admin(admin)
@@ -141,7 +141,7 @@ public class NotificationService {
                 .build();
     }
 
-    // Sending Data
+    // Method : Sending Data
     private void sendNotification(SseEmitter emitter, String eventId, String emitterId, Object data) {
         try {
             emitter.send(SseEmitter.event()
@@ -153,7 +153,7 @@ public class NotificationService {
         }
     }
 
-    // Making an Identity emitterId
+    // Method : Making an Identity emitterId
     private String makeTimeIncludeUd(Long id) {
         return id + "_" + System.currentTimeMillis();
     }

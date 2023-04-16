@@ -57,7 +57,7 @@ public class AdminService {
 
         // Password Equals Check
         if (!signupRequestDto.getPassword().equals(signupRequestDto.getCheckPassword())){
-            throw new UserException(ErrorType.PASSWORD_MISMATCH);
+            throw new UserException(ErrorType.CHECK_PASSWORD_MISMATCH);
         }
 
         // Get Company By CompanyToken And CompanyName
@@ -122,7 +122,7 @@ public class AdminService {
 
         // NewPassword Equals Check
         if (!passwordChangeRequestDto.getNewPassword().equals(passwordChangeRequestDto.getCheckPassword())){
-            throw new UserException(ErrorType.PASSWORD_MISMATCH);
+            throw new UserException(ErrorType.CHECK_PASSWORD_MISMATCH);
         }
 
         // New Password Set

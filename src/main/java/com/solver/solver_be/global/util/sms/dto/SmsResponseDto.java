@@ -10,8 +10,10 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 public class SmsResponseDto {
+
     String requestId;
     LocalDateTime requestTime;
     String statusCode;
     String statusName;
+
 }

@@ -23,7 +23,7 @@ import java.security.NoSuchAlgorithmException;
 public class SmsController {
     private final SmsService smsService;
 
-    // 1. Send Short Message Service
+    // 1. Send Message
     @PostMapping("/sms/send")
     public  ResponseEntity<GlobalResponseDto> sendSms(@RequestBody MessageRequestDto messageDto) throws JsonProcessingException, RestClientException, URISyntaxException, InvalidKeyException, NoSuchAlgorithmException, UnsupportedEncodingException {
         SmsResponseDto response = smsService.sendSms(messageDto);

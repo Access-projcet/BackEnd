@@ -19,12 +19,11 @@ public enum ErrorType {
     USER_ACCOUNT_NOT_EXIST(400, "존재하지 않는 계정입니다."),
     USER_NOT_FOUND(400, "존재하지 않는 사용자입니다."),
     PASSWORD_MISMATCH(400, "비밀번호가 일치하지 않습니다."),
+    CHECK_PASSWORD_MISMATCH(400, "비밀번호 확인이 일치하지 않습니다."),
     INVALID_COMPANY_TOKEN(400, "유효하지 않은 회사 코드입니다."),
-    AUTH_FAILED(400, "이메일 인증 실패" ),
     LOBBYID_ALREADY_DONE(400, "로비 아이디가 발급 되어있습니다."),
-    NOT_IMPOSSIBLE_TRY(400, "일정 횟수를 실패하여 일정 시간 시도가 불가능 합니다." ),
 
-    // Visitor Fail
+    // VisitForm Fail
     VISITFORM_NOT_FOUND(400, "방문 신청 기록이 없습니다."),
     VISITFORM_UPDATE_FAILED(400, "본인은 방문 기록이 아닙니다."),
     VISITFORM_EXIST(400, "동일한 시간에 방문 기록이 있습니다."),

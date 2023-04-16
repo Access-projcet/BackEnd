@@ -17,10 +17,10 @@ public class TimeStamped {
 
     @CreatedDate
     @Column(updatable = false)
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt;            // 생성 날짜
 
     @LastModifiedDate
     @Column
-    private LocalDateTime modifiedAt;
+    private LocalDateTime modifiedAt;           // 수정 날짜
 
 }

@@ -43,4 +43,5 @@ public class Access extends TimeStamped {
                 .status(status)
                 .build();
     }
+
 }
