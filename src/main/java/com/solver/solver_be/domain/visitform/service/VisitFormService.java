@@ -13,6 +13,7 @@ import com.solver.solver_be.domain.visitform.repository.VisitFormRepositoryCusto
 import com.solver.solver_be.global.exception.exceptionType.VisitFormException;
 import com.solver.solver_be.global.response.GlobalResponseDto;
 import com.solver.solver_be.global.type.ErrorType;
+import com.solver.solver_be.global.type.NotificationType;
 import com.solver.solver_be.global.type.SuccessType;
 import com.solver.solver_be.global.util.sse.service.NotificationService;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,7 @@ public class VisitFormService {
     private final NotificationService notificationService;
     private final VisitFormRepository visitFormRepository;
     private final VisitFormRepositoryCustomImpl visitFormRepositoryCustomImpl;
+//    private final NotificationType notificationType;
 
     // 1. Create VisitForm (Guest)
     @Transactional
@@ -64,7 +66,9 @@ public class VisitFormService {
         VisitForm visitForm = visitFormRepository.saveAndFlush(VisitForm.of(visitFormRequestDto, guest, admin));
 
         // SSE Send
-        notificationService.send(admin, "새로운 " + guest.getName() + "님이 방문했습니다.");
+        NotificationType notificationType = NotificationType.NEW_GUEST_VISIT;
+        String message = String.format(notificationType.getMessage(), guest.getName());
+        notificationService.send(admin, message);
 
         return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.VISITFORM_WRITE_SUCCESS, VisitFormResponseDto.of(visitForm, guest)));
     }
