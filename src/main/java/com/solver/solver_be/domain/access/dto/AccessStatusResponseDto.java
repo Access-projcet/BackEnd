@@ -16,7 +16,7 @@ public class AccessStatusResponseDto {
     private LocalDate date;             // 출입한 날짜
     private Long applyNumber;           // 신청 Guest 수
     private Long approveNumber;         // 허가 Guest 수
-    private Long accessNumber;             // 실제 출입 수
+    private Long accessNumber;          // 실제 출입 수
 
     public static AccessStatusResponseDto of(LocalDate date, Long applyNumber, Long approveNumber, Long accessNumber) {
         return AccessStatusResponseDto.builder()

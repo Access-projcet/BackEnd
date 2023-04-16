@@ -1,6 +1,6 @@
 package com.solver.solver_be.global.security.jwt;
 
-import com.solver.solver_be.global.security.refreshtoken.TokenDto;
+import com.solver.solver_be.global.security.jwt.dto.TokenDto;
 import com.solver.solver_be.global.security.webSecurity.UserDetailsServiceImpl;
 import com.solver.solver_be.global.util.redis.RedisUtil;
 import io.jsonwebtoken.*;

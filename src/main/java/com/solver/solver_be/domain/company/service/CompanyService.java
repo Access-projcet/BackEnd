@@ -7,7 +7,6 @@ import com.solver.solver_be.domain.company.repository.CompanyRepository;
 import com.solver.solver_be.domain.user.entity.Admin;
 import com.solver.solver_be.domain.user.entity.Guest;
 import com.solver.solver_be.global.exception.exceptionType.CompanyException;
-import com.solver.solver_be.global.exception.exceptionType.UserException;
 import com.solver.solver_be.global.response.GlobalResponseDto;
 import com.solver.solver_be.global.type.ErrorType;
 import com.solver.solver_be.global.type.SuccessType;
@@ -15,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -36,7 +34,7 @@ public class CompanyService {
 
         // Company Duplicate Validation
         if (companyRepository.findByCompanyName(companyRequestDto.getCompanyName()).isPresent()) {
-            throw new UserException(ErrorType.COMPANY_ALREADY_EXIST);
+            throw new CompanyException(ErrorType.COMPANY_ALREADY_EXIST);
         }
 
         // Create Company Token

@@ -43,6 +43,8 @@ public class SmsService {
 
     @Value("${naver-cloud-sms.senderPhone}")
     private String phone;
+
+    // Send Message
     public SmsResponseDto sendSms(MessageRequestDto messageDto) throws JsonProcessingException, RestClientException, URISyntaxException, InvalidKeyException, NoSuchAlgorithmException, UnsupportedEncodingException {
 
         Long time = System.currentTimeMillis();
@@ -76,6 +78,7 @@ public class SmsService {
         return response;
     }
 
+    // Make Signature
     public String makeSignature(Long time) throws NoSuchAlgorithmException, UnsupportedEncodingException, InvalidKeyException {
         String space = " ";
         String newLine = "\n";
@@ -104,4 +107,5 @@ public class SmsService {
 
         return encodeBase64String;
     }
+
 }

@@ -12,7 +12,7 @@ import com.solver.solver_be.global.exception.exceptionType.CompanyException;
 import com.solver.solver_be.global.exception.exceptionType.UserException;
 import com.solver.solver_be.global.response.GlobalResponseDto;
 import com.solver.solver_be.global.security.jwt.JwtUtil;
-import com.solver.solver_be.global.security.refreshtoken.TokenDto;
+import com.solver.solver_be.global.security.jwt.dto.TokenDto;
 import com.solver.solver_be.global.type.ErrorType;
 import com.solver.solver_be.global.type.SuccessType;
 import com.solver.solver_be.global.type.UserRoleEnum;
@@ -57,7 +57,7 @@ public class AdminService {
 
         // Password Equals Check
         if (!signupRequestDto.getPassword().equals(signupRequestDto.getCheckPassword())){
-            throw new UserException(ErrorType.PASSWORD_MISMATCH);
+            throw new UserException(ErrorType.CHECK_PASSWORD_MISMATCH);
         }
 
         // Get Company By CompanyToken And CompanyName
@@ -122,7 +122,7 @@ public class AdminService {
 
         // NewPassword Equals Check
         if (!passwordChangeRequestDto.getNewPassword().equals(passwordChangeRequestDto.getCheckPassword())){
-            throw new UserException(ErrorType.PASSWORD_MISMATCH);
+            throw new UserException(ErrorType.CHECK_PASSWORD_MISMATCH);
         }
 
         // New Password Set

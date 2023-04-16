@@ -1,4 +1,4 @@
-package com.solver.solver_be.global.security.refreshtoken;
+package com.solver.solver_be.global.security.jwt.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
