@@ -12,7 +12,7 @@ import com.solver.solver_be.global.exception.exceptionType.CompanyException;
 import com.solver.solver_be.global.exception.exceptionType.UserException;
 import com.solver.solver_be.global.response.GlobalResponseDto;
 import com.solver.solver_be.global.security.jwt.JwtUtil;
-import com.solver.solver_be.global.security.refreshtoken.TokenDto;
+import com.solver.solver_be.global.security.jwt.dto.TokenDto;
 import com.solver.solver_be.global.type.ErrorType;
 import com.solver.solver_be.global.type.SuccessType;
 import com.solver.solver_be.global.type.UserRoleEnum;
