@@ -26,6 +26,7 @@ public class NotificationContent {
         this.content = content;
     }
 
+    // Notification Valid
     private boolean ValidNotify(String content){
         return Objects.isNull(content) || content.length() > Max_LENGTH || content.isEmpty();
     }
