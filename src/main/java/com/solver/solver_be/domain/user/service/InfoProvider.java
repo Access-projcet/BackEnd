@@ -30,13 +30,17 @@ public class InfoProvider {
     // 3. Get RandomTarget
     public static String getRandomTarget(int targetStringLength, int leftLimit, int rightLimit) {
         Random random = new Random();
-        return random.ints(leftLimit, rightLimit + 1)
-                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
-                .limit(targetStringLength)
-                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-                .toString();
+        StringBuilder sb = new StringBuilder(targetStringLength);
+        for (int i = 0; i < targetStringLength; i++) {
+            int randomInt = random.nextInt(rightLimit - leftLimit + 1) + leftLimit;
+            if ((randomInt <= 57 || randomInt >= 65) && (randomInt <= 90 || randomInt >= 97)) {
+                sb.appendCodePoint(randomInt);
+            } else {
+                i--;
+            }
+        }
+
+        return sb.toString();
     }
-
-
 
 }

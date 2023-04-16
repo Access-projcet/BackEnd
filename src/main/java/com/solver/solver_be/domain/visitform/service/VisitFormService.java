@@ -13,6 +13,7 @@ import com.solver.solver_be.domain.visitform.repository.VisitFormRepositoryCusto
 import com.solver.solver_be.global.exception.exceptionType.VisitFormException;
 import com.solver.solver_be.global.response.GlobalResponseDto;
 import com.solver.solver_be.global.type.ErrorType;
+import com.solver.solver_be.global.type.FormStatusType;
 import com.solver.solver_be.global.type.SuccessType;
 import com.solver.solver_be.global.util.sse.service.NotificationService;
 import lombok.RequiredArgsConstructor;
@@ -135,10 +136,10 @@ public class VisitFormService {
         }
 
         // Update VisitForm
-        if (visitFormRequestDto.getStatus().equals("2")) {
-            visitForm.updateStatus("승인");
-        } else if (visitFormRequestDto.getStatus().equals("3")) {
-            visitForm.updateStatus("거절");
+        if (visitFormRequestDto.getStatus().equals(FormStatusType.SECOND.getMessage())) {
+            visitForm.updateStatus(FormStatusType.ACCEPT.getMessage());
+        } else if (visitFormRequestDto.getStatus().equals(FormStatusType.THIRD.getMessage())) {
+            visitForm.updateStatus(FormStatusType.DENY.getMessage());
         } else {
             throw new VisitFormException(ErrorType.NOT_VALID_STATUS);
         }

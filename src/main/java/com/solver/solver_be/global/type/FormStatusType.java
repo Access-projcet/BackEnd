@@ -9,6 +9,8 @@ public enum FormStatusType {
     ACCEPT("승인"),
     DENY("거절"),
     WAIT("대기"),
-    COMPLETE("완료");
+    COMPLETE("완료"),
+    SECOND("2"),
+    THIRD("3");
     private final String message;
 }

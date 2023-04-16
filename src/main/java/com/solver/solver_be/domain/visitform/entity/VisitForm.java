@@ -3,6 +3,7 @@ package com.solver.solver_be.domain.visitform.entity;
 import com.solver.solver_be.domain.user.entity.Admin;
 import com.solver.solver_be.domain.user.entity.Guest;
 import com.solver.solver_be.domain.visitform.dto.VisitFormRequestDto;
+import com.solver.solver_be.global.type.FormStatusType;
 import com.solver.solver_be.global.util.TimeStamped;
 import lombok.*;
 
@@ -62,7 +63,7 @@ public class VisitForm extends TimeStamped {
                 .endDate(LocalDate.parse(visitFormRequestDto.getEndDate()))
                 .startTime(LocalDateTime.parse(visitFormRequestDto.getStartTime()))
                 .endTime(LocalDateTime.parse(visitFormRequestDto.getEndTime()))
-                .status("대기")
+                .status(FormStatusType.WAIT.getMessage())
                 .guest(guest)
                 .admin(admin)
                 .build();

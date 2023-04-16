@@ -1,16 +1,15 @@
 package com.solver.solver_be.domain.access.service;
 
-import com.solver.solver_be.domain.access.dto.AccessResponseDto;
 import com.solver.solver_be.domain.access.dto.AccessRequestDto;
+import com.solver.solver_be.domain.access.dto.AccessResponseDto;
+import com.solver.solver_be.domain.access.dto.AccessStatusResponseDto;
 import com.solver.solver_be.domain.access.entity.Access;
 import com.solver.solver_be.domain.access.repository.AccessRepository;
 import com.solver.solver_be.domain.accessRecord.entity.AccessRecord;
 import com.solver.solver_be.domain.accessRecord.repository.AccessRecordRepository;
 import com.solver.solver_be.domain.user.entity.Admin;
 import com.solver.solver_be.domain.user.entity.Guest;
-import com.solver.solver_be.domain.access.dto.AccessStatusResponseDto;
 import com.solver.solver_be.domain.user.repository.GuestRepository;
-import com.solver.solver_be.domain.visitform.dto.VisitFormResponseDto;
 import com.solver.solver_be.domain.visitform.entity.VisitForm;
 import com.solver.solver_be.domain.visitform.repository.VisitFormRepository;
 import com.solver.solver_be.global.exception.exceptionType.AccessException;
@@ -19,6 +18,7 @@ import com.solver.solver_be.global.exception.exceptionType.UserException;
 import com.solver.solver_be.global.exception.exceptionType.VisitFormException;
 import com.solver.solver_be.global.response.GlobalResponseDto;
 import com.solver.solver_be.global.type.ErrorType;
+import com.solver.solver_be.global.type.FormStatusType;
 import com.solver.solver_be.global.type.SuccessType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -80,7 +80,7 @@ public class AccessService {
         }
 
         // Visit completed
-        visitForm.updateStatus("완료");
+        visitForm.updateStatus(FormStatusType.COMPLETE.getMessage());
         visitFormRepository.save(visitForm);
 
         // Already CheckIn Check
@@ -160,10 +160,10 @@ public class AccessService {
             int approveCount = 0;
             int accessCount = 0;
             for (VisitForm visitForm : visitFormByDate) {
-                if ("승인".equals(visitForm.getStatus())) {
+                if (FormStatusType.ACCEPT.getMessage().equals(visitForm.getStatus())) {
                     approveCount += 1;
                 }
-                if ("완료".equals(visitForm.getStatus())) {
+                if (FormStatusType.COMPLETE.getMessage().equals(visitForm.getStatus())) {
                     accessCount += 1;
                 }
             }
