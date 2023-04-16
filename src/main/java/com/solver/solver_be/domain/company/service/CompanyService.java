@@ -27,8 +27,8 @@ import java.util.Optional;
 public class CompanyService {
 
     private final CompanyRepository companyRepository;
-    private static final String BASE62 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     private static final int ID_LENGTH = 16;
+    private static final String BASE62 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
     // 1. Create Company
     @Transactional
@@ -120,4 +120,5 @@ public class CompanyService {
         }
         return sb.toString();
     }
+
 }

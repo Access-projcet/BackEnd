@@ -7,7 +7,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 @Getter
@@ -15,14 +14,15 @@ import java.time.format.DateTimeFormatter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AccessResponseDto {
+
     private Long id;
     private String location;                // 방문장소
     private String place;                   // 세부 방문위치
     private String target;                  // 방문할 분 (Admin)
     private String purpose;                 // 방문 목적
     private String visitor;                 // 방문자 (Guest)
-    private String inTime;
-    private String outTime;
+    private String inTime;                  // 출입시간
+    private String outTime;                 // 나간시간
 
     public static AccessResponseDto of(VisitForm visitForm, AccessRecord accessRecord) {
 
@@ -48,6 +48,5 @@ public class AccessResponseDto {
                 .visitor(visitForm.getGuest().getName())
                 .build();
     }
-
 
 }

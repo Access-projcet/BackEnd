@@ -125,6 +125,7 @@ public class GuestService {
         return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.PASSWORD_RESET_SUCCESS));
     }
 
+    // 4. Find Guest userId
     @Transactional
     public ResponseEntity<GlobalResponseDto> findGuestSearchId(UserSearchRequestDto userSearchRequestDto) throws MessagingException {
 
@@ -163,4 +164,5 @@ public class GuestService {
 
         return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.PASSWORD_RESET_SUCCESS));
     }
+
 }

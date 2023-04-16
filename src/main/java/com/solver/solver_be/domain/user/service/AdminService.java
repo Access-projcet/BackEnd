@@ -31,6 +31,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class AdminService {
+
     private final JwtUtil jwtUtil;
     private final RedisUtil redisUtil;
     private final InfoProvider infoProvider;
@@ -194,7 +195,7 @@ public class AdminService {
         String companyToken = company.getCompanyToken();
 
         // Create lobby ID and send mail
-        emailService.sendLobbyId(lobbyRequestDto.getEmail(), userId, password);
+        emailService.sendLobbyId(lobbyRequestDto.getEmail(), userId, password, company.getCompanyName());
 
         // Password Encoder
         String lobbyPassword = passwordEncoder.encode(password);
@@ -216,6 +217,5 @@ public class AdminService {
 
         return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.LOBBYID_SIGN_UP));
     }
-
 
 }

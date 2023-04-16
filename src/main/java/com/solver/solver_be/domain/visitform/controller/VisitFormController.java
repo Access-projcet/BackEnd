@@ -67,4 +67,5 @@ public class VisitFormController {
                                                               @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return visitorService.searchVisitForms(page, visitFormSearchRequestDto, userDetails.getAdmin());
     }
+
 }

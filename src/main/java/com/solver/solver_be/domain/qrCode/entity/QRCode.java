@@ -28,4 +28,5 @@ public class QRCode {
                 .guest(guest)
                 .build();
     }
+
 }

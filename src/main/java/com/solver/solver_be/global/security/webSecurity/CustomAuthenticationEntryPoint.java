@@ -54,4 +54,5 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
             log.error(e.getMessage());
         }
     }
+
 }

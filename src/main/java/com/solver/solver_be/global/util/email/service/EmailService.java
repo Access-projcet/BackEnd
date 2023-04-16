@@ -2,7 +2,8 @@ package com.solver.solver_be.global.util.email.service;
 
 import com.solver.solver_be.domain.company.entity.Company;
 import com.solver.solver_be.domain.company.repository.CompanyRepository;
-import com.solver.solver_be.global.exception.exceptionType.UserException;
+import com.solver.solver_be.domain.user.service.InfoProvider;
+import com.solver.solver_be.global.exception.exceptionType.CompanyException;
 import com.solver.solver_be.global.type.ErrorType;
 import com.solver.solver_be.global.util.email.dto.EmailRequestDto;
 import com.solver.solver_be.global.util.redis.RedisUtil;
@@ -15,13 +16,12 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.util.Optional;
 
-import static com.solver.solver_be.domain.user.service.InfoProvider.getRandomTarget;
-
 @Service
 @RequiredArgsConstructor
 public class EmailService {
 
     private final RedisUtil redisUtil;
+    private final InfoProvider infoProvider;
     private final JavaMailSender mailSender;
     private final CompanyRepository companyRepository;
 
@@ -34,7 +34,7 @@ public class EmailService {
         Optional<Company> foundCompany = companyRepository.findByCompanyName(emailRequestDto.getCompanyName());
         // Company Existence
         if (foundCompany.isEmpty()) {
-            throw new UserException(ErrorType.COMPANY_NOT_FOUND);
+            throw new CompanyException(ErrorType.COMPANY_NOT_FOUND);
         }
 
         MimeMessage message = mailSender.createMimeMessage();
@@ -64,7 +64,7 @@ public class EmailService {
     // 3. Create Authentication Code Mail Form
     private MimeMessage createAuthCode(EmailRequestDto emailRequestDto) throws MessagingException {
 
-        String authCode = createdCode();
+        String authCode = infoProvider.createdCode();
 
         MimeMessage message = mailSender.createMimeMessage();
         message.addRecipients(MimeMessage.RecipientType.TO, emailRequestDto.getEmail());
@@ -123,21 +123,14 @@ public class EmailService {
     }
 
     // 8. Create lobby ID and send mail
-    public void sendLobbyId(String toEmail, String userId, String password) throws MessagingException {
+    public void sendLobbyId(String toEmail, String userId, String password, String companyName) throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
         message.addRecipients(MimeMessage.RecipientType.TO, toEmail);
-        message.setSubject("로비 아이디가 도착했습니다.");
+        message.setSubject(companyName + " 로비 아이디가 도착했습니다.");
         message.setFrom(configEmail);
         message.setText("로비 아이디 : " + userId + " 로비 비밀번호 : " + password, "utf-8", "html");
 
         mailSender.send(message);
     }
 
-    // Create an authentication code
-    private String createdCode() {
-        int leftLimit = 48; // number '0'
-        int rightLimit = 122; // alphabet 'z'
-        int targetStringLength = 6;
-        return getRandomTarget(targetStringLength, leftLimit, rightLimit);
-    }
 }

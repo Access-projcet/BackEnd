@@ -6,5 +6,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class QRCodeRequestDto {
-    private String imgUrl;
+
+    private String imgUrl;          // QR코드 URL
+
 }

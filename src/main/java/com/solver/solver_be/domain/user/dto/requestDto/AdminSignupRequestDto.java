@@ -28,14 +28,14 @@ public class AdminSignupRequestDto {
     @NotBlank(message = "담당자명은 필수입니다.")
     private String name;
 
-    @NotBlank(message = "사업자 등록 번호")
+    @NotBlank(message = "사업자 등록 번호를 적어주세요.")
     @Pattern(regexp = "^\\d{3}-\\d{2}-\\d{5}$", message = "사업자 등록 번호는 XXX-XX-XXXXX 형식입니다.")
     private String businessNum;
 
     @NotBlank(message = "회사명은 필수입니다.")
     private String companyName;
 
-    @NotBlank
+    @NotBlank(message = "회사 코드 필수입니다.")
     private String companyToken;
 
     public static AdminSignupRequestDto of(String userId, String name, String phoneNum, String companyToken){
@@ -46,4 +46,5 @@ public class AdminSignupRequestDto {
                 .companyToken(companyToken)
                 .build();
     }
+
 }

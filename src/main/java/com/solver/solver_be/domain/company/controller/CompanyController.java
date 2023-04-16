@@ -41,4 +41,5 @@ public class CompanyController {
                                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return companyService.deleteCompany(id, userDetails.getAdmin());
     }
+
 }

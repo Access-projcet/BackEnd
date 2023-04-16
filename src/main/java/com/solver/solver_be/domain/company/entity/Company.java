@@ -67,4 +67,5 @@ public class Company extends TimeStamped {
     public void setLobbyIdIssued(Boolean lobbyIdIssued) {
         this.lobbyIdIssued = lobbyIdIssued;
     }
+
 }

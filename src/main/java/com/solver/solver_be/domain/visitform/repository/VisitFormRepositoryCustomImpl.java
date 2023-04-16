@@ -64,6 +64,8 @@ public class VisitFormRepositoryCustomImpl{
                 )
                 .fetch();
     }
+
+    // 2. Get All VisitForms Count
     public Long count(VisitFormSearchRequestDto visitFormSearchRequestDto) {
 
         BooleanBuilder builder = new BooleanBuilder();
@@ -94,4 +96,5 @@ public class VisitFormRepositoryCustomImpl{
                 .where(builder)
                 .fetchOne();
     }
+
 }

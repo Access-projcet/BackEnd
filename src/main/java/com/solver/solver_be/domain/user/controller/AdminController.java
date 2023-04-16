@@ -58,4 +58,5 @@ public class AdminController {
                                                            @AuthenticationPrincipal UserDetailsImpl userDetails) throws MessagingException {
         return adminService.createLobbyId(lobbyRequestDto, userDetails.getAdmin());
     }
+
 }

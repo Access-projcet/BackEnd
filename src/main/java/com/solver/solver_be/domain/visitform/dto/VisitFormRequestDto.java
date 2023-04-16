@@ -40,4 +40,5 @@ public class VisitFormRequestDto {
 
     @NotBlank
     private String status;
+
 }

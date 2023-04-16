@@ -13,6 +13,7 @@ import com.solver.solver_be.domain.visitform.repository.VisitFormRepositoryCusto
 import com.solver.solver_be.global.exception.exceptionType.VisitFormException;
 import com.solver.solver_be.global.response.GlobalResponseDto;
 import com.solver.solver_be.global.type.ErrorType;
+import com.solver.solver_be.global.type.FormStatusType;
 import com.solver.solver_be.global.type.NotificationType;
 import com.solver.solver_be.global.type.SuccessType;
 import com.solver.solver_be.global.util.sse.service.NotificationService;
@@ -22,9 +23,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -35,7 +37,6 @@ public class VisitFormService {
     private final NotificationService notificationService;
     private final VisitFormRepository visitFormRepository;
     private final VisitFormRepositoryCustomImpl visitFormRepositoryCustomImpl;
-//    private final NotificationType notificationType;
 
     // 1. Create VisitForm (Guest)
     @Transactional
@@ -139,10 +140,10 @@ public class VisitFormService {
         }
 
         // Update VisitForm
-        if (visitFormRequestDto.getStatus().equals("2")) {
-            visitForm.updateStatus("승인");
-        } else if (visitFormRequestDto.getStatus().equals("3")) {
-            visitForm.updateStatus("거절");
+        if (visitFormRequestDto.getStatus().equals(FormStatusType.SECOND.getMessage())) {
+            visitForm.updateStatus(FormStatusType.ACCEPT.getMessage());
+        } else if (visitFormRequestDto.getStatus().equals(FormStatusType.THIRD.getMessage())) {
+            visitForm.updateStatus(FormStatusType.DENY.getMessage());
         } else {
             throw new VisitFormException(ErrorType.NOT_VALID_STATUS);
         }
@@ -175,21 +176,13 @@ public class VisitFormService {
     @Transactional
     public ResponseEntity<GlobalResponseDto> searchVisitForms(int page, VisitFormSearchRequestDto visitFormSearchRequestDto, Admin admin) {
 
-        LocalDate startDate = null;
-        if (visitFormSearchRequestDto.getStartDate() != null) {
-            startDate = LocalDate.parse(visitFormSearchRequestDto.getStartDate());
-        }
-
-        LocalDate endDate = null;
-        if (visitFormSearchRequestDto.getEndDate() != null) {
-            endDate = LocalDate.parse(visitFormSearchRequestDto.getEndDate());
-        }
-
         // Get VisitFormListBy KeyWords
         List<VisitForm> visitFormList = visitFormRepositoryCustomImpl.findAllByContainKeyword(page, visitFormSearchRequestDto);
 
+        // Get All VisitForms Count
         Long count = visitFormRepositoryCustomImpl.count(visitFormSearchRequestDto);
 
+        // Divide 10 All Visit Forms
         Long totalPage = count%10 > 0 ? count/10 + 1 : count/10;
 
         return ResponseEntity.ok(GlobalResponseDto.of(SuccessType.VISITFORM_SEARCH_SUCCESS, VisitFormPageDto.of(totalPage, visitFormList)));
@@ -199,4 +192,5 @@ public class VisitFormService {
     private VisitForm getVisitFormById(Long id) {
         return visitFormRepository.findById(id).orElseThrow(() -> new VisitFormException(ErrorType.VISITFORM_NOT_FOUND));
     }
+
 }
