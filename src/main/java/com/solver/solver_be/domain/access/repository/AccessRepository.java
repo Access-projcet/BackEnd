@@ -12,6 +12,5 @@ public interface AccessRepository extends JpaRepository<Access, Long> {
 
     List<Access> findByAdminId(Long id);
 
-    Optional<Access> findLatestByGuestNameAndGuestPhoneNum(String name, String phoneNum);
-
+    Optional<Access> findFirstByGuestNameAndGuestPhoneNumOrderByCreatedAtDesc(String name, String phoneNum);
 }

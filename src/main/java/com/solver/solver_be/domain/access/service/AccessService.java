@@ -92,8 +92,7 @@ public class AccessService {
             accessCheck.get().setStatus(true);
             accessRepository.save(accessCheck.get());
             accessRecordRepository.save(AccessRecord.of(nowTime, null, accessCheck.get()));
-        }
-        else{
+        } else {
             // Save AccessRepo
             Access access = accessRepository.save(Access.of(guest, visitForm.getAdmin(), visitForm, true));
             // Save AccessRecordRepo
@@ -111,8 +110,8 @@ public class AccessService {
         LocalDateTime outTime = LocalDateTime.now();
 
         // Access Check
-        Access access = accessRepository.findLatestByGuestNameAndGuestPhoneNum(accessRequestDto.getName(), accessRequestDto.getPhoneNum()).orElseThrow(
-                () -> new UserException(ErrorType.USER_NOT_FOUND)
+        Access access = accessRepository.findFirstByGuestNameAndGuestPhoneNumOrderByCreatedAtDesc(accessRequestDto.getName(), accessRequestDto.getPhoneNum()).orElseThrow(
+                ()-> new UserException(ErrorType.USER_NOT_FOUND)
         );
 
         // Already Checkout Check
